@@ -1,0 +1,7 @@
+[
+  {"id":"U001","name":"张工","industry":"化工","company":"某化工集团","company_scale":"500-1000人","role":"设备采购工程师","long_term_tags":["控制器","PLC","防爆设备","仪器仪表"],"short_term_tags":["西门子","压力变送器","变频器"],"avatar":"https://api.dicebear.com/9.x/initials/svg?seed=ZG"},
+  {"id":"U002","name":"李主管","industry":"汽车零部件","company":"某汽车配件有限公司","company_scale":"200-500人","role":"维修主管","long_term_tags":["气动元件","传感器","伺服电机","减速机"],"short_term_tags":["气缸","电磁阀","接近传感器"],"avatar":"https://api.dicebear.com/9.x/initials/svg?seed=LZG"},
+  {"id":"U003","name":"王经理","industry":"食品饮料","company":"某食品集团","company_scale":"1000+人","role":"项目经理","long_term_tags":["变频器","PLC","人机界面","温控器"],"short_term_tags":["ABB变频器","台达HMI","温度传感器"],"avatar":"https://api.dicebear.com/9.x/initials/svg?seed=WJL"},
+  {"id":"U004","name":"赵工","industry":"电子制造","company":"某电子科技有限公司","company_scale":"100-200人","role":"自动化工程师","long_term_tags":["传感器","机器视觉","伺服系统","机器人"],"short_term_tags":["基恩士","激光传感器","六轴机器人"],"avatar":"https://api.dicebear.com/9.x/initials/svg?seed=ZG2"},
+  {"id":"U005","name":"陈总","industry":"水处理","company":"某水务集团","company_scale":"500-1000人","role":"技术总监","long_term_tags":["流量计","压力变送器","PLC","变频器","阀门"],"short_term_tags":["电磁流量计","差压变送器","软启动器"],"avatar":"https://api.dicebear.com/9.x/initials/svg?seed=CZ"}
+]

@@ -1,0 +1,85 @@
+{
+  "U001": {
+    "home": [
+      {"product_id":"P030","score":0.923,"channel":"temporal_cf","explanation":"基于您近期对压力变送器的多次浏览"},
+      {"product_id":"P001","score":0.897,"channel":"item_cf","explanation":"与您采购的「SITOP电源模块」同一品牌生态"},
+      {"product_id":"P023","score":0.872,"channel":"hot","explanation":"化工行业热门采购Top5"},
+      {"product_id":"P028","score":0.845,"channel":"temporal_cf","explanation":"您的同行近期也在关注软启动器"},
+      {"product_id":"P012","score":0.831,"channel":"user_cf","explanation":"与您兴趣相似的用户也在查看"},
+      {"product_id":"P022","score":0.815,"channel":"content","explanation":"与「压力变送器」功能互补的流量监测设备"},
+      {"product_id":"P026","score":0.790,"channel":"item_cf","explanation":"精密位移测量，完善您的传感器矩阵"},
+      {"product_id":"P019","score":0.762,"channel":"hot","explanation":"高性价比小型控制器，化工产线常用"}
+    ],
+    "detail_P008": [
+      {"product_id":"P030","score":0.912,"channel":"item_cf","explanation":"同品牌差压变送器，精度等级匹配"},
+      {"product_id":"P026","score":0.875,"channel":"item_cf","explanation":"互补测量方案：压力+位移"},
+      {"product_id":"P022","score":0.843,"channel":"content","explanation":"搭配使用：压力监测+流量监测"},
+      {"product_id":"P005","score":0.801,"channel":"hot","explanation":"近期热门高精度传感器"}
+    ]
+  },
+  "U002": {
+    "home": [
+      {"product_id":"P007","score":0.935,"channel":"temporal_cf","explanation":"基于您近期的电磁阀浏览记录"},
+      {"product_id":"P018","score":0.918,"channel":"item_cf","explanation":"气动系统配套：气缸 + 减压阀"},
+      {"product_id":"P027","score":0.886,"channel":"temporal_cf","explanation":"完善气源处理链路"},
+      {"product_id":"P014","score":0.862,"channel":"item_cf","explanation":"自动化产线必备：执行+传感"},
+      {"product_id":"P017","score":0.841,"channel":"user_cf","explanation":"同类角色维修主管也在采购"},
+      {"product_id":"P031","score":0.828,"channel":"content","explanation":"ISO标准气缸，兼容现有产线"},
+      {"product_id":"P034","score":0.795,"channel":"hot","explanation":"汽车零部件行业热销传感器"},
+      {"product_id":"P036","score":0.773,"channel":"user_cf","explanation":"相似用户高频采购"}
+    ],
+    "detail_P006": [
+      {"product_id":"P007","score":0.921,"channel":"item_cf","explanation":"常与气缸配套使用的电磁阀"},
+      {"product_id":"P027","score":0.883,"channel":"item_cf","explanation":"气源处理三件套推荐"},
+      {"product_id":"P018","score":0.852,"channel":"content","explanation":"精密调压，提升气动系统稳定性"},
+      {"product_id":"P031","score":0.811,"channel":"item_cf","explanation":"ISO标准系列气缸"}
+    ]
+  },
+  "U003": {
+    "home": [
+      {"product_id":"P025","score":0.941,"channel":"temporal_cf","explanation":"基于您近期的HMI浏览偏好"},
+      {"product_id":"P004","score":0.915,"channel":"temporal_cf","explanation":"您关注过的变频器品类"},
+      {"product_id":"P016","score":0.892,"channel":"item_cf","explanation":"驱动方案升级：变频器+伺服搭配"},
+      {"product_id":"P024","score":0.876,"channel":"user_cf","explanation":"相似食品行业项目正在采购"},
+      {"product_id":"P021","score":0.853,"channel":"content","explanation":"高性能伺服，提升产线节拍"},
+      {"product_id":"P033","score":0.828,"channel":"hot","explanation":"远程IO模块，食品产线数字化标配"},
+      {"product_id":"P002","score":0.802,"channel":"hot","explanation":"食品加工温控刚需"}
+    ],
+    "detail_P023": [
+      {"product_id":"P004","score":0.918,"channel":"item_cf","explanation":"不同功率段变频器产品矩阵"},
+      {"product_id":"P012","score":0.884,"channel":"item_cf","explanation":"小功率经济型变频器"},
+      {"product_id":"P028","score":0.856,"channel":"content","explanation":"软启动器可作为变频器替代方案"},
+      {"product_id":"P032","score":0.823,"channel":"user_cf","explanation":"高性价比国产伺服方案"}
+    ]
+  },
+  "U004": {
+    "home": [
+      {"product_id":"P013","score":0.928,"channel":"temporal_cf","explanation":"匹配您近期浏览的光纤传感器"},
+      {"product_id":"P016","score":0.907,"channel":"temporal_cf","explanation":"您收藏过的伺服系统品类"},
+      {"product_id":"P037","score":0.883,"channel":"item_cf","explanation":"微型激光传感，适用于电子产线"},
+      {"product_id":"P005","score":0.869,"channel":"item_cf","explanation":"高精度位移检测方案"},
+      {"product_id":"P009","score":0.845,"channel":"content","explanation":"六轴机器人，电子装配自动化升级"}
+    ],
+    "detail_P009": [
+      {"product_id":"P016","score":0.901,"channel":"item_cf","explanation":"机器人关节伺服电机推荐"},
+      {"product_id":"P021","score":0.876,"channel":"item_cf","explanation":"高性能伺服驱动器配套"},
+      {"product_id":"P032","score":0.843,"channel":"content","explanation":"国产伺服替代方案"},
+      {"product_id":"P005","score":0.815,"channel":"hot","explanation":"电子制造高精度传感需求"}
+    ]
+  },
+  "U005": {
+    "home": [
+      {"product_id":"P028","score":0.936,"channel":"temporal_cf","explanation":"基于您近期的软启动器浏览"},
+      {"product_id":"P023","score":0.914,"channel":"temporal_cf","explanation":"您收藏过的ABB变频器系列"},
+      {"product_id":"P008","score":0.895,"channel":"item_cf","explanation":"压力监测：变送器矩阵推荐"},
+      {"product_id":"P022","score":0.878,"channel":"item_cf","explanation":"流量+压力：水处理监测双核心"},
+      {"product_id":"P030","score":0.856,"channel":"content","explanation":"差压变送器，水处理工艺关键设备"}
+    ],
+    "detail_P022": [
+      {"product_id":"P030","score":0.922,"channel":"item_cf","explanation":"差压+流量：完整流动监测方案"},
+      {"product_id":"P008","score":0.891,"channel":"item_cf","explanation":"压力变送器，水处理工艺核心仪表"},
+      {"product_id":"P023","score":0.867,"channel":"content","explanation":"大功率变频器，水泵节能改造"},
+      {"product_id":"P028","score":0.844,"channel":"hot","explanation":"软启动器，水泵设备标配"}
+    ]
+  }
+}

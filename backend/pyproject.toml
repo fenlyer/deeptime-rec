@@ -1,0 +1,10 @@
+[project]
+name = "deeptime-rec-backend"
+version = "0.1.0"
+description = "工业资产商城推荐系统 MVP 后端"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.34.0",
+    "pydantic>=2.10.0",
+]

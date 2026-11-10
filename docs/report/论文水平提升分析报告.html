@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-palette="#2a78d6,#eb6834,#1baf7a">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>硕士论文水平提升分析报告 · 工业资产商城推荐系统</title>
+<style>
+:root{
+  color-scheme: light;
+  --surface-0:#f4f3ef;
+  --surface-1:#fcfcfb;
+  --surface-2:#efeeea;
+  --surface-3:#e6e5e0;
+  --border:#d8d6cf;
+  --border-strong:#b9b6ac;
+  --text-primary:#0b0b0b;
+  --text-secondary:#52514e;
+  --text-muted:#767469;
+  --series-1:#2a78d6;
+  --series-2:#eb6834;
+  --series-3:#1baf7a;
+  --seq-100:#cde2fb; --seq-200:#9ec5f4; --seq-300:#6da7ec; --seq-450:#2a78d6; --seq-550:#1c5cab; --seq-650:#104281;
+  --good:#1baf7a; --warn:#eda100; --bad:#e34948; --note:#6250d6;
+  --radius:10px;
+  --maxw:1080px;
+}
+@media (prefers-color-scheme: dark){
+  :root:where(:not([data-theme="light"])){
+    color-scheme: dark;
+    --surface-0:#131312; --surface-1:#1a1a19; --surface-2:#232322; --surface-3:#2c2c2a;
+    --border:#34342f; --border-strong:#4a4a43;
+    --text-primary:#f0efec; --text-secondary:#c3c2b7; --text-muted:#8f8e83;
+    --series-1:#3987e5; --series-2:#d95926; --series-3:#199e70;
+    --seq-100:#184f95; --seq-200:#1c5cab; --seq-300:#256abf; --seq-450:#3987e5; --seq-550:#6da7ec; --seq-650:#9ec5f4;
+    --good:#199e70; --warn:#c98500; --bad:#e66767; --note:#9085e9;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --surface-0:#131312; --surface-1:#1a1a19; --surface-2:#232322; --surface-3:#2c2c2a;
+  --border:#34342f; --border-strong:#4a4a43;
+  --text-primary:#f0efec; --text-secondary:#c3c2b7; --text-muted:#8f8e83;
+  --series-1:#3987e5; --series-2:#d95926; --series-3:#199e70;
+  --seq-100:#184f95; --seq-200:#1c5cab; --seq-300:#256abf; --seq-450:#3987e5; --seq-550:#6da7ec; --seq-650:#9ec5f4;
+  --good:#199e70; --warn:#c98500; --bad:#e66767; --note:#9085e9;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--surface-0);color:var(--text-primary);
+  font:15px/1.85 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px 96px}
+a{color:var(--series-1);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.35;letter-spacing:-0.01em}
+code,.mono{font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;font-size:.9em}
+
+/* ---------- top bar ---------- */
+.topbar{
+  position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--surface-1) 88%,transparent);
+  backdrop-filter:blur(12px);border-bottom:1px solid var(--border);
+}
+.topbar-in{max-width:var(--maxw);margin:0 auto;padding:10px 24px;display:flex;gap:16px;align-items:center}
+.topbar .brand{font-weight:700;font-size:14px;letter-spacing:.02em;white-space:nowrap}
+.topbar nav{display:flex;gap:2px;overflow-x:auto;flex:1;scrollbar-width:none}
+.topbar nav::-webkit-scrollbar{display:none}
+.topbar nav a{
+  color:var(--text-secondary);padding:5px 10px;border-radius:7px;font-size:13px;white-space:nowrap
+}
+.topbar nav a:hover{background:var(--surface-2);color:var(--text-primary);text-decoration:none}
+.tools{display:flex;gap:6px}
+.btn{
+  border:1px solid var(--border-strong);background:var(--surface-1);color:var(--text-secondary);
+  border-radius:7px;padding:5px 11px;font-size:12.5px;cursor:pointer;white-space:nowrap;
+  font-family:inherit;
+}
+.btn:hover{background:var(--surface-2);color:var(--text-primary)}
+.btn.primary{background:var(--series-1);border-color:var(--series-1);color:#fff}
+.btn.primary:hover{filter:brightness(1.07);color:#fff}
+
+/* ---------- hero ---------- */
+header.hero{padding:64px 0 34px;border-bottom:1px solid var(--border)}
+.kicker{font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);font-weight:600}
+h1{font-size:clamp(28px,4.2vw,42px);margin:14px 0 16px;font-weight:760}
+.lede{font-size:17px;color:var(--text-secondary);max-width:760px;margin:0}
+.meta-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+.tag{
+  font-size:12.5px;padding:4px 10px;border-radius:999px;border:1px solid var(--border);
+  color:var(--text-secondary);background:var(--surface-1)
+}
+
+/* ---------- verdict ---------- */
+.verdict{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);
+  border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin:34px 0 0
+}
+.verdict > div{background:var(--surface-1);padding:18px 18px 16px}
+.verdict .num{font-size:26px;font-weight:720;letter-spacing:-.02em;line-height:1.15}
+.verdict .num small{font-size:13px;font-weight:500;color:var(--text-muted);margin-left:3px}
+.verdict .lbl{font-size:12.5px;color:var(--text-secondary);margin-top:5px}
+.verdict .sub{font-size:11.5px;color:var(--text-muted);margin-top:3px}
+
+/* ---------- sections ---------- */
+section{padding-top:62px;scroll-margin-top:64px}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
+.sec-no{
+  font-family:ui-monospace,monospace;font-size:12px;color:var(--series-1);
+  border:1px solid color-mix(in srgb,var(--series-1) 40%,transparent);
+  padding:1px 7px;border-radius:5px;position:relative;top:-2px
+}
+h2{font-size:26px;margin:0;font-weight:720}
+.sec-sub{color:var(--text-secondary);margin:2px 0 26px;font-size:14.5px}
+h3{font-size:18px;margin:34px 0 10px;font-weight:680}
+h4{font-size:15px;margin:22px 0 8px;font-weight:660}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 16px;padding-left:22px}
+li{margin-bottom:7px}
+li::marker{color:var(--text-muted)}
+strong{font-weight:660}
+
+.card{
+  background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius);
+  padding:22px 24px;margin:0 0 16px
+}
+.card.tight{padding:18px 20px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width:820px){.grid2,.grid3,.verdict{grid-template-columns:1fr}.verdict{grid-template-columns:repeat(2,1fr)}}
+
+.callout{
+  border-left:3px solid var(--series-1);background:var(--surface-1);border-radius:0 var(--radius) var(--radius) 0;
+  padding:14px 18px;margin:16px 0;font-size:14.5px;color:var(--text-secondary)
+}
+.callout strong{color:var(--text-primary)}
+.callout.warn{border-left-color:var(--warn)}
+.callout.bad{border-left-color:var(--bad)}
+.callout.note{border-left-color:var(--note)}
+.callout p:last-child{margin-bottom:0}
+.callout .ct{font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);display:block;margin-bottom:5px}
+
+/* ---------- tables ---------- */
+.tablewrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius);margin:14px 0 22px;background:var(--surface-1)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.6;min-width:660px}
+th,td{padding:9px 13px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}
+th{
+  font-weight:660;font-size:12px;letter-spacing:.04em;color:var(--text-secondary);
+  background:var(--surface-2);white-space:nowrap;position:sticky;top:0
+}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--surface-2)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+caption{caption-side:top;text-align:left;padding:12px 13px 4px;font-size:12.5px;color:var(--text-muted)}
+
+/* ---------- chart ---------- */
+.chart{position:relative;margin:8px 0 4px}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.axis text{font-size:11px;fill:var(--text-muted)}
+.axis line,.gridline{stroke:var(--border);stroke-width:1}
+.blabel{font-size:11.5px;fill:var(--text-secondary)}
+.bval{font-size:11.5px;fill:var(--text-primary);font-weight:640;font-variant-numeric:tabular-nums}
+.bar{transition:opacity .12s}
+.chart:hover .bar{opacity:.45}
+.chart .bar:hover{opacity:1}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin:4px 0 10px;font-size:12.5px;color:var(--text-secondary)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.legend i.dash{width:16px;height:0;border-top:2px dashed var(--text-muted);border-radius:0}
+
+/* ---------- pills ---------- */
+.pill{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:999px;border:1px solid var(--border-strong);color:var(--text-secondary);white-space:nowrap}
+.pill.hi{color:#fff;background:var(--bad);border-color:var(--bad)}
+.pill.mid{color:#fff;background:var(--warn);border-color:var(--warn)}
+.pill.lo{color:#fff;background:var(--series-3);border-color:var(--series-3)}
+.pill.info{color:var(--series-1);border-color:color-mix(in srgb,var(--series-1) 50%,transparent)}
+
+/* ---------- TOC ---------- */
+.toc{columns:2;column-gap:32px;font-size:14px}
+.toc ol{margin:0;padding-left:18px}
+.toc a{color:var(--text-secondary)}
+.toc a:hover{color:var(--series-1)}
+@media (max-width:820px){.toc{columns:1}}
+
+/* ---------- prompt blocks ---------- */
+.formula{
+  background:var(--surface-2);border:1px solid var(--border);border-radius:8px;
+  padding:12px 16px;margin:12px 0;font-family:ui-monospace,Menlo,monospace;font-size:13px;
+  line-height:1.75;overflow-x:auto;white-space:pre;color:var(--text-primary)
+}
+.formula .c{color:var(--text-muted)}
+
+/* ---------- footer ---------- */
+footer{margin-top:80px;padding-top:26px;border-top:1px solid var(--border);color:var(--text-muted);font-size:12.5px}
+
+@media print{
+  .topbar{display:none}
+  body{background:#fff}
+  section{padding-top:28px;break-inside:avoid-page}
+  .card,.tablewrap{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-in">
+    <div class="brand">论文水平提升分析</div>
+    <nav>
+      <a href="#s0">结论</a>
+      <a href="#s1">体检</a>
+      <a href="#s2">对标</a>
+      <a href="#s3">算法深化</a>
+      <a href="#s4">实验</a>
+      <a href="#s5">篇幅</a>
+      <a href="#s6">周计划</a>
+      <a href="#s7">红线</a>
+    </nav>
+    <div class="tools">
+      <button class="btn" onclick="toggleTheme()">明/暗</button>
+      <button class="btn primary" onclick="window.print()">导出 PDF</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="kicker">硕士毕业论文 · 评审级诊断</div>
+  <h1>从“合格”到“能过盲审”：<br>《1109-整改V7》的水平提升路线图</h1>
+  <p class="lede">
+    本报告基于对 <code>docs/1109-整改V7.docx</code> 全文的结构化解析（50,247 汉字、7 章、22 表、43 条参考文献），
+    对照近两年顶会/顶刊的同类工作，逐项给出<strong>可执行的抬升动作</strong>：算法要做到什么深度、实验要补哪些、字数从哪来、
+    以及哪些地方会被盲审老师一眼看穿。<strong>目标：5 万字以上且算法部分具备可发表的严谨度。</strong>
+  </p>
+  <div class="meta-row">
+    <span class="tag">北京邮电大学 · 硕士学位论文</span>
+    <span class="tag">生成日期 2026-11-10</span>
+    <span class="tag">稿件版本 V7</span>
+    <span class="tag">当前 5.0 万字 → 目标 6.0–6.8 万字</span>
+  </div>
+
+  <div class="verdict">
+    <div>
+      <div class="num">A−</div>
+      <div class="lbl">工程完成度</div>
+      <div class="sub">三阶段链路+可跑系统，少见</div>
+    </div>
+    <div>
+      <div class="num">B</div>
+      <div class="lbl">算法深度</div>
+      <div class="sub">改进有想法，理论刻画偏薄</div>
+    </div>
+    <div>
+      <div class="num">C+</div>
+      <div class="lbl">实验严谨度</div>
+      <div class="sub">缺基线/重复性/置信区间细节</div>
+    </div>
+    <div>
+      <div class="num">B−</div>
+      <div class="lbl">学术规范性</div>
+      <div class="sub">43 篇文献、近两年几乎空白</div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ 0 结论 ============ -->
+<section id="s0">
+  <div class="sec-head"><span class="sec-no">00</span><h2>先说结论：你现在卡在哪一档</h2></div>
+  <p class="sec-sub">盲审老师通常 30 分钟内形成判断。决定你这篇论文档位的，不是工作量，而是三件事。</p>
+
+  <div class="grid3">
+    <div class="card tight">
+      <span class="pill info">决定档位的第 1 件事</span>
+      <h4 style="margin-top:10px">创新点是否“可证伪”</h4>
+      <p style="margin:0;font-size:14px;color:var(--text-secondary)">TI-LightGCN 的边权重函数目前是一个<strong>手工设定的先验</strong>（α<sub>b</sub>、λ 全靠表 4-1 拍定），论文没有回答“为什么是这个形式、能不能学出来、学出来是否更好”。这是最容易被追问、也最容易补强的地方。</p>
+    </div>
+    <div class="card tight">
+      <span class="pill info">决定档位的第 2 件事</span>
+      <h4 style="margin-top:10px">对比是否“打到了当代”</h4>
+      <p style="margin:0;font-size:14px;color:var(--text-secondary)">召回基线里最强的 SGL(2021)/SimGCL(2022) 已是三四年前的工作；2024–2025 的多行为图推荐、LLM 增强排序几乎缺席。基线停在 2022 年，答辩时会被直接问“2025 年的工作你比过吗”。</p>
+    </div>
+    <div class="card tight">
+      <span class="pill info">决定档位的第 3 件事</span>
+      <h4 style="margin-top:10px">结论是否“经得起复算”</h4>
+      <p style="margin:0;font-size:14px;color:var(--text-secondary)">文中同时出现 Vue 3 与 React、单 Epoch 6.3 分钟与全量 35 分钟（3 层 L=3 时对不上）、延迟 68ms 与 “P99 控制在 80ms 内” 的表述口径不一。数字前后一致，是良/优秀的分水岭。</p>
+    </div>
+  </div>
+
+  <div class="callout note">
+    <span class="ct">核心判断</span>
+    <p>这篇论文的<strong>骨架是合格的甚至偏好的</strong>——它有真系统、有真实验、有可解释模块，比大量“只跑公开数据集、系统章节凑数”的硕士论文强。它的问题不在“有没有做”，而在<strong>“做的东西没有被讲成一个有理论主张的研究”</strong>：现在的第四章读起来像“三个模块的工程说明书”，而不是“一个被推导出来的方法”。</p>
+    <p style="margin-top:8px">提升路径因此非常明确：<strong>把“拍定的超参数”变成“被推导/被学习的量”，把“模块并列”变成“一个统一目标下的三处耦合”，把“49 篇文献”变成“60+ 篇且 2024–2026 占 25%”。</strong>这三件事做完，5 万字会自然长出来，而不是硬凑。</p>
+  </div>
+</section>
+
+<!-- ============ 1 体检 ============ -->
+<section id="s1">
+  <div class="sec-head"><span class="sec-no">01</span><h2>稿件体检：结构、体量与硬伤</h2></div>
+  <p class="sec-sub">先看客观数据，再看结构性风险。下图为各章汉字数，虚线为“按 §05 规划重分配后”的目标体量——注意第三、六两章是<strong>刻意压缩</strong>的。</p>
+
+  <div class="card">
+    <div class="legend">
+      <span><i style="background:var(--series-1)"></i>当前字数（汉字）</span>
+      <span><i class="dash"></i>规划目标</span>
+    </div>
+    <div class="chart" id="chart-chapters"></div>
+    <p style="font-size:12.5px;color:var(--text-muted);margin:6px 0 0">
+      数据来源：对 docx 的 <code>word/document.xml</code> 逐段抽取正文并按章汇总；仅统计汉字，不含公式、图表标题与参考文献。
+    </p>
+  </div>
+
+  <h3>1.1 体量结论：字数是够的，但“密度”不对</h3>
+  <p>5.0 万汉字对工科专硕是达标的（多数学校要求 3–5 万字）。真正的问题在于<strong>分布</strong>：</p>
+  <ul>
+    <li><strong>第四章（算法）1.12 万字，只占全文 22%</strong>。算法章是硕士论文的“心脏”，评审的注意力 70% 集中在这里。一篇被评“优秀”的同类论文，算法章通常占 28%–35%。</li>
+    <li><strong>第三章（架构设计）0.65 万字 + 第六章（系统实现）0.65 万字 = 1.3 万字，超过算法章</strong>。这两章大量篇幅在讲 FastAPI、MySQL 表结构、Redis TTL、Docker —— 这些是<strong>工程交付物</strong>，不是<strong>研究贡献</strong>。评审看到表 3-2 / 6.x 的组件版本清单时，会本能地下调论文的学术权重。</li>
+    <li><strong>第二章（相关工作）0.80 万字偏薄且偏旧</strong>。作为对比，一篇合格的硕士论文相关工作通常是 1.0–1.4 万字，并且必须覆盖到最近 18 个月。</li>
+    <li><strong>第一章 0.62 万字</strong>基本合理，但“研究现状”三小节加起来不到 3000 字，撑不起“国内外研究现状”这个评审必看项。</li>
+  </ul>
+
+  <div class="callout warn">
+    <span class="ct">结构性建议（最关键的一刀）</span>
+    <p>把<strong>第三章“架构设计”与第六章“系统实现”合并压缩</strong>为单章“系统设计与实现”（现有 1.3 万字压到 0.8–0.9 万字，删掉组件版本罗列、把 §3.4.2 数据存储设计与 §6.3 数据存储工程实现这类重复内容去重）。<strong>腾出的 0.4 万字全部灌进第四章和第五章</strong>。这样总字数不增反降，但重心从“工程”挪到了“研究”——这是提升档位性价比最高的一步。</p>
+  </div>
+
+  <h3>1.2 必须修掉的硬伤（盲审最爱抓这些）</h3>
+  <div class="tablewrap">
+    <table>
+      <caption>按“被发现后的扣分严重程度”排序；每条都可在 1–2 天内修完</caption>
+      <thead><tr><th>#</th><th>问题</th><th>证据（V7 原文位置）</th><th>修法</th><th class="num">工作量</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><strong>技术栈自相矛盾</strong></td><td>§3.1 与表 3-1 写“Vue 3 + Element Plus”，§7.1 总结写“基于 Vue 3 … 实现”，但实际仓库 <code>frontend/package.json</code> 是 React 18 + Ant Design 5</td><td>全文统一为 React 18 + AntD 5（以你交付的代码为准），并核对第六章截图</td><td class="num">0.5 天</td></tr>
+        <tr><td>2</td><td><strong>训练耗时对不上</strong></td><td>§4.1.3 称“单 Epoch 6.3 min、早停第 6 轮、全量 35–40 min”；但 6.3×6≈38 min 未含图构建，且 §3.2.2 写“训练约 50 轮”</td><td>统一成一张“训练预算表”：图构建 2 min + N×6.3 min + 导出 3 min，并说明 N 的实际取值与早停统计口径</td><td class="num">0.5 天</td></tr>
+        <tr><td>3</td><td><strong>P99 延迟口径混乱</strong></td><td>§3.2.1 逐步累加“关键路径 35–45ms”，但全链路含 LLM 解释为 800–1200ms；§1.3.3、§5.5、§6.7 反复出现 68ms / 80ms 两种目标</td><td>拆成两个指标：<strong>推荐主链路 P99</strong>（不含解释）与<strong>首屏含解释 P99</strong>，全表统一</td><td class="num">0.5 天</td></tr>
+        <tr><td>4</td><td><strong>损失函数符号不一致</strong></td><td>式(4-7)写 <code>L_total = L_BPR + γ·Σ‖ẽ_i − ẽ_i^sem‖²</code>，而 §4.1.5 称“BPR 损失与长尾正则损失（式4-6、4-7）”；式(4-14)的 α、β 与式(2-8)的 α、(1−α) 命名冲突</td><td>全部损失重新编号并统一符号表，α/β 只保留一种含义</td><td class="num">1 天</td></tr>
+        <tr><td>5</td><td><strong>表 5-1 与 5-9 口径冲突</strong></td><td>表 5-1 IS 用户 16,438、平均交互 10.0；表 5-9 分层占比合计 100%，但“超冷启动 18.3%”与 5-core 后训练集仅 3–4 条的解释依赖读者自行补全</td><td>在表 5-9 上方加一段“训练集口径”定义（文中已有该段，但被放在表下方），并把 5-core→LOO 的样本流失率写清楚</td><td class="num">0.5 天</td></tr>
+        <tr><td>6</td><td><strong>“首次提出”表述过强</strong></td><td>§1.3.3 “本文首次在工业资产推荐场景下提出统一边权重函数”；§1.1 “首次在图协同过滤框架中同时引入”</td><td>多行为加权 + 时间衰减在 2019–2021 已有大量工作（见 §2 对标）。改为“针对工业低频场景重新设计了…并给出…的理论解释”，删掉“首次”</td><td class="num">0.5 天</td></tr>
+        <tr><td>7</td><td><strong>实验规模与硬件声明不匹配</strong></td><td>§5.1.2 声明 A100×2 / 64 核 / 256GB，但 §6.7 的性能测试在“单台 4 核 8GB、CPU 环境”</td><td>明确区分“训练环境（A100）”与“推理/部署环境（4C8G CPU）”，并在表 5-2 下加注</td><td class="num">0.3 天</td></tr>
+        <tr><td>8</td><td><strong>可复现性承诺未兑现</strong></td><td>§5 开头称“所有实验代码与数据处理流程均可独立复现”，但全文无代码/数据/中间结果获取地址，也无随机种子、依赖锁文件说明</td><td>加“可复现性声明”小节：仓库地址、种子、DeepSeek/Qwen 中间结果存档（<code>readme.txt</code> 里已有这个思路，搬进论文）</td><td class="num">1 天</td></tr>
+        <tr><td>9</td><td><strong>图表重复占位</strong></td><td>§5.4.1 中“图5-1 各召回模型性能对比”连续出现 4 次（docx 中为同一图的多次插入）</td><td>清理排版，一图一题注；顺便检查全文图号是否连续（现为 1-1 … 6-x，共 9 张图，偏少）</td><td class="num">0.5 天</td></tr>
+        <tr><td>10</td><td><strong>参考文献严重偏旧</strong></td><td>43 篇中 2023 年及以后仅 6 篇（约 14%），且多为 arXiv 综述；2025–2026 年文献为 0</td><td>见 §2，补到 60+ 篇、近两年占比 ≥ 25%</td><td class="num">2–3 天</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout bad">
+    <span class="ct">一条会让评审直接起疑的隐患</span>
+    <p>你的实验数据（Recall@10 = 0.0962、AUC = 0.7934、P99 = 68ms、AUC 提升 5.6% …）<strong>精度过于整齐</strong>，且提升幅度与章节叙事完全一一对应。评审不会说“你造假”，但会问“这组数据是怎么来的、能不能现场复算”。<strong>最稳妥的做法是：把你实际跑出来的原始日志（含随机种子、每次运行的指标）整理成附录表 A-1～A-3</strong>。有原始日志，数字不整齐反而更可信；没有日志，数字再漂亮也是负债。</p>
+  </div>
+</section>
+
+<!-- ============ 2 对标 ============ -->
+<section id="s2">
+  <div class="sec-head"><span class="sec-no">02</span><h2>对标近两年：你的位置在哪里</h2></div>
+  <p class="sec-sub">下面这张图不是“引用数排名”，而是<strong>你这篇论文在技术谱系中的坐标</strong>——以及评审会拿来问你“为什么不比”的那些工作。</p>
+
+  <div class="card">
+    <h4 style="margin-top:0">近两年同方向工作的技术谱系（按“与你的重合度”排列）</h4>
+    <div class="tablewrap" style="margin-bottom:0">
+      <table>
+        <thead><tr><th>方向</th><th>代表工作（年份）</th><th>核心做法</th><th>与你的关系</th><th>你必须做的动作</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>多行为图推荐</strong></td>
+            <td>MBGCN (SIGIR'20)；KHGT (AAAI'21)；CML (KDD'21)；<br>近两年：多行为对比/去噪系列（2024–2025）</td>
+            <td>为每类行为建子图或关系类型，做跨行为传播与对比约束</td>
+            <td style="color:var(--bad)"><strong>直接撞车</strong>：你的“统一边权重”本质是 MBGCN 的极简变体，且你只比了 LightGCN，没比 MBGCN</td>
+            <td>补 MBGCN / KHGT / CML 三个基线；在 §2.1.4 增加理论对比表（参数复杂度、表达力、可解释性）</td>
+          </tr>
+          <tr>
+            <td><strong>时间感知图推荐</strong></td>
+            <td>TGSRec (SIGIR'22)；TiSASRec (WSDM'20)；<br>动态图推荐（2024–2025 增量传播系列）</td>
+            <td>把时间编码进序列/边，或用时间窗口动态更新图</td>
+            <td style="color:var(--warn)"><strong>部分重合</strong>：你的时间衰减是指数先验，TGSRec 用时间编码 + 图传播</td>
+            <td>至少引用并比较 TGSRec；说明“指数衰减先验 vs 可学习时间编码”的取舍（这是一个现成的 1000 字论证点）</td>
+          </tr>
+          <tr>
+            <td><strong>LLM 增强排序 / 蒸馏</strong></td>
+            <td>RLMRec (2023–2024)；LLaRA；<br>KD 系列：RD / DE 蒸馏（2024–2025）</td>
+            <td>LLM 生成用户画像文本→编码为 embedding 注入 CF；或用 LLM 软标签蒸馏小模型</td>
+            <td style="color:var(--bad)"><strong>高度重合</strong>：你的 User Memory + 蒸馏 ≈ RLMRec 的“LLM 画像 + 对齐”思路</td>
+            <td><strong>这是最危险的一处</strong>。必须正面引用 RLMRec 并做对比实验，否则“创新点二”会被判为重复劳动</td>
+          </tr>
+          <tr>
+            <td><strong>生成式推荐</strong></td>
+            <td>TIGER (NeurIPS'23)；LC-Rec；<br>工业级：OneRec (快手 2025)、HSTU (Meta 2024)</td>
+            <td>把推荐转成“语义 ID 序列生成”，用 Transformer 直接生成物品 token</td>
+            <td style="color:var(--note)"><strong>不重合但必引</strong>：这是 2024–2026 最热的方向，你的 <code>readme.txt</code> 里提到的 MACRec（AAAI 2026）正属此类</td>
+            <td>在第一章研究现状中单列一小节；说明为何工业稀疏场景下生成式方案尚不适用（可作为“未来工作”，也是一个加分点）</td>
+          </tr>
+          <tr>
+            <td><strong>可解释推荐</strong></td>
+            <td>PEPLER / P5；<br>RAG-based explanation（2024–2025）</td>
+            <td>模板 / 生成 / 反事实三类解释范式</td>
+            <td style="color:var(--good)"><strong>你的强项</strong>：双层知识库 + 双查询 + 人工评估，做得比多数论文实在</td>
+            <td>只需补 2–3 篇 2025 年的 RAG 解释工作，并把“事实准确率 91.3%”的标注协议写进附录</td>
+          </tr>
+          <tr>
+            <td><strong>工业/垂直领域推荐</strong></td>
+            <td>B2B 推荐、汽车/工业品电商（2023–2025）</td>
+            <td>领域约束、多角色决策、长决策链</td>
+            <td style="color:var(--good)"><strong>你的差异化</strong>：真正把“低频高价值 + 多行为 + 可解释”串起来了</td>
+            <td>把这一块从“背景描述”提升为“问题定义”，见 §3.1</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="callout bad">
+    <span class="ct">最需要提前准备回答的一个问题</span>
+    <p><strong>“你的 User Memory + 蒸馏，和 RLMRec（Representation Learning with LLM for Recommendation）有什么区别？”</strong></p>
+    <p style="margin-top:8px">RLMRec 同样用 LLM 生成用户/物品画像文本并编码为表示，再通过对比/对齐损失注入协同过滤模型。你现在的 §4.6.2 只对比了 GPT4Rec / P5 / BIGRec（“LLM 做在线排序”这一路），<strong>恰好绕开了最像你的那一路</strong>。这在盲审中风险极高——评审如果熟悉这个方向，会认为你在回避。正确做法是主动对比并说清差异，见 §3.2 给出的“三处真实差异”。</p>
+  </div>
+
+  <h3>2.1 参考文献补强清单（直接可用）</h3>
+  <p>现有 43 篇的年份分布：2020 年以前约 60%，2021–2023 约 26%，2024 以后约 14%，2025–2026 为 <strong>0</strong>。下面给出补强方向，具体条目请按你学校的格式核验后引用（建议直接去 DBLP / Google Scholar 按标题确认年份与会议）：</p>
+  <div class="grid2">
+    <div class="card tight">
+      <h4 style="margin-top:0">必补（否则会被质疑遗漏）</h4>
+      <ul style="font-size:14px;margin-bottom:0">
+        <li>多行为图推荐：MBGCN、KHGT、CML、以及 2024–2025 的多行为对比学习工作</li>
+        <li>时间感知图/序列：TGSRec、TiSASRec</li>
+        <li>LLM 画像 + 对齐：RLMRec 系列</li>
+        <li>生成式推荐：TIGER、LC-Rec、OneRec / HSTU（工业级）</li>
+        <li>RAG 解释：2024–2025 的 RAG-based explanation</li>
+      </ul>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0">加分（体现你在跟踪前沿）</h4>
+      <ul style="font-size:14px;margin-bottom:0">
+        <li>语义 ID / 量化码本方向（对应你 <code>readme.txt</code> 里的 MACRec 思路）</li>
+        <li>图推荐中的去噪与去偏（popularity debiasing，2024–2025）</li>
+        <li>推荐系统的 causality / 反事实评估</li>
+        <li>LLM 蒸馏的偏差传递（teacher bias propagation）</li>
+        <li>工业 B2B 推荐 / 长决策链推荐</li>
+      </ul>
+    </div>
+  </div>
+  <p style="font-size:13.5px;color:var(--text-secondary)">目标：<strong>65–75 篇</strong>，其中 <strong>2024 年及以后 ≥ 18 篇（约 25%）</strong>。这项工作约需 2–3 天，但对“学术规范性”这一项的评分影响极大，属于投入产出比最高的改动之一。</p>
+</section>
+
+<!-- ============ 3 算法深化 ============ -->
+<section id="s3">
+  <div class="sec-head"><span class="sec-no">03</span><h2>算法部分如何写“高深”：六处可落地的深化</h2></div>
+  <p class="sec-sub">“高深”不等于堆公式。评审认的是三件事：<strong>你的设计是从假设推导出来的</strong>、<strong>你能解释它为什么有效</strong>、<strong>你能证明它的代价可控</strong>。下面六处改动，每一处都给到可直接写进论文的数学表达与论述结构。</p>
+
+  <h3>3.1 第一处：把“边权重”从先验升级为“可学习 + 可解释”的机制</h3>
+  <p><strong>现状问题：</strong>式(4-1)的 <code>w(u,i) = Σ α_b · exp(−λ·Δt/T)</code> 是三个手工常数（α<sub>b</sub> 五档、λ=0.1、T=86400）的乘积。表 5-13 又显示 α<sub>buy</sub>、λ 都“中度敏感”——<strong>敏感意味着这套主观取值很可能没调到最优，也就意味着别人换个数据集就能把你的提升抹掉。</strong>这是评审最容易攻击的点。</p>
+
+  <h4>改法 A（推荐）：参数化为可学习形式，并给出单调性约束</h4>
+  <p>把固定权重改为带约束的参数化函数，让模型自己学，同时用先验做归纳偏置：</p>
+  <div class="formula">w(u,i) = Σ<sub>(u,i,b,t)</sub> softplus(θ<sub>b</sub>) · exp( − softplus(φ) · Δt / T )
+
+<span class="c">约束：θ<sub>buy</sub> ≥ θ<sub>collect</sub> ≥ θ<sub>click</sub> ≥ θ<sub>show</sub>（行为语义强度的先验序）
+     φ > 0（衰减率恒正，保证单调递减）</span></div>
+  <p>这样你得到三样东西：① 参数只有 5+1 个，参数量依然远小于 MBGCN 的多图方案；② 可以用<strong>序约束投影</strong>（ordered projection，类似 isotonic regression 的欧氏投影）在每次梯度更新后强制执行，写成一个小引理即可；③ 可以在论文里报告“学出来的 α 与手工设定差多少”——<strong>如果接近，就证明了手工表 4-1 的合理性；如果差很多，就是你第二个贡献点。</strong>无论哪种结果都能写，这是最稳的设计。</p>
+
+  <h4>改法 B（更“高深”，但工作量更大）：从贝叶斯视角给出推导</h4>
+  <p>把 BPR 损失 + 边权重解释为<strong>带边先验的加权极大似然</strong>。设每条边 (u,i) 的观测由泊松过程给出、观测到该交互的概率与“行为强度 × 时间衰减”成正比，则可推出加权 BPR 是其在 logistic 似然下的近似。写成一个命题（Proposition）+ 一段证明（半页），你的 §4.1.2 立刻从“经验设计”变成“有推导的设计”。</p>
+  <div class="callout">
+    <span class="ct">为什么这一处最关键</span>
+    <p>它一次性解决三个问题：把“拍脑袋”变成“可学习/可证明”；为表 5-13 的敏感性分析提供理论解释（为什么 λ 中度敏感——因为它是唯一控制全局信号时间尺度的量）；并且天然生成 1500–2500 字的高质量正文。<strong>这是全篇性价比最高的单点改动。</strong></p>
+  </div>
+
+  <h3>3.2 第二处：把“LLM 蒸馏”从“软标签 MSE”升级为“分布对齐 + 去偏”</h3>
+  <p><strong>现状问题：</strong>式(4-16) <code>L_kd = (ŷ − r_T)²</code> 是把 LLM 的输出当成一个标量回归目标。这有两个理论缺陷：① LLM 输出的 [0,1] 分数<strong>没有校准</strong>（不同 prompt、不同商品类目下的分数尺度不一致），直接做 MSE 会把系统偏差学进去；② 你在 §7.3 已经承认“可能把教师偏差传给student”，但正文没有对应的技术手段——这等于自己挖了坑没填。</p>
+
+  <h4>改法：引入三重蒸馏目标 + 排序一致性约束</h4>
+  <div class="formula">L_total = α·L_beh + β·L_kd + γ·L_rank + δ·L_reg
+
+L_beh  = BCE(y, ŷ)                          <span class="c"># 真实行为监督</span>
+L_kd   = KL( softmax(z_T/τ) ‖ softmax(z_S/τ) )   <span class="c"># 分布级蒸馏（替代点对点 MSE）</span>
+L_rank = −log σ( ŷ(u,i⁺) − ŷ(u,i⁻) )          <span class="c"># 教师排序一致性（成对）</span>
+L_reg  = ‖ E[z_S] − E[z_T] ‖²                <span class="c"># 一阶矩对齐，抑制教师全局偏差</span></div>
+  <p><strong>论述写法（这是评审想看的三段式）：</strong></p>
+  <ol>
+    <li><strong>为什么 KL 优于 MSE：</strong>MSE 只约束点估计，KL 约束整个输出分布的形状；在软标签含噪时，分布级约束对噪声更鲁棒（可引用 KD 文献中的标准论证）。</li>
+    <li><strong>为什么需要 L_rank：</strong>推荐是排序任务而非回归任务。教师的绝对分数不可信，但<strong>相对排序更可信</strong>——成对损失直接对齐“谁比谁更相关”，绕开了分数校准问题。这一条直接回应了上面的缺陷①。</li>
+    <li><strong>为什么需要 L_reg：</strong>一阶矩对齐相当于给教师信号做“去均值”，这是<strong>最简单的去偏手段</strong>，且零额外推理代价。用 2–3 句话就能说清，正好填上 §7.3 自曝的那个坑。</li>
+  </ol>
+  <p>配套实验：把 <code>α,β,γ,δ</code> 做成一张四元网格（或至少做 β/γ 二维热力图），替换现在只有 β 的一维表 5-14。<strong>一维超参表 + 倒 U 形曲线的写法在 2026 年已经显得单薄，二维热力图是最低成本的形象升级。</strong></p>
+
+  <h3>3.3 第三处：给 Temporal-DIN 补上“时间衰减的理论依据”</h3>
+  <p><strong>现状：</strong>§4.2.3 末尾已经有一段很好的定性论证（“指数衰减的无记忆性”“连续可导”“(0,1] 区间”），这是全文写得最像论文的一段。但它停在定性层面，<strong>没有公式支撑</strong>。</p>
+  <p><strong>改法：</strong>把这段定性论述提升为一个小命题，给出两条可验证的性质：</p>
+  <ul>
+    <li><strong>性质 1（半衰期单调性）：</strong>给出半衰期 <code>t<sub>1/2</sub> = ln2·T/γ</code>，并画出 γ ∈ {0.1,0.3,0.5} 时权重随 Δt 的曲线族——一张图就把“为什么 0.3”讲清楚，比一段文字强 10 倍。</li>
+    <li><strong>性质 2（长序列截断等价性）：</strong>证明当 Δt 超过某阈值时衰减项小于 ε，等价于对序列做了软截断，从而说明<strong>为何 Temporal-DIN 的推理延迟反而低于 DIN</strong>（你在 §5.5.1 观察到 65ms &lt; 85ms 却没解释）。这一条把你的“工程观察”升级为“理论性质”，是典型的加分写法。</li>
+  </ul>
+
+  <h3>3.4 第四处：把“三阶段”论证成一个统一目标，而不是三个模块</h3>
+  <p><strong>现状问题：</strong>第四章 §4.1–4.5 是五个并列小节，§4.6 才勉强论证“协同增益”。评审读完的感受是“三个模块拼在一起”，而不是“一个方法”。这直接削弱了“系统性创新”的说服力。</p>
+  <h4>改法：在第四章开头加一节“统一优化视角”</h4>
+  <p>用一个带正则的联合目标把三阶段串起来（形式上必须成立，不必真的联合训练）：</p>
+  <div class="formula">min<sub>Θ</sub>  L<sub>rec</sub>(Θ) + λ₁·R<sub>graph</sub>(w) + λ₂·R<sub>distill</sub>(Θ) + λ₃·R<sub>sem</sub>(m<sub>u</sub>)
+
+其中：R<sub>graph</sub>   = 边权重的时序/语义先验正则        → 召回层
+      R<sub>distill</sub> = 教师-学生分布对齐              → 排序层
+      R<sub>sem</sub>     = User Memory 与候选语义一致性   → 增强层
+      m<sub>u</sub>       = 三阶段共享的隐变量（User Memory）
+
+<span class="c">关键论点：三阶段共享同一个隐变量 m<sub>u</sub>，
+因此不是三个独立模块的串联，而是一个"共享潜表示的层级优化问题"。</span></div>
+  <p>这个视角的价值：它把 §4.6.3 那句“User Memory 跨三阶段共享”从<strong>一句描述</strong>变成<strong>一个形式化论点</strong>，并顺带解释了为什么消融实验里“同时移除 User Memory 与蒸馏”的退化（−5.3%）远大于单独移除（−2.6%、−1.5%）——因为它们是同一个隐变量的两个作用面。<strong>这一处能把“拼装感”彻底消除，且只需 1500 字。</strong></p>
+
+  <h3>3.5 第五处：补上理论分析（复杂度之外还要有“表达力”与“收敛性”）</h3>
+  <p>现在 §4.1.3 只有一张复杂度对比表。合格的算法论文至少要有<strong>一个</strong>理论结果。三个可选（选一个即可，按难度排序）：</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>类型</th><th>内容</th><th>写法</th><th>难度</th><th class="num">篇幅（字）</th></tr></thead>
+      <tbody>
+        <tr><td><strong>表达力</strong></td><td>证明加权 LightGCN 的传播算子等价于某个带核的图滤波，边权重改变了滤波器的频响特性</td><td>一个定理 + 谱域解释 + 一张频响曲线图</td><td><span class="pill lo">低</span></td><td class="num">1200</td></tr>
+        <tr><td><strong>收敛性</strong></td><td>在 BPR 非凸目标下，加权传播不改变 SGD 的收敛速率（只改变有效步长），给出 O(1/√T) 界</td><td>一个命题 + 引用标准结果 + 2 段证明草图</td><td><span class="pill mid">中</span></td><td class="num">1500</td></tr>
+        <tr><td><strong>泛化界</strong></td><td>基于边权重的有效度数给出泛化误差上界，说明加权降低了有效样本复杂度</td><td>一个定理 + Rademacher 复杂度论证</td><td><span class="pill hi">高</span></td><td class="num">2000</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:13.5px;color:var(--text-secondary)">建议选<strong>“表达力”</strong>：它不需要新假设，用现有的对称归一化邻接矩阵做谱分解即可，且结论直观（“边权重 = 对图滤波器频响的重塑”），配一张图非常出彩。这也是你 §3.1 改法 A 的天然延伸。</p>
+
+  <h3>3.6 第六处：把“可解释性”从附属模块升级为“可评估的研究对象”</h3>
+  <p>你现在 §4.5 + §5.9 已经做得不错（双层知识库、双查询、人工评估、失败案例分析），但它被放在第四章末尾“顺手带过”，削弱了贡献感。建议：</p>
+  <ul>
+    <li>把 §4.5 提升为独立的“解释生成的形式化”小节：定义解释质量的三维目标（<strong>事实性 / 个性化 / 决策支撑性</strong>），并把它写成一个<strong>带约束的生成问题</strong>（在给定知识片段 K 的条件下最大化 P(解释 | K, m<sub>u</sub>, i) 并约束事实一致性）。这样 §5.9 的人工评估维度就从“随手设计”变成“对应目标函数的三项分解”。</li>
+    <li>把 §5.9.2 的 5 位专家评估升级为<strong>双人独立标注 + Cohen's κ 一致性系数</strong>，一行字就能显著提升可信度（现在没有一致性检验，是评审常问的点）。</li>
+    <li>失败案例（多需求并发、超低频专业用户）写得很好，但结论停在“未来可探索”。<strong>建议把“多槽位 User Memory”做成一个 3–5 页的初步方案 + 小规模验证</strong>，作为“研究不足”的回应——这一步能把“不足”变成“已识别且已部分解决”，是提升档位的有效手段。</li>
+  </ul>
+</section>
+
+<!-- ============ 4 实验 ============ -->
+<section id="s4">
+  <div class="sec-head"><span class="sec-no">04</span><h2>实验章：从“能看”到“经得起复算”</h2></div>
+  <p class="sec-sub">实验章现在 0.93 万字、结构完整（主实验/跨域/冷启动/消融/敏感性/解释评估/案例），这是优点。问题在<strong>严谨度</strong>与<strong>说服力</strong>。</p>
+
+  <div class="grid2">
+    <div class="card tight">
+      <h4 style="margin-top:0">已经做得好的</h4>
+      <ul style="font-size:14px;margin-bottom:0">
+        <li>全排序评估（而非随机负采样）——这是加分项，文中已正确解释了原因</li>
+        <li>多随机种子 + 配对 t 检验 + 效应量（Cohen's d）——超出多数硕士论文</li>
+        <li>冷启动分层 + 各召回路贡献分解——逻辑闭环</li>
+        <li>失败案例分析——诚实，评审喜欢</li>
+        <li>解释质量的人工评估（含领域专家）——稀缺</li>
+      </ul>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0">必须补的</h4>
+      <ul style="font-size:14px;margin-bottom:0">
+        <li><strong>基线太旧</strong>：缺 MBGCN / KHGT / TGSRec / RLMRec</li>
+        <li><strong>缺效率对比</strong>：只有训练时长，没有显存、FLOPs、收敛曲线</li>
+        <li><strong>缺显著性细节</strong>：t 检验只给了两组，其余“标注 *”未给统计量</li>
+        <li><strong>缺重复性材料</strong>：种子、日志、中间结果未存档</li>
+        <li><strong>敏感性分析是一维表</strong>，应升级为二维热力图 + 收敛曲线</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>4.1 补实验的最优顺序（按“评审关注度 ÷ 工作量”）</h3>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>优先级</th><th>补充实验</th><th>为什么必须补</th><th class="num">预计工作量</th></tr></thead>
+      <tbody>
+        <tr><td><span class="pill hi">P0</span></td><td><strong>补 MBGCN 基线</strong>（多行为图推荐直接对标）</td><td>你的“统一边权重 vs 多图分离”是创新点一的核心论点，现在<strong>没有任何直接证据</strong>。不比 MBGCN，创新点一在逻辑上悬空</td><td class="num">3–5 天</td></tr>
+        <tr><td><span class="pill hi">P0</span></td><td><strong>补 RLMRec 类基线</strong>（LLM 画像注入 CF）</td><td>见 §2 的“最危险问题”。这是唯一可能让创新点二被判重复的地方</td><td class="num">5–7 天</td></tr>
+        <tr><td><span class="pill mid">P1</span></td><td><strong>二维超参热力图</strong>（λ × α<sub>buy</sub>；β × γ）</td><td>替代一维表，成本极低、观感提升巨大；并能直接支撑 §3.1 改法 A 的“可学习权重”论述</td><td class="num">1–2 天</td></tr>
+        <tr><td><span class="pill mid">P1</span></td><td><strong>学出来的权重 vs 手工权重对比</strong></td><td>§3.1 改法 A 的直接验证：报告学出的 α<sub>b</sub>、λ，与表 4-1 对照。无论接近与否都是好结论</td><td class="num">2 天</td></tr>
+        <tr><td><span class="pill mid">P1</span></td><td><strong>收敛曲线 + 显存/FLOPs 表</strong></td><td>补齐“效率”维度；收敛曲线还能直观展示加权传播的稳定性</td><td class="num">1 天</td></tr>
+        <tr><td><span class="pill lo">P2</span></td><td><strong>稀疏度梯度实验</strong>（把交互截断到 3/5/8/10 条，看各方法退化曲线）</td><td>直接验证“你的方法在越稀疏时越有效”这一核心主张，比单一冷启动分层更有说服力</td><td class="num">2–3 天</td></tr>
+        <tr><td><span class="pill lo">P2</span></td><td><strong>标注一致性检验</strong>（解释评估加 Cohen's κ）</td><td>成本半天，显著提升人工评估的可信度</td><td class="num">0.5 天</td></tr>
+        <tr><td><span class="pill lo">P2</span></td><td><strong>附录：全量实验日志</strong></td><td>回应“数字为何这么整齐”的潜在质疑，见 §1 的隐患提示</td><td class="num">1 天</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout warn">
+    <span class="ct">关于“补 RLMRec 后万一输了怎么办”</span>
+    <p>这是必然的担忧，但答案是：<strong>局部输比整体缺席好</strong>。如果 RLMRec 在某项指标上略高，你仍然可以成立三个论点：① 你的方案在线延迟低一个数量级（它需要在线/近线 LLM 编码）；② 你在大规模稀疏用户上的退化更平缓；③ 你的蒸馏是单教师轻量方案，工程可落地性更强。<strong>论文里“被强基线小胜”是常态，“没有强基线”才是硬伤。</strong></p>
+  </div>
+
+  <h3>4.2 指标口径统一表（建议直接放进论文附录）</h3>
+  <p>把全文出现的所有指标、测法、硬件、并发数做成一张“评估协议表”，这是让评审相信“你说的 68ms 是真的”的最低成本手段：</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>指标</th><th>定义/口径</th><th>测量条件</th><th>报告方式</th></tr></thead>
+      <tbody>
+        <tr><td>Recall@K / NDCG@K</td><td>全排序（候选=全部商品），LOO 单正样本</td><td>5 个种子，A100 训练</td><td>均值 ± 标准差</td></tr>
+        <tr><td>AUC</td><td>Top-100 固定候选集，正负 1:4</td><td>同上</td><td>均值 ± 标准差 + t 检验</td></tr>
+        <tr><td>P99 主链路延迟</td><td>缓存未命中路径，不含解释生成</td><td>4C8G CPU，50 并发，预热 1000 次</td><td>P50/P95/P99 三档</td></tr>
+        <tr><td>首屏含解释延迟</td><td>含 RAG 解释（异步）</td><td>同上，缓存命中率 70%</td><td>P50/P95/P99 + 缓存命中率</td></tr>
+        <tr><td>事实准确率</td><td>人工核验技术参数是否与商品库一致</td><td>100 样本，双人独立标注</td><td>准确率 + κ</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ 5 篇幅 ============ -->
+<section id="s5">
+  <div class="sec-head"><span class="sec-no">05</span><h2>5 万字怎么“长”出来：按增量拆解</h2></div>
+  <p class="sec-sub">不要靠“把话说长”凑字数——那样评审一眼就能看出来。下面每一块增量都对应一个<strong>实质内容</strong>，加起来正好落在 6.0–6.8 万字。</p>
+
+  <div class="card">
+    <div class="legend">
+      <span><i style="background:var(--series-1)"></i>当前</span>
+      <span><i style="background:var(--series-3)"></i>规划后</span>
+    </div>
+    <div class="chart" id="chart-words"></div>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <caption>增量明细：每项都标注“新增的实质内容”，避免注水</caption>
+      <thead><tr><th>章节</th><th class="num">当前</th><th class="num">目标</th><th class="num">增量</th><th>增量来自什么（实质内容）</th></tr></thead>
+      <tbody>
+        <tr><td>第一章 绪论</td><td class="num">6,175</td><td class="num">8,500</td><td class="num">+2,325</td><td>研究现状三节各扩 500–700 字（补生成式推荐、RLMRec 方向、工业 B2B 推荐）；单列“研究问题形式化”小节（把三大挑战写成带符号的问题定义）</td></tr>
+        <tr><td>第二章 相关工作</td><td class="num">8,041</td><td class="num">12,500</td><td class="num">+4,459</td><td>新增“多行为图推荐”独立小节（1,500 字）；“时间感知推荐”扩写（1,200 字）；“LLM 增强推荐”按三种范式重写并补 RLMRec（1,200 字）；“生成式推荐”新小节（800 字）；各节末尾加“本文定位”段</td></tr>
+        <tr><td>第三章 架构设计</td><td class="num">6,505</td><td class="num">5,000</td><td class="num">−1,505</td><td><strong>压缩</strong>：删组件版本罗列、与第六章去重；保留“设计原则 + 流程 + 权衡”</td></tr>
+        <tr><td>第四章 算法（核心）</td><td class="num">11,192</td><td class="num">20,000</td><td class="num">+8,808</td><td>统一优化视角（1,500）；边权重可学习化 + 命题与证明（2,500）；蒸馏三重目标 + 去偏（2,000）；时间衰减的两条性质 + 曲线（1,200）；表达力/收敛性定理（1,600）；解释生成形式化（1,000）</td></tr>
+        <tr><td>第五章 实验</td><td class="num">9,279</td><td class="num">14,000</td><td class="num">+4,721</td><td>补 MBGCN/RLMRec 基线与结果分析（2,000）；二维热力图与学出权重分析（1,200）；稀疏度梯度实验（800）；收敛曲线与效率分析（700）</td></tr>
+        <tr><td>第六章 系统实现</td><td class="num">6,525</td><td class="num">5,500</td><td class="num">−1,025</td><td><strong>压缩</strong>：删表结构/DDL 级细节，保留架构决策与权衡；把“可复现性”一节写实</td></tr>
+        <tr><td>第七章 总结</td><td class="num">2,530</td><td class="num">3,000</td><td class="num">+470</td><td>创新点表述与正文对齐（删除“首次”）；“不足”部分改写为“已识别 + 已部分解决”</td></tr>
+        <tr><td><strong>合计</strong></td><td class="num"><strong>50,247</strong></td><td class="num"><strong>68,500</strong></td><td class="num"><strong>+18,253</strong></td><td>正文增至约 6.5 万字，另有附录约 4,000 字（原始日志、prompt 模板、标注协议）</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <span class="ct">篇幅策略的关键</span>
+    <p>3、6 两章<strong>净减 2,530 字</strong>是刻意的。如果只是“全部加长”，总字数上去了，但算法章占比反而下降，评审的观感更差。<strong>正确的做法是“结构重分配”：</strong>从工程章搬 2,500 字到算法章，再加上 §3 的六处实质深化，算法章从 22% 提到 29%，全文从 5.0 万到 6.5 万——字数达标、重心也对了。</p>
+  </div>
+</section>
+
+<!-- ============ 6 周计划 ============ -->
+<section id="s6">
+  <div class="sec-head"><span class="sec-no">06</span><h2>四周执行计划（可直接照做）</h2></div>
+  <p class="sec-sub">按“先修硬伤 → 再补实验 → 后写理论 → 最后统稿”的顺序。理由：实验跑起来有等待时间，正好用来写理论；而硬伤不修，后面全部白做。</p>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th style="width:80px">周次</th><th>主线任务</th><th>产出物</th><th>验收标准</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>第 1 周</strong><br><span style="font-size:12px;color:var(--text-muted)">清障</span></td>
+          <td>修完 §1.2 的 10 条硬伤；统一技术栈、延迟口径、损失符号、图表编号；补 20–25 篇 2024–2026 文献</td>
+          <td>V8 稿件；文献表更新到 65+ 篇</td>
+          <td>全文搜索“Vue”无残留；P99 只有一个定义；图表编号连续</td>
+        </tr>
+        <tr>
+          <td><strong>第 2 周</strong><br><span style="font-size:12px;color:var(--text-muted)">跑实验</span></td>
+          <td><span class="pill hi">P0</span> 跑 MBGCN 与 RLMRec 基线；<span class="pill mid">P1</span> 同时启动二维超参扫描与“可学习权重”版本</td>
+          <td>表 5-4 / 5-6 增补行；两张热力图；学习到的 α<sub>b</sub>、λ</td>
+          <td>MBGCN 结果可复算；新基线相对提升 ≤ ±3% 也要如实报告</td>
+        </tr>
+        <tr>
+          <td><strong>第 3 周</strong><br><span style="font-size:12px;color:var(--text-muted)">写理论</span></td>
+          <td>趁 GPU 跑实验，写第四章六处深化：统一优化视角、可学习边权重 + 命题、三重蒸馏、时间衰减性质、表达力定理、解释形式化</td>
+          <td>第四章节稿 2.0 万字</td>
+          <td>每个命题都有“证明或证明草图”；每个设计都有“为什么不是另一种”</td>
+        </tr>
+        <tr>
+          <td><strong>第 4 周</strong><br><span style="font-size:12px;color:var(--text-muted)">统稿</span></td>
+          <td>第三章/第六章压缩合并；第一章现状扩写；第五章补写新结果分析；第七章对齐创新点表述；写附录与可复现性声明</td>
+          <td>V9 完整稿 6.5 万字 + 附录</td>
+          <td>通读一遍无前后矛盾；数字与附录日志一致；查重率达标</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout note">
+    <span class="ct">如果时间只有两周</span>
+    <p>砍掉“表达力定理”和“稀疏度梯度实验”，保留：① 10 条硬伤全修；② 补 MBGCN 基线（这一条不能省）；③ 统一优化视角 + 可学习边权重两节；④ 第三章压缩。这样能在两周内把论文从 B 拉到 B+，且不冒“补了 RLMRec 却来不及改叙事”的风险。</p>
+  </div>
+</section>
+
+<!-- ============ 7 红线 ============ -->
+<section id="s7">
+  <div class="sec-head"><span class="sec-no">07</span><h2>最后：四条不能碰的红线</h2></div>
+  <p class="sec-sub">这些是“做了会被判不合格、没做只是扣分”的区别。</p>
+
+  <div class="grid2">
+    <div class="card tight">
+      <h4 style="margin-top:0;color:var(--bad)">① 数字必须能复算</h4>
+      <p style="font-size:14px;margin:0;color:var(--text-secondary)">如果实验数据不是实际跑出来的，宁可降低提升幅度（比如 Recall@10 提升从 15.6% 改成 8–10%），也不要保留一个复算不出来的漂亮数字。<strong>8% 的真实提升远胜 15.6% 的存疑提升。</strong>盲审可能不查，答辩现场一定会问。</p>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0;color:var(--bad)">② 不能宣称“首次”</h4>
+      <p style="font-size:14px;margin:0;color:var(--text-secondary)">多行为加权、时间衰减、LLM 画像蒸馏三件事，在 2020–2024 都有明确前作。<strong>改成“针对工业低频场景重新设计 + 给出理论解释 + 系统性工程验证”</strong>，既准确又更显成熟。</p>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0;color:var(--bad)">③ 不能回避最强相关工作</h4>
+      <p style="font-size:14px;margin:0;color:var(--text-secondary)">RLMRec、MBGCN 必须出现在相关工作与实验对比里。评审最反感的不是“你的方法不是最新的”，而是“你假装不知道有更新的”。</p>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0;color:var(--bad)">④ 不能有“自相矛盾”的硬伤</h4>
+      <p style="font-size:14px;margin:0;color:var(--text-secondary)">Vue/React、50 轮/6 轮、68ms/80ms 这类矛盾，单看不致命，但同时出现三处，评审会形成“作者不严谨”的整体印象，<strong>这个印象一旦形成，全篇都会被以更挑剔的眼光重读</strong>。</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <span class="ct">一句话总结</span>
+    <p>你已经有了一副<strong>能跑的骨架</strong>和<strong>三个说得清的想法</strong>。要提升档位，不需要推倒重来——只需要做三件事：<strong>把先验变成可学习/可证明的机制，把三个模块讲成一个统一目标，把对比打到 2025 年。</strong>前者给深度，中者给系统感，后者给可信度。三件事都做完，这篇论文会从“合格的工程型硕士论文”变成“有研究品味的硕士论文”。</p>
+  </div>
+</section>
+
+<footer>
+  <p style="margin-bottom:6px">本报告由 Claude 基于 <code>docs/1109-整改V7.docx</code> 全文解析生成 · 2026-11-10</p>
+  <p style="margin:0">建议用法：先看 §1.2 的硬伤表逐条打勾，再按 §6 的四周计划推进。文档中的算法公式为设计建议，落地前请与导师确认工作量与可行性。</p>
+</footer>
+
+</div>
+
+<script>
+/* ---------- theme ---------- */
+function toggleTheme(){
+  const r=document.documentElement;
+  const cur=r.getAttribute('data-theme');
+  const isDark = cur ? cur==='dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  r.setAttribute('data-theme', isDark?'light':'dark');
+  renderAll(true);
+}
+
+/* ---------- helpers ---------- */
+const NS='http://www.w3.org/2000/svg';
+function el(tag,attrs,parent){
+  const n=document.createElementNS(NS,tag);
+  for(const k in attrs) n.setAttribute(k,attrs[k]);
+  if(parent) parent.appendChild(n);
+  return n;
+}
+function cssv(name){return getComputedStyle(document.documentElement).getPropertyValue(name).trim();}
+
+/* ---------- chart 1: chapters (horizontal bars vs target line) ---------- */
+const CH=[
+  {n:'第一章 绪论',        v:6175, t:8500,  tag:'扩写现状'},
+  {n:'第二章 相关工作',    v:8041, t:12500, tag:'补近两年'},
+  {n:'第三章 架构设计',    v:6505, t:5000,  tag:'压缩'},
+  {n:'第四章 算法',        v:11192,t:20000, tag:'核心加深'},
+  {n:'第五章 实验',        v:9279, t:14000, tag:'补基线'},
+  {n:'第六章 系统实现',    v:6525, t:5500,  tag:'压缩'},
+  {n:'第七章 总结',        v:2530, t:3000,  tag:'对齐表述'}
+];
+function drawChapters(){
+  const host=document.getElementById('chart-chapters'); host.innerHTML='';
+  const W=880,H=CH.length*46+56, padL=132, padR=96, padT=10;
+  const max=Math.max(...CH.map(d=>Math.max(d.v,d.t)))*1.08;
+  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'各章字数与建议目标对比'},host);
+  const x=v=>padL+(v/max)*(W-padL-padR);
+  const bh=20, gap=26;
+  // gridlines
+  [0,5000,10000,15000,20000].forEach(g=>{
+    const gx=x(g); if(gx>W-padR) return;
+    el('line',{x1:gx,y1:padT,x2:gx,y2:H-34,stroke:cssv('--border'),'stroke-width':1},svg);
+    el('text',{x:gx,y:H-16,'text-anchor':'middle',class:'axis'},svg).textContent=(g/1000)+'k';
+  });
+  CH.forEach((d,i)=>{
+    const y=padT+i*(bh+gap);
+    // label
+    const lb=el('text',{x:padL-12,y:y+bh/2+4,'text-anchor':'end',class:'blabel'},svg);
+    lb.textContent=d.n;
+    // current bar
+    const bw=Math.max(2,x(d.v)-padL);
+    el('rect',{x:padL,y:y,width:bw,height:bh,rx:4,fill:cssv('--series-1'),class:'bar'},svg)
+      .appendChild(el('title',{})).textContent=`${d.n}：当前 ${d.v.toLocaleString()} 字`;
+    // target marker (vertical tick)
+    const tx=x(d.t);
+    el('line',{x1:tx,y1:y-4,x2:tx,y2:y+bh+4,stroke:cssv('--text-muted'),'stroke-width':2,'stroke-dasharray':'3 3'},svg);
+    // value
+    const val=el('text',{x:Math.max(tx,padL+bw)+10,y:y+bh/2+4,class:'bval'},svg);
+    val.textContent=d.v.toLocaleString();
+    const tg=el('text',{x:Math.max(tx,padL+bw)+10+46,y:y+bh/2+4,class:'blabel',fill:cssv('--text-muted')},svg);
+    tg.textContent='→ '+d.t.toLocaleString();
+  });
+}
+/* ---------- chart 2: words before/after grouped bars ---------- */
+const W2=[
+  {n:'绪论',a:6175,b:8500},
+  {n:'相关工作',a:8041,b:12500},
+  {n:'架构设计',a:6505,b:5000},
+  {n:'算法',a:11192,b:20000},
+  {n:'实验',a:9279,b:14000},
+  {n:'系统实现',a:6525,b:5500},
+  {n:'总结',a:2530,b:3000}
+];
+function drawWords(){
+  const host=document.getElementById('chart-words'); host.innerHTML='';
+  const W=880,H=300,padL=48,padR=12,padT=16,padB=56;
+  const max=22000;
+  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'各章当前与规划字数'},host);
+  const innerW=W-padL-padR, bandW=innerW/W2.length;
+  const bw=Math.min(30,bandW/3);
+  const y=v=>H-padB-(v/max)*(H-padT-padB);
+  [0,5000,10000,15000,20000].forEach(g=>{
+    const gy=y(g);
+    el('line',{x1:padL,y1:gy,x2:W-padR,y2:gy,class:'gridline'},svg);
+    el('text',{x:padL-8,y:gy+4,'text-anchor':'end',class:'axis'},svg).textContent=(g/1000)+'k';
+  });
+  W2.forEach((d,i)=>{
+    const cx=padL+bandW*i+bandW/2;
+    // bars: 2px surface gap between adjacent bars
+    [{v:d.a,c:cssv('--series-1'),off:-1},{v:d.b,c:cssv('--series-3'),off:1}].forEach(s=>{
+      const bx = s.off < 0 ? cx - bw - 1 : cx + 1;
+      const h=H-padB-y(s.v);
+      el('rect',{x:bx,y:y(s.v),width:bw,height:Math.max(h,1),rx:4,fill:s.c,class:'bar'},svg)
+        .appendChild(el('title',{})).textContent=`${d.n}：${s.v.toLocaleString()} 字`;
+      // value label only on "after" to avoid clutter
+      if(s.off>0){
+        el('text',{x:bx+bw/2,y:y(s.v)-6,'text-anchor':'middle',class:'bval'},svg).textContent=(s.v/1000).toFixed(1)+'k';
+      }
+    });
+    el('text',{x:cx,y:H-padB+20,'text-anchor':'middle',class:'axis'},svg).textContent=d.n;
+  });
+  // baseline
+  el('line',{x1:padL,y1:H-padB,x2:W-padR,y2:H-padB,stroke:cssv('--border-strong'),'stroke-width':1},svg);
+}
+function renderAll(){ drawChapters(); drawWords(); }
+renderAll();
+setTimeout(()=>{
+  const h=location.hash.slice(1);
+  if(h){
+    const el=document.getElementById(h);
+    if(el){
+      const top=el.getBoundingClientRect().top+window.scrollY;
+      window.scrollTo({top:Math.max(0,top-80),behavior:'instant'});
+    }
+  }
+},600);
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>renderAll());
+</script>
+</body>
+</html>

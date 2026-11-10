@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工业资产推荐系统 - 实验执行计划</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #64748b;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --text: #1e293b;
+            --text-muted: #64748b;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            background: linear-gradient(135deg, var(--primary), #1d4ed8);
+            color: white;
+            padding: 40px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+        }
+        header h1 { font-size: 2.2em; margin-bottom: 10px; }
+        header p { opacity: 0.9; font-size: 1.1em; }
+        .section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .section h2 {
+            color: var(--primary);
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
+        }
+        .section h3 {
+            color: var(--text);
+            font-size: 1.2em;
+            margin: 20px 0 15px;
+        }
+        .phase {
+            background: #f1f5f9;
+            border-left: 4px solid var(--primary);
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .phase-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        .formula-box {
+            background: #fef3c7;
+            border: 1px solid #fbbf24;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin: 15px 0;
+            font-family: 'Times New Roman', serif;
+        }
+        .formula-box code {
+            font-size: 1.1em;
+            color: #92400e;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border: 1px solid var(--border);
+        }
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+        tr:nth-child(even) { background: #f8fafc; }
+        tr:hover { background: #f1f5f9; }
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #60a5fa; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fbbf24; }
+        .checklist {
+            list-style: none;
+        }
+        .checklist li {
+            padding: 10px 0;
+            padding-left: 35px;
+            position: relative;
+        }
+        .checklist li::before {
+            content: "☐";
+            position: absolute;
+            left: 10px;
+            color: var(--primary);
+            font-size: 1.2em;
+        }
+        .checklist li.done::before {
+            content: "✓";
+            color: var(--success);
+        }
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .alert-info { background: #dbeafe; border-left: 4px solid var(--primary); }
+        .alert-success { background: #dcfce7; border-left: 4px solid var(--success); }
+        .alert-warning { background: #fef3c7; border-left: 4px solid var(--warning); }
+        .alert-danger { background: #fee2e2; border-left: 4px solid var(--danger); }
+        .gpu-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .gpu-card {
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        .gpu-card.recommended {
+            border-color: var(--primary);
+            background: #eff6ff;
+        }
+        .gpu-card h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        .price {
+            font-size: 1.5em;
+            color: var(--primary);
+            font-weight: 700;
+        }
+        .price-unit { font-size: 0.8em; color: var(--text-muted); }
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        .timeline::before {
+            content: "";
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+        }
+        .timeline-item {
+            position: relative;
+            padding: 15px 0;
+        }
+        .timeline-item::before {
+            content: "";
+            position: absolute;
+            left: -25px;
+            top: 20px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+        .badge-primary { background: #dbeafe; color: var(--primary); }
+        .badge-success { background: #dcfce7; color: #166534; }
+        .badge-warning { background: #fef3c7; color: #92400e; }
+        ul, ol { padding-left: 25px; }
+        li { margin: 8px 0; }
+        code {
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9em;
+        }
+        .module-card {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .module-card h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        .flex-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .flex-col {
+            flex: 1;
+            min-width: 280px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔬 工业资产推荐系统实验执行计划</h1>
+            <p>基于论文第四章核心算法的完整实验方案</p>
+        </header>
+
+        <!-- 总览 -->
+        <div class="section">
+            <h2>📋 实验总览</h2>
+            <p>本计划对应论文第四章的三个核心算法模块，分为四个实验阶段：</p>
+
+            <div class="phase">
+                <div class="phase-title">阶段一：核心模块开发与验证（第1-2周）</div>
+                <ul>
+                    <li><strong>TI-LightGCN 召回模块</strong>：边权重计算、加权归一化、BPR+长尾正则</li>
+                    <li><strong>Temporal-DIN 排序模块</strong>：时间衰减注意力、双通道门控融合</li>
+                    <li><strong>LLM 偏好蒸馏模块</strong>：User Memory生成、知识蒸馏训练</li>
+                </ul>
+            </div>
+
+            <div class="phase">
+                <div class="phase-title">阶段二：主实验（第3周）</div>
+                <ul>
+                    <li>基线模型：BPR-MF、LightGCN、DIN、DIEN</li>
+                    <li>完整模型：TI-LightGCN + Temporal-DIN + LLM蒸馏</li>
+                    <li>指标：Recall@K、NDCG@K、AUC、推理延迟</li>
+                </ul>
+            </div>
+
+            <div class="phase">
+                <div class="phase-title">阶段三：消融实验（第4周）</div>
+                <ul>
+                    <li>去除行为权重（仅时间衰减）</li>
+                    <li>去除时间衰减（仅行为权重）</li>
+                    <li>去除长尾正则化</li>
+                    <li>去除LLM蒸馏</li>
+                </ul>
+            </div>
+
+            <div class="phase">
+                <div class="phase-title">阶段四：补充实验（第5周）</div>
+                <ul>
+                    <li>冷启动分层分析（0-4条 / 5-10条 / 11-20条 / 20+条）</li>
+                    <li>跨域泛化验证（TH / OP / AJ数据集）</li>
+                    <li>超参数敏感性（λ、γ、β、嵌入维度等）</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- GPU资源 -->
+        <div class="section">
+            <h2>💻 GPU资源需求与租用建议</h2>
+
+            <div class="alert alert-info">
+                <strong>结论：需要GPU资源</strong><br>
+                虽然论文声称CPU可训练，但GPU可将训练时间从18分钟/epoch降至约6分钟/epoch，大幅提升实验效率。
+            </div>
+
+            <h3>训练时间估算</h3>
+            <table>
+                <tr>
+                    <th>模块</th>
+                    <th>CPU训练时间</th>
+                    <th>GPU训练时间</th>
+                    <th>说明</th>
+                </tr>
+                <tr>
+                    <td>TI-LightGCN</td>
+                    <td>~18分钟/epoch</td>
+                    <td>~6分钟/epoch</td>
+                    <td>6 epochs收敛，共约35-40分钟</td>
+                </tr>
+                <tr>
+                    <td>Temporal-DIN</td>
+                    <td>~5分钟/epoch</td>
+                    <td>~1分钟/epoch</td>
+                    <td>10 epochs，共约10-50分钟</td>
+                </tr>
+                <tr>
+                    <td>LLM蒸馏</td>
+                    <td>无法完成</td>
+                    <td>必需</td>
+                    <td>需调用LLM API生成教师信号</td>
+                </tr>
+            </table>
+
+            <h3>GPU租用方案对比</h3>
+            <div class="gpu-options">
+                <div class="gpu-card">
+                    <h4>AutoDL（推荐）</h4>
+                    <div class="price">¥1.5-3<span class="price-unit">/小时</span></div>
+                    <ul style="text-align: left; margin-top: 15px;">
+                        <li>RTX 3090 / A100</li>
+                        <li>按小时计费，随用随停</li>
+                        <li>学生认证有优惠</li>
+                        <li>适合短期实验</li>
+                    </ul>
+                    <p style="margin-top: 10px; color: var(--primary); font-weight: 600;">预计总费用：¥50-100</p>
+                </div>
+
+                <div class="gpu-card recommended">
+                    <h4>阿里云GPU实例 ⭐</h4>
+                    <div class="price">¥2000-3000<span class="price-unit">/月</span></div>
+                    <ul style="text-align: left; margin-top: 15px;">
+                        <li>V100 / A10 / A100</li>
+                        <li>学生免费额度（可申请）</li>
+                        <li>与现有ECS同账号便于管理</li>
+                        <li>可申请高校科研资助</li>
+                    </ul>
+                    <p style="margin-top: 10px; color: var(--primary); font-weight: 600;">学生可申请免费试用</p>
+                </div>
+
+                <div class="gpu-card">
+                    <h4>Google Colab Pro</h4>
+                    <div class="price">¥70<span class="price-unit">/月</span></div>
+                    <ul style="text-align: left; margin-top: 15px;">
+                        <li>T4 GPU（免费）/ V100（付费）</li>
+                        <li>Jupyter环境，开箱即用</li>
+                        <li>适合原型开发</li>
+                        <li>网络需科学上网</li>
+                    </ul>
+                    <p style="margin-top: 10px; color: var(--primary); font-weight: 600;">适合快速验证</p>
+                </div>
+
+                <div class="gpu-card">
+                    <h4>本地GPU（如有）</h4>
+                    <div class="price">¥0<span class="price-unit">/一次性</span></div>
+                    <ul style="text-align: left; margin-top: 15px;">
+                        <li>RTX 3060+ 即可</li>
+                        <li>数据不出本地</li>
+                        <li>长期成本最低</li>
+                        <li>需自行配置环境</li>
+                    </ul>
+                    <p style="margin-top: 10px; color: var(--primary); font-weight: 600;">最经济方案</p>
+                </div>
+            </div>
+
+            <div class="alert alert-success">
+                <strong>推荐方案：</strong><br>
+                1. <strong>首选</strong>：阿里云GPU实例（可申请学生免费额度，与现有ECS同账号）<br>
+                2. <strong>备选</strong>：AutoDL按小时租用（灵活，适合短期冲刺实验）<br>
+                3. <strong>最低成本</strong>：本地GPU或Google Colab免费额度
+            </div>
+        </div>
+
+        <!-- 数据集 -->
+        <div class="section">
+            <h2>📊 数据集准备</h2>
+
+            <h3>主数据集</h3>
+            <table>
+                <tr>
+                    <th>数据集</th>
+                    <th>用户数</th>
+                    <th>物品数</th>
+                    <th>交互数</th>
+                    <th>稀疏度</th>
+                    <th>用途</th>
+                </tr>
+                <tr>
+                    <td>Industrial & Scientific (IS)</td>
+                    <td>16,438</td>
+                    <td>10,228</td>
+                    <td>~680,000</td>
+                    <td>>99%</td>
+                    <td>主实验</td>
+                </tr>
+            </table>
+
+            <h3>跨域验证数据集</h3>
+            <table>
+                <tr>
+                    <th>数据集</th>
+                    <th>简称</th>
+                    <th>特点</th>
+                    <th>用途</th>
+                </tr>
+                <tr>
+                    <td>Amazon Tools & Hardware</td>
+                    <td>TH</td>
+                    <td>工具类，中等稀疏</td>
+                    <td>跨域验证</td>
+                </tr>
+                <tr>
+                    <td>Amazon Office Products</td>
+                    <td>OP</td>
+                    <td>办公用品，较密集</td>
+                    <td>跨域验证</td>
+                </tr>
+                <tr>
+                    <td>Amazon Automotive Jewelry</td>
+                    <td>AJ</td>
+                    <td>含原生多行为数据</td>
+                    <td>跨域验证</td>
+                </tr>
+            </table>
+
+            <div class="alert alert-warning">
+                <strong>数据下载链接：</strong><br>
+                • Amazon Review Data: https://cseweb.ucsd.edu/~jmcauley/datasets/amazon_v2/<br>
+                • 工业资产数据集: 需联系导师获取或从系统MySQL导出
+            </div>
+        </div>
+
+        <!-- 核心模块实现 -->
+        <div class="section">
+            <h2>🔧 核心模块实现（对照论文公式）</h2>
+
+            <h3>模块一：TI-LightGCN 召回</h3>
+
+            <div class="module-card">
+                <h4>公式对照表</h4>
+                <table>
+                    <tr>
+                        <th>论文公式</th>
+                        <th>代码实现</th>
+                        <th>说明</th>
+                    </tr>
+                    <tr>
+                        <td>式(4-1): 边权重函数</td>
+                        <td><code>compute_edge_weight()</code></td>
+                        <td>w(u,i) = Σ α_b · exp(-λ·Δt/T)</td>
+                    </tr>
+                    <tr>
+                        <td>式(4-3)(4-4): 加权归一化</td>
+                        <td><code>weighted_propagate()</code></td>
+                        <td>e_u^(l) = Σ w(u,i)/√W_u·√W_i · e_i^(l-1)</td>
+                    </tr>
+                    <tr>
+                        <td>式(4-5): 均值聚合</td>
+                        <td><code>mean_aggregate()</code></td>
+                        <td>ẽ_u = 1/(L+1) Σ e_u^(l)</td>
+                    </tr>
+                    <tr>
+                        <td>式(4-6): BPR损失</td>
+                        <td><code>bpr_loss()</code></td>
+                        <td>-Σ log σ(ẽ_u^T ẽ_i - ẽ_u^T ẽ_j)</td>
+                    </tr>
+                    <tr>
+                        <td>式(4-7): 长尾正则</td>
+                        <td><code>long_tail_regularization()</code></td>
+                        <td>γ · Σ ||ẽ_i - ẽ_i^sem||²</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># ti_lightgcn.py - TI-LightGCN 核心实现</span>
+
+<span class="keyword">import</span> torch
+<span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn
+<span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+<span class="keyword">from</span> torch_geometric.nn <span class="keyword">import</span> MessagePassing
+
+<span class="comment"># 行为类型语义权重（表4-1）</span>
+BEHAVIOR_WEIGHTS = {
+    <span class="string">'buy'</span>: <span class="number">3.0</span>,
+    <span class="string">'collect'</span>: <span class="number">1.5</span>,
+    <span class="string">'cart'</span>: <span class="number">1.2</span>,
+    <span class="string">'click'</span>: <span class="number">1.0</span>,
+    <span class="string">'show'</span>: <span class="number">0.1</span>
+}
+
+<span class="comment"># 时间衰减参数</span>
+LAMBDA = <span class="number">0.1</span>  <span class="comment"># 时间衰减率</span>
+T_NORMALIZE = <span class="number">86400</span>  <span class="comment"># 时间归一化常数（秒/天）</span>
+
+<span class="keyword">class</span> <span class="string">TILightGCN</span>(MessagePassing):
+    <span class="string">"""TI-LightGCN: 时间感知行为加权图协同过滤"""</span>
+
+    <span class="keyword">def</span> <span class="string">__init__</span>(self, num_users, num_items, embedding_dim=<span class="number">64</span>, num_layers=<span class="number">3</span>):
+        super(TILightGCN, self).__init__(aggr=<span class="string">'add'</span>)
+        self.num_users = num_users
+        self.num_items = num_items
+        self.embedding_dim = embedding_dim
+        self.num_layers = num_layers
+
+        <span class="comment"># 初始化嵌入矩阵（Xavier初始化）</span>
+        self.user_embedding = nn.Embedding(num_users, embedding_dim)
+        self.item_embedding = nn.Embedding(num_items, embedding_dim)
+        nn.init.xavier_uniform_(self.user_embedding.weight)
+        nn.init.xavier_uniform_(self.item_embedding.weight)
+
+    <span class="keyword">def</span> <span class="string">compute_edge_weight</span>(self, interactions):
+        <span class="string">"""
+        式(4-1): w(u,i) = Σ α_b · exp(-λ · (T_now - t) / T)
+
+        Args:
+            interactions: List of (user_id, item_id, behavior_type, timestamp)
+        Returns:
+            edge_weights: Dict[(user_id, item_id)] -> weight
+        """</span>
+        edge_weights = {}
+        T_now = interactions[<span class="number">-1</span>][<span class="number">3</span>]  <span class="comment"># 当前时间</span>
+
+        <span class="keyword">for</span> user_id, item_id, behavior, timestamp <span class="keyword">in</span> interactions:
+            alpha_b = BEHAVIOR_WEIGHTS[behavior]
+            delta_t = T_now - timestamp
+            weight = alpha_b * np.exp(-LAMBDA * delta_t / T_NORMALIZE)
+
+            key = (user_id, item_id)
+            edge_weights[key] = edge_weights.get(key, <span class="number">0</span>) + weight
+
+        <span class="keyword">return</span> edge_weights
+
+    <span class="keyword">def</span> <span class="string">forward</span>(self, edge_index, edge_weights, user_degree, item_degree):
+        <span class="string">"""
+        式(4-3)(4-4): 加权归一化传播
+
+        e_u^(l) = Σ w(u,i)/√W_u · √W_i · e_i^(l-1)
+        """</span>
+        all_embeddings = [torch.cat([self.user_embedding.weight,
+                                      self.item_embedding.weight], dim=<span class="number">0</span>)]
+
+        <span class="keyword">for</span> l <span class="keyword">in</span> range(self.num_layers):
+            <span class="comment"># 计算加权归一化系数</span>
+            norm_weights = []
+            <span class="keyword">for</span> idx, (u, i) <span class="keyword">in</span> enumerate(edge_index.t().tolist()):
+                w_ui = edge_weights[idx]
+                W_u = user_degree[u]
+                W_i = item_degree[i]
+                norm = w_ui / (np.sqrt(W_u) * np.sqrt(W_i))
+                norm_weights.append(norm)
+
+            norm_weights = torch.tensor(norm_weights, dtype=torch.float32)
+
+            <span class="comment"># 消息传递</span>
+            embeddings = all_embeddings[<span class="number">-1</span>]
+            new_embeddings = self.propagate(edge_index, x=embeddings,
+                                            edge_weight=norm_weights)
+            all_embeddings.append(new_embeddings)
+
+        <span class="comment"># 式(4-5): 均值聚合</span>
+        final_embedding = torch.stack(all_embeddings, dim=<span class="number">1</span>).mean(dim=<span class="number">1</span>)
+
+        <span class="comment"># 分离用户和物品嵌入</span>
+        user_emb = final_embedding[:self.num_users]
+        item_emb = final_embedding[self.num_users:]
+
+        <span class="keyword">return</span> user_emb, item_emb
+
+    <span class="keyword">def</span> <span class="string">message</span>(self, x_j, edge_weight):
+        <span class="string">"""加权消息传递"""</span>
+        <span class="keyword">return</span> edge_weight.view(-<span class="number">1</span>, <span class="number">1</span>) * x_j
+
+
+<span class="keyword">def</span> <span class="string">bpr_loss</span>(user_emb, pos_item_emb, neg_item_emb):
+    <span class="string">"""
+    式(4-6): BPR损失
+    L_BPR = -Σ log σ(ẽ_u^T ẽ_i - ẽ_u^T ẽ_j)
+    """</span>
+    pos_scores = (user_emb * pos_item_emb).sum(dim=<span class="number">1</span>)
+    neg_scores = (user_emb * neg_item_emb).sum(dim=<span class="number">1</span>)
+    loss = -torch.log(torch.sigmoid(pos_scores - neg_scores)).mean()
+    <span class="keyword">return</span> loss
+
+
+<span class="keyword">def</span> <span class="string">long_tail_regularization</span>(item_emb, item_sem_emb, tail_mask, gamma=<span class="number">0.01</span>):
+    <span class="string">"""
+    式(4-7): 长尾度感知正则化
+    L_total = L_BPR + γ · Σ ||ẽ_i - ẽ_i^sem||²
+
+    Args:
+        item_emb: 物品图嵌入
+        item_sem_emb: 物品语义嵌入（Sentence-BERT）
+        tail_mask: 长尾商品掩码（交互次数<10）
+        gamma: 正则化强度
+    """</span>
+    tail_item_emb = item_emb[tail_mask]
+    tail_sem_emb = item_sem_emb[tail_mask]
+    reg_loss = F.mse_loss(tail_item_emb, tail_sem_emb.detach())
+    <span class="keyword">return</span> gamma * reg_loss
+
+
+<span class="comment"># 训练主函数</span>
+<span class="keyword">def</span> <span class="string">train_ti_lightgcn</span>(interactions, num_users, num_items, epochs=<span class="number">50</span>, lr=<span class="number">0.001</span>):
+    <span class="string">"""TI-LightGCN训练流程"""</span>
+    device = torch.device(<span class="string">'cuda'</span> <span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">'cpu'</span>)
+
+    <span class="comment"># 1. 构建加权图</span>
+    edge_weights = compute_edge_weight(interactions)
+    edge_index, weights = build_graph(edge_weights, num_users, num_items)
+    edge_index = edge_index.to(device)
+    weights = weights.to(device)
+
+    <span class="comment"># 2. 计算加权度</span>
+    user_degree = compute_weighted_degree(edge_index, weights, <span class="string">'user'</span>)
+    item_degree = compute_weighted_degree(edge_index, weights, <span class="string">'item'</span>)
+
+    <span class="comment"># 3. 初始化模型</span>
+    model = TILightGCN(num_users, num_items).to(device)
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=<span class="number">1e-4</span>)
+
+    <span class="comment"># 4. 训练循环</span>
+    best_recall = <span class="number">0</span>
+    patience_counter = <span class="number">0</span>
+
+    <span class="keyword">for</span> epoch <span class="keyword">in</span> range(epochs):
+        model.train()
+        optimizer.zero_grad()
+
+        <span class="comment"># 前向传播</span>
+        user_emb, item_emb = model(edge_index, weights, user_degree, item_degree)
+
+        <span class="comment"># 采样BPR三元组</span>
+        pos_pairs, neg_items = sample_bpr_triplets(interactions, num_items)
+        pos_item_emb = item_emb[pos_pairs[:, <span class="number">1</span>]]
+        neg_item_emb = item_emb[neg_items]
+        user_emb_batch = user_emb[pos_pairs[:, <span class="number">0</span>]]
+
+        <span class="comment"># 计算损失</span>
+        loss_bpr = bpr_loss(user_emb_batch, pos_item_emb, neg_item_emb)
+        loss_tail = long_tail_regularization(item_emb, item_sem_emb, tail_mask)
+        loss = loss_bpr + loss_tail
+
+        <span class="comment"># 反向传播</span>
+        loss.backward()
+        optimizer.step()
+
+        <span class="comment"># 验证早停</span>
+        <span class="keyword">if</span> (epoch + <span class="number">1</span>) % <span class="number">5</span> == <span class="number">0</span>:
+            recall = evaluate_recall(model, val_data)
+            <span class="keyword">if</span> recall > best_recall:
+                best_recall = recall
+                patience_counter = <span class="number">0</span>
+                torch.save(model.state_dict(), <span class="string">'best_model.pt'</span>)
+            <span class="keyword">else</span>:
+                patience_counter += <span class="number">1</span>
+                <span class="keyword">if</span> patience_counter >= <span class="number">5</span>:
+                    print(f<span class="string">"Early stopping at epoch {epoch+1}"</span>)
+                    <span class="keyword">break</span>
+
+    <span class="keyword">return</span> model
+            </div>
+
+            <h3>模块二：Temporal-DIN 排序</h3>
+
+            <div class="module-card">
+                <h4>公式对照表</h4>
+                <table>
+                    <tr>
+                        <th>论文公式</th>
+                        <th>代码实现</th>
+                        <th>说明</th>
+                    </tr>
+                    <tr>
+                        <td>式(4-8): 时间衰减注意力</td>
+                        <td><code>temporal_attention()</code></td>
+                        <td>α_k = softmax(a(e_ik, e_ic)) · exp(-γ·Δt/T)</td>
+                    </tr>
+                    <tr>
+                        <td>式(4-9): 归一化</td>
+                        <td><code>softmax()</code></td>
+                        <td>ã_k = α_k / Σ α_j</td>
+                    </tr>
+                    <tr>
+                        <td>式(4-10): 短期兴趣</td>
+                        <td><code>short_term_interest()</code></td>
+                        <td>h_st = Σ ã_k · e_ik</td>
+                    </tr>
+                    <tr>
+                        <td>式(4-11): 门控</td>
+                        <td><code>gating_fusion()</code></td>
+                        <td>g = sigmoid(W_g · [h_st; h_lt; e_ic] + b_g)</td>
+                    </tr>
+                    <tr>
+                        <td>式(4-12): 兴趣融合</td>
+                        <td><code>fuse_interests()</code></td>
+                        <td>h_user = g ⊙ h_st + (1-g) ⊙ h_lt</td>
+                    </tr>
+                    <tr>
+                        <td>式(4-13): CTR预测</td>
+                        <td><code>mlp_predict()</code></td>
+                        <td>ŷ = MLP([h_user; e_ic; e_u^static; e_i^stat])</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># temporal_din.py - Temporal-DIN 核心实现</span>
+
+<span class="keyword">import</span> torch
+<span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn
+<span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F
+
+<span class="comment"># 时间衰减参数</span>
+GAMMA = <span class="number">0.3</span>  <span class="comment"># 时间衰减率</span>
+T_NORMALIZE = <span class="number">86400</span>  <span class="comment"># 秒/天</span>
+T_SHORT = <span class="number">7</span> * T_NORMALIZE  <span class="comment"># 短期兴趣窗口：7天</span>
+
+<span class="keyword">class</span> <span class="string">TemporalDIN</span>(nn.Module):
+    <span class="string">"""Temporal-DIN: 时间衰减兴趣网络"""</span>
+
+    <span class="keyword">def</span> <span class="string">__init__</span>(self, num_items, embedding_dim=<span class="number">64</span>, hidden_dim=<span class="number">256</span>):
+        super(TemporalDIN, self).__init__()
+
+        self.item_embedding = nn.Embedding(num_items, embedding_dim)
+        self.user_static_emb = nn.Embedding(num_users, embedding_dim)
+        self.item_stat_emb = nn.Embedding(num_items, embedding_dim)
+
+        <span class="comment"># 激活单元（DIN注意力）</span>
+        self.activation_unit = nn.Sequential(
+            nn.Linear(embedding_dim * <span class="number">4</span>, hidden_dim),
+            nn.ReLU(),
+            nn.Linear(hidden_dim, <span class="number">1</span>)
+        )
+
+        <span class="comment"># 门控融合</span>
+        self.gate = nn.Sequential(
+            nn.Linear(embedding_dim * <span class="number">3</span>, hidden_dim),
+            nn.Sigmoid()
+        )
+
+        <span class="comment"># MLP预测层</span>
+        self.mlp = nn.Sequential(
+            nn.Linear(embedding_dim * <span class="number">4</span>, hidden_dim),
+            nn.ReLU(),
+            nn.Linear(hidden_dim, hidden_dim // <span class="number">2</span>),
+            nn.ReLU(),
+            nn.Linear(hidden_dim // <span class="number">2</span>, <span class="number">1</span>),
+            nn.Sigmoid()
+        )
+
+    <span class="keyword">def</span> <span class="string">temporal_attention</span>(self, hist_items, hist_times, candidate_item, T_now):
+        <span class="string">"""
+        式(4-8): 时间衰减注意力
+        α_k = softmax(a(e_ik, e_ic)) · exp(-γ · (T_now - t_k) / T)
+        """</span>
+        <span class="comment"># 获取嵌入</span>
+        hist_emb = self.item_embedding(hist_items)  <span class="comment"># [batch, seq_len, dim]</span>
+        cand_emb = self.item_embedding(candidate_item)  <span class="comment"># [batch, dim]</span>
+
+        <span class="comment"># DIN注意力分数</span>
+        cand_expanded = cand_emb.unsqueeze(<span class="number">1</span>).expand_as(hist_emb)
+        diff = hist_emb - cand_expanded
+        prod = hist_emb * cand_expanded
+
+        attention_input = torch.cat([hist_emb, cand_expanded, diff, prod], dim=-<span class="number">1</span>)
+        din_scores = self.activation_unit(attention_input).squeeze(-<span class="number">1</span>)  <span class="comment"># [batch, seq_len]</span>
+
+        <span class="comment"># 时间衰减因子</span>
+        delta_t = T_now - hist_times  <span class="comment"># [batch, seq_len]</span>
+        time_decay = torch.exp(-GAMMA * delta_t / T_NORMALIZE)
+
+        <span class="comment"># 结合</span>
+        alpha = torch.softmax(din_scores, dim=-<span class="number">1</span>) * time_decay
+
+        <span class="comment"># 式(4-9): 归一化</span>
+        alpha_normalized = alpha / (alpha.sum(dim=-<span class="number">1</span>, keepdim=True) + <span class="number">1e-8</span>)
+
+        <span class="keyword">return</span> alpha_normalized
+
+    <span class="keyword">def</span> <span class="string">forward</span>(self, user_id, hist_items, hist_times, candidate_item,
+                user_memory, T_now, user_static=None, item_stat=None):
+        <span class="string">"""
+        完整前向传播
+        """</span>
+        <span class="comment"># 式(4-10): 短期兴趣</span>
+        alpha = self.temporal_attention(hist_items, hist_times, candidate_item, T_now)
+        hist_emb = self.item_embedding(hist_items)
+        h_st = (alpha.unsqueeze(-<span class="number">1</span>) * hist_emb).sum(dim=<span class="number">1</span>)  <span class="comment"># [batch, dim]</span>
+
+        <span class="comment"># 长期兴趣（来自User Memory）</span>
+        h_lt = self.memory_projection(user_memory)  <span class="comment"># [batch, dim]</span>
+
+        <span class="comment"># 式(4-11)(4-12): 门控融合</span>
+        cand_emb = self.item_embedding(candidate_item)
+        gate_input = torch.cat([h_st, h_lt, cand_emb], dim=-<span class="number">1</span>)
+        g = self.gate(gate_input)
+        h_user = g * h_st + (<span class="number">1</span> - g) * h_lt
+
+        <span class="comment"># 式(4-13): CTR预测</span>
+        user_static_emb = self.user_static_emb(user_id)
+        item_stat_emb = self.item_stat_emb(candidate_item)
+
+        mlp_input = torch.cat([h_user, cand_emb, user_static_emb, item_stat_emb], dim=-<span class="number">1</span>)
+        prediction = self.mlp(mlp_input)
+
+        <span class="keyword">return</span> prediction.squeeze(-<span class="number">1</span>)
+
+
+<span class="comment"># 蒸馏损失</span>
+<span class="keyword">def</span> <span class="string">distillation_loss</span>(y_pred, y_true, y_teacher, alpha=<span class="number">0.7</span>, beta=<span class="number">0.3</span>):
+    <span class="string">"""
+    式(4-14)(4-15)(4-16): 联合损失函数
+    L_total = α · L_beh + β · L_kd
+    """</span>
+    <span class="comment"># 行为损失（二元交叉熵）</span>
+    L_beh = F.binary_cross_entropy(y_pred, y_true)
+
+    <span class="comment"># 蒸馏损失（MSE）</span>
+    L_kd = F.mse_loss(y_pred, y_teacher.detach())
+
+    <span class="keyword">return</span> alpha * L_beh + beta * L_kd
+            </div>
+
+            <h3>模块三：LLM偏好蒸馏</h3>
+
+            <div class="module-card">
+                <h4>公式对照表</h4>
+                <table>
+                    <tr>
+                        <th>论文公式</th>
+                        <th>代码实现</th>
+                        <th>说明</th>
+                    </tr>
+                    <tr>
+                        <td>User Memory生成</td>
+                        <td><code>generate_user_memory()</code></td>
+                        <td>调用Qwen API生成结构化偏好摘要</td>
+                    </tr>
+                    <tr>
+                        <td>式(4-14): 联合损失</td>
+                        <td><code>distillation_loss()</code></td>
+                        <td>L_total = α · L_beh + β · L_kd</td>
+                    </tr>
+                    <tr>
+                        <td>式(4-15): 行为损失</td>
+                        <td><code>BCE_loss</code></td>
+                        <td>L_beh = -[y·log ŷ + (1-y)·log(1-ŷ)]</td>
+                    </tr>
+                    <tr>
+                        <td>式(4-16): 蒸馏损失</td>
+                        <td><code>MSE_loss</code></td>
+                        <td>L_kd = (ŷ - r_T)²</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># llm_distillation.py - LLM偏好蒸馏实现</span>
+
+<span class="keyword">import</span> json
+<span class="keyword">from</span> openai <span class="keyword">import</span> OpenAI
+<span class="keyword">from</span> sentence_transformers <span class="keyword">import</span> SentenceTransformer
+
+<span class="comment"># 初始化</span>
+client = OpenAI(api_key=<span class="string">"your-api-key"</span>)
+encoder = SentenceTransformer(<span class="string">'paraphrase-multilingual-MiniLM-L12-v2'</span>)
+
+<span class="keyword">def</span> <span class="string">generate_user_memory</span>(user_behaviors, user_profile):
+    <span class="string">"""
+    User Memory生成（式4.3.2）
+
+    Args:
+        user_behaviors: List of (item_name, behavior_type, timestamp)
+        user_profile: Dict with industry, role, etc.
+    Returns:
+        memory_vector: 256-dim numpy array
+        memory_json: Structured preference summary
+    """</span>
+    <span class="comment"># 步骤一：行为历史结构化</span>
+    behavior_text = format_behaviors(user_behaviors)
+
+    <span class="comment"># 步骤二：LLM推理生成结构化摘要</span>
+    prompt = f<span class="string">"""
+    你是一个工业采购专家。请根据以下用户行为历史，生成结构化的偏好摘要。
+
+    用户信息：
+    - 行业：{user_profile.get('industry', '未知')}
+    - 注册时间：{user_profile.get('register_time', '未知')}
+
+    近30天行为记录：
+    {behavior_text}
+
+    请输出JSON格式：
+    {{
+        "industry_domain": "所属行业领域",
+        "preferred_brands": ["品牌1", "品牌2"],
+        "price_sensitivity": "价格敏感度描述",
+        "tech_keywords": ["技术关键词1", "技术关键词2"],
+        "purchase_intent": "当前采购意图",
+        "long_term_preference": "长期偏好总结"
+    }}
+    """</span>
+
+    response = client.chat.completions.create(
+        model=<span class="string">"qwen-7b-chat"</span>,
+        messages=[{<span class="string">"role"</span>: <span class="string">"user"</span>, <span class="string">"content"</span>: prompt}],
+        temperature=<span class="number">0.3</span>
+    )
+
+    memory_json = json.loads(response.choices[<span class="number">0</span>].message.content)
+
+    <span class="comment"># 步骤三：向量化</span>
+    memory_text = json.dumps(memory_json, ensure_ascii=False)
+    memory_vector = encoder.encode(memory_text)
+
+    <span class="keyword">return</span> memory_vector, memory_json
+
+
+<span class="keyword">def</span> <span class="string">generate_teacher_labels</span>(user_memory, candidate_items):
+    <span class="string">"""
+    生成教师信号（教师标签）
+
+    Returns:
+        relevance_scores: Dict[item_id] -> score in [0, 1]
+    """</span>
+    prompt = f<span class="string">"""
+    基于以下用户偏好摘要，请对每个候选商品评估相关性评分（0-1之间）。
+
+    用户偏好：
+    {user_memory}
+
+    候选商品：
+    {format_items(candidate_items)}
+
+    请输出JSON格式：{{item_id: score}}
+    """</span>
+
+    response = client.chat.completions.create(
+        model=<span class="string">"qwen-7b-chat"</span>,
+        messages=[{<span class="string">"role"</span>: <span class="string">"user"</span>, <span class="string">"content"</span>: prompt}],
+        temperature=<span class="number">0.1</span>
+    )
+
+    <span class="keyword">return</span> json.loads(response.choices[<span class="number">0</span>].message.content)
+
+
+<span class="comment"># 蒸馏训练主函数</span>
+<span class="keyword">def</span> <span class="string">train_with_distillation</span>(model, train_data, user_memories, epochs=<span class="number">10</span>,
+                             alpha=<span class="number">0.7</span>, beta=<span class="number">0.3</span>):
+    <span class="string">"""
+    式(4-14): 联合损失训练
+    """</span>
+    optimizer = torch.optim.Adam(model.parameters(), lr=<span class="number">0.001</span>)
+
+    <span class="keyword">for</span> epoch <span class="keyword">in</span> range(epochs):
+        <span class="keyword">for</span> batch <span class="keyword">in</span> train_data:
+            user_id, hist_items, hist_times, candidates, labels = batch
+
+            <span class="comment"># 学生模型预测</span>
+            predictions = model(user_id, hist_items, hist_times, candidates,
+                               user_memories[user_id], T_now=<span class="number">1700000000</span>)
+
+            <span class="comment"># 获取教师标签（离线预生成）</span>
+            teacher_labels = get_teacher_labels(user_id, candidates)
+
+            <span class="comment"># 联合损失</span>
+            loss = distillation_loss(predictions, labels.float(),
+                                     teacher_labels.float(), alpha, beta)
+
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            </div>
+        </div>
+
+        <!-- 实验执行步骤 -->
+        <div class="section">
+            <h2>📝 实验执行步骤</h2>
+
+            <h3>阶段一：环境准备（Day 1-2）</h3>
+            <div class="checklist">
+                <li>租用GPU实例（推荐AutoDL或阿里云）</li>
+                <li>安装依赖：PyTorch, PyTorch Geometric, Sentence-BERT, FAISS</li>
+                <li>下载数据集（Amazon IS/TH/OP/AJ）</li>
+                <li>数据预处理：构建交互图、生成行为序列</li>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># 环境安装脚本</span>
+<span class="comment"># install.sh</span>
+
+<span class="comment">#!/bin/bash</span>
+<span class="comment"># 创建conda环境</span>
+conda create -n recsys python=3.10 -y
+conda activate recsys
+
+<span class="comment"># PyTorch with CUDA</span>
+pip install torch==2.1.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+
+<span class="comment"># PyTorch Geometric</span>
+pip install pyg-lib torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-2.1.0+cu118.html
+pip install torch-geometric
+
+<span class="comment"># 其他依赖</span>
+pip install sentence-transformers faiss-cpu numpy pandas scikit-learn
+pip install openai dashscope  <span class="comment"># 阿里云Qwen API</span>
+pip install tensorboard tqdm
+
+<span class="comment"># 验证GPU</span>
+python -c "import torch; print(f'CUDA: {torch.cuda.is_available()}')"
+            </div>
+
+            <h3>阶段二：TI-LightGCN训练（Day 3-5）</h3>
+            <div class="checklist">
+                <li>构建加权邻接矩阵（式4-1）</li>
+                <li>实现加权消息传递（式4-3, 4-4）</li>
+                <li>实现BPR损失+长尾正则（式4-6, 4-7）</li>
+                <li>训练并保存嵌入向量</li>
+                <li>构建FAISS索引</li>
+            </div>
+
+            <h3>阶段三：Temporal-DIN训练（Day 6-8）</h3>
+            <div class="checklist">
+                <li>生成User Memory向量（调用Qwen API）</li>
+                <li>实现时间衰减注意力（式4-8）</li>
+                <li>实现双通道门控融合（式4-11, 4-12）</li>
+                <li>生成教师标签（调用Qwen API）</li>
+                <li>蒸馏训练（式4-14）</li>
+            </div>
+
+            <h3>阶段四：实验评估（Day 9-14）</h3>
+            <div class="checklist">
+                <li>主实验：对比BPR-MF, LightGCN, DIN, DIEN</li>
+                <li>消融实验：逐一去除各模块</li>
+                <li>冷启动分层分析</li>
+                <li>跨域验证（TH/OP/AJ）</li>
+                <li>超参数敏感性分析</li>
+            </div>
+        </div>
+
+        <!-- 实验结果模板 -->
+        <div class="section">
+            <h2>📊 实验结果记录模板</h2>
+
+            <h3>主实验结果</h3>
+            <table>
+                <tr>
+                    <th>模型</th>
+                    <th>Recall@10</th>
+                    <th>Recall@20</th>
+                    <th>NDCG@10</th>
+                    <th>AUC</th>
+                    <th>P99延迟</th>
+                </tr>
+                <tr>
+                    <td>BPR-MF</td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                </tr>
+                <tr>
+                    <td>LightGCN</td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                </tr>
+                <tr>
+                    <td>DIN</td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                </tr>
+                <tr>
+                    <td>DIEN</td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                </tr>
+                <tr style="background: #dbeafe; font-weight: bold;">
+                    <td>完整模型 (Ours)</td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                </tr>
+            </table>
+
+            <h3>消融实验结果</h3>
+            <table>
+                <tr>
+                    <th>变体</th>
+                    <th>Recall@10</th>
+                    <th>NDCG@10</th>
+                    <th>AUC</th>
+                    <th>变化</th>
+                </tr>
+                <tr>
+                    <td>去除行为权重</td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                    <td><em>待计算</em></td>
+                </tr>
+                <tr>
+                    <td>去除时间衰减</td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                    <td><em>待计算</em></td>
+                </tr>
+                <tr>
+                    <td>去除长尾正则</td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                    <td><em>待计算</em></td>
+                </tr>
+                <tr>
+                    <td>去除LLM蒸馏</td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                    <td><em>待计算</em></td>
+                </tr>
+                <tr style="background: #dbeafe; font-weight: bold;">
+                    <td>完整模型</td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                    <td>-</td>
+                </tr>
+            </table>
+
+            <h3>冷启动分层分析</h3>
+            <table>
+                <tr>
+                    <th>用户分组</th>
+                    <th>LightGCN</th>
+                    <td>TI-LightGCN</th>
+                    <th>提升幅度</th>
+                </tr>
+                <tr>
+                    <td>0-4条交互</td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                    <td><em>待计算</em></td>
+                </tr>
+                <tr>
+                    <td>5-10条交互</td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                    <td><em>待计算</em></td>
+                </tr>
+                <tr>
+                    <td>11-20条交互</td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                    <td><em>待计算</em></td>
+                </tr>
+                <tr>
+                    <td>20+条交互</td>
+                    <td><em>待填写</em></td>
+                    <td><em>待填写</em></td>
+                    <td><em>待计算</em></td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- 预算与时间 -->
+        <div class="section">
+            <h2>💰 预算与时间规划</h2>
+
+            <h3>成本估算</h3>
+            <table>
+                <tr>
+                    <th>项目</th>
+                    <th>单价</th>
+                    <th>数量</th>
+                    <th>总价</th>
+                </tr>
+                <tr>
+                    <td>GPU租用（AutoDL）</td>
+                    <td>¥2/小时</td>
+                    <td>50小时</td>
+                    <td>¥100</td>
+                </tr>
+                <tr>
+                    <td>Qwen API调用</td>
+                    <td>¥0.02/千token</td>
+                    <td>~500万token</td>
+                    <td>¥100</td>
+                </tr>
+                <tr>
+                    <td>数据存储</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>¥0（本地）</td>
+                </tr>
+                <tr style="background: #dcfce7; font-weight: bold;">
+                    <td>总计</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>约¥200</td>
+                </tr>
+            </table>
+
+            <div class="alert alert-success">
+                <strong>节省方案：</strong><br>
+                • 阿里云学生免费GPU额度（可申请）<br>
+                • Qwen API学术资助计划<br>
+                • 本地GPU（如有RTX 3060+）
+            </div>
+
+            <h3>时间线</h3>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <strong>Week 1</strong>: 环境搭建 + TI-LightGCN实现
+                </div>
+                <div class="timeline-item">
+                    <strong>Week 2</strong>: Temporal-DIN + LLM蒸馏实现
+                </div>
+                <div class="timeline-item">
+                    <strong>Week 3</strong>: 主实验 + 基线对比
+                </div>
+                <div class="timeline-item">
+                    <strong>Week 4</strong>: 消融实验 + 补充实验
+                </div>
+                <div class="timeline-item">
+                    <strong>Week 5</strong>: 结果整理 + 论文图表
+                </div>
+            </div>
+        </div>
+
+        <!-- 常见问题 -->
+        <div class="section">
+            <h2>❓ 常见问题</h2>
+
+            <h3>Q1: 没有GPU怎么办？</h3>
+            <p>CPU也可以跑，但训练时间会延长3-5倍。建议：</p>
+            <ul>
+                <li>使用AutoDL按小时租用，实验完立即关机</li>
+                <li>申请阿里云/腾讯云学生免费GPU</li>
+                <li>先用小数据集验证代码正确性</li>
+            </ul>
+
+            <h3>Q2: Qwen API费用如何控制？</h3>
+            <p>User Memory生成每用户约10-15次调用，可先对1000用户采样验证：</p>
+            <ul>
+                <li>先用小样本（1000用户）验证流程</li>
+                <li>缓存已生成的User Memory</li>
+                <li>使用Qwen-1.8B（更便宜）替代Qwen-7B</li>
+            </ul>
+
+            <h3>Q3: 数据集从哪里来？</h3>
+            <ul>
+                <li>Amazon Review Data: 公开数据集，直接下载</li>
+                <li>工业资产数据: 联系导师获取或从系统MySQL导出</li>
+                <li>如无法获取，可用Amazon IS数据集替代</li>
+            </ul>
+
+            <h3>Q4: 实验结果与论文不一致怎么办？</h3>
+            <ul>
+                <li>检查数据预处理是否一致</li>
+                <li>检查超参数是否对齐（λ=0.1, γ=0.3, β=0.3）</li>
+                <li>多次运行取平均值（随机种子影响）</li>
+                <li>趋势正确即可，数值略有差异是正常的</li>
+            </ul>
+        </div>
+
+        <!-- 下一步 -->
+        <div class="section">
+            <h2>🚀 下一步行动</h2>
+
+            <ol>
+                <li><strong>今天</strong>: 确认GPU资源（注册AutoDL或申请阿里云学生额度）</li>
+                <li><strong>Day 1-2</strong>: 下载数据集，完成数据预处理</li>
+                <li><strong>Day 3-5</strong>: 实现并训练TI-LightGCN</li>
+                <li><strong>Day 6-8</strong>: 实现Temporal-DIN和LLM蒸馏</li>
+                <li><strong>Day 9-14</strong>: 运行全部实验，记录结果</li>
+            </ol>
+
+            <div class="alert alert-info">
+                <strong>需要帮助？</strong><br>
+                如果在实现过程中遇到具体问题，可以随时询问：
+                <ul style="margin-top: 10px;">
+                    <li>数据预处理的具体步骤</li>
+                    <li>某个公式的代码实现细节</li>
+                    <li>实验结果的可视化方法</li>
+                </ul>
+            </div>
+        </div>
+
+        <footer style="text-align: center; padding: 30px; color: var(--text-muted);">
+            <p>Generated for 工业资产推荐系统实验 | 基于论文第四章核心算法</p>
+            <p>Last updated: 2026-11-10</p>
+        </footer>
+    </div>
+</body>
+</html>

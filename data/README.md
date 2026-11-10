@@ -1,117 +1,82 @@
-# 数据集说明
+# Amazon Review 数据集
 
 ## 数据集概览
 
-| 数据集 | 简称 | 用户数 | 物品数 | 交互数 | 稀疏度 | 用途 |
-|--------|------|--------|--------|--------|--------|------|
-| Industrial & Scientific | IS | ~16,438 | ~10,228 | ~680,000 | >99% | 主实验 |
-| Tools & Hardware | TH | - | - | - | 中等稀疏 | 跨域验证 |
-| Office Products | OP | - | - | - | 较密集 | 跨域验证 |
-| Automotive Jewelry | AJ | - | - | - | - | 跨域验证 (含多行为数据) |
+| 数据集 | 简称 | 用途 | 预期大小 |
+|--------|------|------|----------|
+| Industrial & Scientific | IS | 主实验 | 46.6MB |
+| Tools & Hardware | TH | 跨域验证 | 364MB |
+| Office Products | OP | 跨域验证 | 238MB |
+| Automotive | AJ | 跨域验证 (含多行为) | 227MB |
 
-## 数据来源
+## 快速开始
 
-- **Amazon Review Data (2023)**: https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023
-- **Amazon Review Data (2018)**: https://cseweb.ucsd.edu/~jmcauley/datasets/amazon_v2/
+```bash
+# 一键下载 + 预处理
+bash quick_start.sh
+
+# 或分步执行:
+python3 download_data.py              # 下载 (支持断点续传)
+python3 prepare_data.py --k-core 5    # 预处理
+```
+
+## 脚本说明
+
+- **download_data.py** - 下载脚本 (支持断点续传、并行)
+- **prepare_data.py** - 预处理脚本 (K-core 过滤、时序划分)
+- **quick_start.sh** - 一键执行下载+预处理
+
+## 下载参数
+
+```bash
+python3 download_data.py --source snap --workers 4
+# --source: 数据源 (snap/deepyeti)
+# --workers: 并行数 (默认 4)
+# --dry-run: 仅显示下载列表
+```
+
+## 预处理参数
+
+```bash
+python3 prepare_data.py --categories IS TH --k-core 5 --output-format both
+# --categories: 要处理的类别 (IS/TH/OP/AJ)
+# --k-core: K-core 过滤阈值 (0=不过滤, 推荐 5)
+# --output-format: 输出格式 (csv/parquet/both)
+# --stats-only: 仅输出统计信息
+```
 
 ## 目录结构
 
 ```
 data/
-├── README.md              # 本文件
-├── download_data.py       # 数据下载脚本
-├── prepare_data.py        # 数据预处理脚本
-├── quick_start.sh         # 一键下载+处理
-├── raw/                   # 原始数据 (下载后生成)
-│   ├── Industrial_and_Scientific.json.gz
-│   ├── meta_Industrial_and_Scientific.json.gz
-│   ├── Tools_and_Home_Improvement.json.gz
-│   └── ...
-└── processed/             # 处理后数据 (预处理后生成)
-    ├── IS/                # 主实验数据
-    │   ├── train.csv
-    │   ├── val.csv
-    │   ├── test.csv
-    │   ├── item_meta.csv
-    │   ├── id_maps/
-    │   └── stats.json
-    ├── TH/                # 跨域验证数据
-    ├── OP/
-    ├── AJ/
-    └── cross_domain/
-        └── cross_domain_summary.json
+├── raw/                    # 原始 JSON.gz (下载后)
+│   ├── reviews_*.json.gz   # 评论数据
+│   └── meta_*.json.gz      # 物品元数据
+└── processed/              # 处理后数据
+    ├── IS/                 # 各类别子目录
+    │   ├── train.csv       # 训练集
+    │   ├── val.csv         # 验证集
+    │   ├── test.csv        # 测试集
+    │   ├── item_meta.csv   # 物品元数据
+    │   ├── id_maps/        # ID 映射 (JSON)
+    │   └── stats.json      # 统计信息
+    └── cross_domain/       # 跨域汇总
 ```
 
-## 快速开始
+## 数据字段
 
-```bash
-# 1. 安装依赖
-pip install pandas numpy pyarrow datasets
+**评论数据**: `user_id`, `item_id`, `rating`, `timestamp`, `review_text`, `summary`, `verified`
 
-# 2. 下载数据 (全部类别)
-python download_data.py
+**物品元数据**: `item_id`, `title`, `brand`, `category`, `description`, `price`, `features`
 
-# 3. 只下载主实验数据
-python download_data.py --categories IS
+## 数据源
 
-# 4. 预处理数据 (5-core 过滤)
-python prepare_data.py --k-core 5
-
-# 5. 一键执行
-bash quick_start.sh
-```
-
-## 脚本参数
-
-### download_data.py
-
-| 参数 | 说明 | 默认值 |
-|------|------|--------|
-| `--categories` | 要下载的类别 (IS/TH/OP/AJ) | 全部 |
-| `--source` | 下载来源 (auto/hf/direct/kaggle/manual) | auto |
-| `--data-type` | 数据类型 (reviews/meta/both) | both |
-| `--dry-run` | 只打印操作不实际下载 | false |
-
-### prepare_data.py
-
-| 参数 | 说明 | 默认值 |
-|------|------|--------|
-| `--categories` | 要处理的类别 | 全部 |
-| `--k-core` | K-core 过滤阈值 (0=不过滤) | 0 |
-| `--output-format` | 输出格式 (csv/parquet/both) | both |
-| `--stats-only` | 只输出统计信息 | false |
-| `--val-ratio` | 验证集比例 | 0.1 |
-| `--test-ratio` | 测试集比例 | 0.1 |
-
-## 数据字段说明
-
-### 评论数据 (reviews)
-
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| user_id | str | 用户 ID (reviewerID) |
-| item_id | str | 物品 ID (ASIN) |
-| rating | float | 评分 (1-5) |
-| timestamp | int | Unix 时间戳 |
-| review_text | str | 评论文本 (可选) |
-| summary | str | 评论摘要 (可选) |
-| verified | bool | 是否验证购买 (可选) |
-
-### 物品元数据 (meta)
-
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| item_id | str | 物品 ID (ASIN) |
-| title | str | 商品标题 |
-| brand | str | 品牌 |
-| category | list | 商品类别 |
-| description | str | 商品描述 |
-| price | float | 价格 |
-| features | list | 商品特征 |
+- SNAP Stanford (优先): `http://snap.stanford.edu/data/amazon/productGraph/`
+- DeepYeti UCSD (备用): `http://deepyeti.ucsd.edu/jianmo/amazon/`
+- 原始页面: https://cseweb.ucsd.edu/~jmcauley/datasets/amazon_v2/
 
 ## 注意事项
 
-- 原始数据来自 UCSD McAuley 实验室, deepyeti 服务器已退役
-- 推荐通过 HuggingFace 的 McAuley-Lab/Amazon-Reviews-2023 下载
-- 2023 版本包含 1996-2023 的数据, 可过滤至 2018 之前得到 2018 版本
-- 处理后的 ID 映射保存在 `id_maps/` 目录, 确保训练和推理使用一致的编码
+- 下载支持断点续传，中断后重新运行即可继续
+- SNAP 服务器速度约 10MB/min，总计 ~1.1GB 需 ~2 小时
+- 处理后的 ID 映射保存在 `id_maps/`，确保训练推理一致

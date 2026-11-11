@@ -157,33 +157,67 @@ helpful_vote + rating` 三维度行为推导（见 `data_list.txt` 第四节）�
 ```bash
 cd data
 
+# 下载默认组（core + rag，约 1.1GB）
+python3 download_data.py
+
+# 只下 IS
+python3 download_data.py --groups core --filter IS
+
+# 全部（core/rag/loo/meta/reviews-ext，约 7.7GB）
+python3 download_data.py --groups all
+
+# 仅校验已有文件（精确字节数 + gzip 完整性）
+python3 download_data.py --verify-only
+
 # 预处理（--k-core 0：2023 benchmark 已过滤，不要再过滤一遍）
 python3 prepare_data.py --categories IS TH OP --k-core 0 --output-format csv
 
 # 仅看统计
 python3 prepare_data.py --categories IS --stats-only
-
-# 输出：processed/{IS,TH,OP}/{train,val,test}.csv + item_meta.csv + id_maps/ + stats.json
 ```
 
-`prepare_data.py` 的划分参数 `--val-ratio` / `--test-ratio` 默认 0.1/0.1，是**比例划分，
-不是 LOO**。若要生成论文口径的 LOO 划分，优先直接使用 `raw_2023/loo/` 的官方文件；
-需要自建时须改 `temporal_split()`（当前实现会取最后 10%，交互多的用户会有多条进测试集）。
+下载分组：
 
-## 六、已知问题（脚本与新数据尚未对齐）
+| 分组 | 内容 | 体积 |
+|------|------|------|
+| `core` | IS/TH/OP 三个 5-core 评分文件 | 172 MB |
+| `rag` | IS 评论原文 + IS 商品元数据 | 913 MB |
+| `loo` | 官方 LOO 划分（9 个 train/valid/test） | 212 MB |
+| `meta` | TH/OP 商品元数据 | 1.6 GB |
+| `reviews-ext` | TH/OP 评论原文（默认不下） | 4.8 GB |
 
-以下问题已在 `data_list.txt` 中登记，尚未修复：
+`download_data.py` 的下载行为：
 
-| # | 位置 | 问题 | 影响 |
-|---|------|------|------|
-| 1 | `download_data.py` | 全部 URL 指向 SNAP v1 的 `productGraph/` 与 `deepyeti/`。这些地址仍可访问（实测 SNAP 返回 200），返回的是 **2018 版** `reviews_*.json.gz`，与 docx 指定的 2023 版不是同一份数据 | 下到的是旧版数据，字段与统计均不符 |
-| 2 | `download_data.py` | `EXPECTED_SIZES` 为 2018 版大小（IS 46.6MB 等），与 2023 版（6.8MB）不符 | 大小校验全部失败 |
-| 3 | `prepare_data.py` | `RAW_DIR = data/raw`，`glob("*{category}*")` 找 `*.json.gz`；2023 数据在 `raw_2023/*.csv.gz` | 找不到输入文件 |
-| 4 | `prepare_data.py` | `load_json_gz` 用 `json.loads` 逐行解析，2023 版是 JSONL 可解析，但 2018 版 meta 是 dict 字面量会全部跳过 | 已不适用（改用 2023 后 meta 可正常解析） |
-| 5 | `prepare_data.py` | `CATEGORIES["AJ"] = "Automotive"`，而 docx 的 AJ 是 Alibaba IJCAI15 | 类别定义错误 |
-| 6 | `prepare_data.py` | `temporal_split` 按比例划分，非 LOO | 与 docx 5.1.1 口径不符 |
-| 7 | `quick_start.sh` | 调用 `--k-core 5`，对已过滤的 2023 数据会二次过滤并显著缩小 | 数据量异常偏小 |
-| 8 | 全项目 | docx 表 5-1、4.1.3、表 3-4、3.4 选型中的 16,438/10,228/164,923 与实测 50,985/25,848/412,947 不符 | 论文数字需回改 |
+- 写入 `<file>.part`，**精确字节数 + `gzip -t` 双重校验通过后**才原子改名为正式文件
+- 用 `flock` 排他锁防止多进程写同一文件
+- 断点续传由 Python 侧重试驱动，**不使用 `curl --retry`**（它配合 `-C -` 会截断文件）
+- `--speed-limit/--speed-time` 识别长时间零速的僵死连接
+
+输出：`processed/{IS,TH,OP}/{train,val,test}.csv` + `item_meta.csv` + `id_maps/` + `stats.json`
+
+`prepare_data.py` 默认 `--split-mode loo`（留一法，对齐 docx 5.1.1）。
+已实测验证：IS 自建 LOO 划分与官方 `last_out/` **逐条完全一致**
+（train/val/test = 310,977 / 50,985 / 50,985，test 集 50,985 条交集全中、零差异）。
+需要旧的按比例划分时用 `--split-mode ratio`。
+
+## 六、脚本与新数据的对齐状态
+
+已修复（2026-11-11）：
+
+| 脚本 | 改动 |
+|------|------|
+| `download_data.py` | 完全重写：URL 改为 2023 官方地址、目标目录改 `raw_2023/`、精确字节数 + gzip 双校验、`.part` 原子落盘、`flock` 防并发、分组下载 |
+| `prepare_data.py` | `RAW_DIR` 改 `raw_2023/`；新增 CSV 读取（2023 的 5-core 是 CSV 不是 JSON）；毫秒→秒时间戳转换；`temporal_split` 新增 `--split-mode loo`（默认）；`CATEGORIES` 移除错误的 `AJ=Automotive` |
+| `quick_start.sh` | 改调新分组参数；`--k-core 5` → `--k-core 0`；增加下载后校验步骤 |
+
+仍待处理：
+
+| # | 位置 | 问题 |
+|---|------|------|
+| 1 | `prepare_data.py` | 未实现 AJ（Alibaba IJCAI15）的加载路径。该数据集格式为 `user_id,item_id,cat_id,seller_id,brand_id,time_stamp,action_type`，与 Amazon 不同，需单独处理 |
+| 2 | `prepare_data.py` | 行为类型推导（rating→buy/collect/click/show）尚未写入，当前输出只有 `rating` 原值 |
+| 3 | 论文 | docx 表 5-1、4.1.3、表 3-4、3.4 选型的数字与实测不符，见 `data_list.txt` 第七节 |
+| 4 | 行为加权设计 | buy 占比 72~73%，α_b 近似退化为常数，消融实验难做出差异；方案待定，见 `data_list.txt` 第四节 |
 
 ## 七、数据源
 

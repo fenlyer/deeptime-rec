@@ -31,3 +31,4 @@ Thumbs.db
 *.log
 *.csv.gz
 data/raw_2023/*
+data/raw_aj/*

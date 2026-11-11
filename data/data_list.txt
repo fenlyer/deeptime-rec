@@ -4,28 +4,6 @@
   核对日期：2026-11-11
 ================================================================================
 
-【本版修订说明】
-  上一版清单存在 3 处与论文/实际数据源不符的问题，本版已全部更正：
-
-  1) 数据集版本错误：上一版给的是 SNAP v1（2018）的 reviews/meta .json.gz 地址，
-     而 docx 5.1.1 正文写的是 "Amazon Review Dataset 2023"，且引用文献 [38]
-     （Hou Y, Li J, He Z, et al. Bridging Language and Items for Retrieval and
-     Recommendation. arXiv:2403.03952）正是 2023 版数据集的论文。
-     → 本版统一改为 2023 版（mcauleylab.ucsd.edu 官方 benchmark）。
-
-  2) 数据集版本错误：上一版给的是 SNAP v1（2018）的 reviews/meta .json.gz 地址，
-     而 docx 5.1.1 正文写的是 "Amazon Review Dataset 2023"，且引用文献 [38]
-     （Hou Y, Li J, He Z, et al. Bridging Language and Items for Retrieval and
-     Recommendation. arXiv:2403.03952）正是 2023 版数据集的论文。
-     → 本版统一改为 2023 版（mcauleylab.ucsd.edu 官方 benchmark）。
-     ※ 说明：SNAP v1 的地址本身仍可访问（实测返回 200），下到的确实是 2018 版
-       数据，并非 404；问题在于版本不对，而非地址失效。
-
-  3) AJ 数据集 ID 错误：上一版写天池 dataId=46，实测 dataId=46 是「阿里移动推荐
-     算法数据集」（2014 年移动推荐赛，字段 behavior_type 取 1/2/3/4）。
-     IJCAI-15 Repeat Buyers Prediction Dataset 的实际 dataId 是 42。
-     → 本版改为 dataId=42。
-
 --------------------------------------------------------------------------------
   零、统一说明
 --------------------------------------------------------------------------------
@@ -403,25 +381,41 @@
   data/raw_2023/ 实际状态：
 
     ✅ IS_5core.csv.gz           7,114,449 字节 = 目标值，gzip -t 通过
+    ✅ TH_5core.csv.gz         134,267,062 字节 = 目标值，gzip -t 通过
     ✅ OP_5core.csv.gz          30,826,376 字节 = 目标值，gzip -t 通过
-    ⏳ TH_5core.csv.gz          约 77 MB / 134,267,062，续传中（曾截断至 47 MB）
 
-    ❌ raw/IS_reviews.jsonl.gz  未下载（RAG 评论摘要层必需）
-    ❌ raw/IS_meta.jsonl.gz     未下载（商品属性文档 + 长尾正则化必需）
-    ❌ loo/IS.*.csv.gz          未下载（可选）
-    ❌ loo/TH.*.csv.gz          未下载（可选）
-    ❌ loo/OP.*.csv.gz          未下载（可选）
-    ❌ data/raw_aj/             未下载（需天池登录）
+    ✅ raw/IS_reviews.jsonl.gz  675,586,079 字节 = 目标值，gzip -t 通过
+    ✅ raw/IS_meta.jsonl.gz     281,523,932 字节 = 目标值，gzip -t 通过
+    ✅ raw/TH_reviews.jsonl.gz 3,509,652,638 字节 = 目标值，gzip -t 通过
+    ✅ raw/TH_meta.jsonl.gz    1,211,372,176 字节 = 目标值，gzip -t 通过
+    ✅ raw/OP_reviews.jsonl.gz 1,616,649,135 字节 = 目标值，gzip -t 通过
+    ✅ raw/OP_meta.jsonl.gz     528,939,340 字节 = 目标值，gzip -t 通过
 
-  注：OP 曾截断至 25,720,801 字节（gzip 报 unexpected end of file），
-      已通过 curl -C - 续传补齐并校验通过，可作为续传流程的验证案例。
+    ✅ loo/IS.{train,valid,test}.csv.gz   全部通过 gzip -t
+    ✅ loo/TH.{train,valid,test}.csv.gz   全部通过 gzip -t
+    ✅ loo/OP.{train,valid,test}.csv.gz   全部通过 gzip -t
+
+  data/raw_aj/ 实际状态：
+
+    ✅ data_format1/user_log_format1.csv    1,910,208,392 字节（核心行为日志）
+       表头：user_id,item_id,cat_id,seller_id,brand_id,time_stamp,action_type
+       ✅ 与清单 3.2 预期一致
+    ✅ data_format1/user_info_format1.csv       4,546,137 字节（用户属性，可选）
+    ✅ data_format1/train_format1.csv           3,530,906 字节（复购标签）
+    ✅ data_format1/test_format1.csv            3,277,697 字节（测试集）
+    ✅ data_format2/train_format2.csv         767,446,877 字节
+    ✅ data_format2/test_format2.csv          768,663,861 字节
+    ✅ sample_submission.csv                    4,062,128 字节
+
+    ⚠ action_type 取值待确认：天池数据为 4 类编码（0/1/2/3），需映射到
+      click/cart/purchase/favorite，详见第三节 3.2 注意事项。
 
   总计：
-    必下 5 个文件，约 1.1 GB
-    可选（LOO 划分）9 个文件，约 0.21 GB
-    可选（TH/OP meta）约 1.6 GB
-    可选（TH/OP 评论）约 4.8 GB —— 默认不下载
-    AJ 需登录，大小待定
+    ✅ 必下 5 个文件，约 1.1 GB（全部完成）
+    ✅ 可选（LOO 划分）9 个文件，约 0.21 GB（全部完成）
+    ✅ 可选（TH/OP meta）约 1.6 GB（全部完成）
+    ✅ 可选（TH/OP 评论）约 4.8 GB（全部完成）
+    ✅ AJ 需登录，约 3.4 GB（已下载，已解压验证）
 
 
 ────────────────────────────────────────────────────────────────────────────────

@@ -31,16 +31,19 @@ import numpy as np
 import pandas as pd
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-RAW_DIR = SCRIPT_DIR / "raw"
+RAW_DIR = SCRIPT_DIR / "raw_2023"
 PROCESSED_DIR = SCRIPT_DIR / "processed"
 PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
 
+# Amazon 2023 benchmark 类别
 CATEGORIES = {
     "IS": "Industrial_and_Scientific",
     "TH": "Tools_and_Home_Improvement",
     "OP": "Office_Products",
-    "AJ": "Automotive",
 }
+
+# AJ（Alibaba IJCAI15）不是 Amazon 数据，格式不同，走单独的加载路径
+AJ_DIR = SCRIPT_DIR / "raw_aj"
 
 
 def log(msg: str, level: str = "INFO"):
@@ -69,15 +72,45 @@ def load_json_gz(filepath: Path) -> list[dict]:
     return records
 
 
+def load_reviews_csv(filepath: Path) -> pd.DataFrame:
+    """
+    加载 Amazon 2023 benchmark 5-core 评分文件（CSV.gz）
+
+    字段: user_id, parent_asin, rating, timestamp(毫秒)
+    """
+    log(f"加载评分文件: {filepath.name}")
+    df = pd.read_csv(filepath, compression="gzip")
+    log(f"读取 {len(df):,} 条记录")
+
+    rename_map = {"parent_asin": "item_id"}
+    df = df.rename(columns={k: v for k, v in rename_map.items() if k in df.columns})
+
+    required = ["user_id", "item_id", "rating", "timestamp"]
+    missing = [c for c in required if c not in df.columns]
+    if missing:
+        log(f"缺少关键列: {missing}, 可用列: {list(df.columns)}", "ERROR")
+        return pd.DataFrame()
+
+    # 2023 版时间戳为毫秒，统一转换为秒（下游按秒处理）
+    if len(df) and df["timestamp"].max() > 1e11:
+        log("时间戳为毫秒级，转换为秒")
+        df["timestamp"] = (df["timestamp"] // 1000).astype("int64")
+
+    return df
+
+
 def load_reviews(filepath: Path) -> pd.DataFrame:
-    """加载评论数据并转为 DataFrame"""
+    """加载评论数据并转为 DataFrame（JSONL：2023 版评论原文）"""
+    if filepath.suffix == ".csv" or filepath.name.endswith(".csv.gz"):
+        return load_reviews_csv(filepath)
+
     records = load_json_gz(filepath)
     df = pd.DataFrame(records)
 
-    # 统一字段名 (兼容 2018 和 2023 版本)
+    # 统一字段名 (2023 版 JSONL 为主；保留 2018 版映射以便旧文件仍可用)
     rename_map = {
+        # 2018 版
         "reviewerID": "user_id",
-        "asin": "item_id",
         "overall": "rating",
         "unixReviewTime": "timestamp",
         "reviewText": "review_text",
@@ -85,20 +118,16 @@ def load_reviews(filepath: Path) -> pd.DataFrame:
         "verified": "verified",
         "reviewerName": "reviewer_name",
         "reviewTime": "review_time",
+        # 2023 版
+        "asin": "item_id",
+        "parent_asin": "item_id",
+        "text": "review_text",
+        "title": "summary",
+        "verified_purchase": "verified",
     }
     for old, new in rename_map.items():
-        if old in df.columns:
+        if old in df.columns and new not in df.columns:
             df = df.rename(columns={old: new})
-
-    # 2023 版本字段映射
-    if "rating" not in df.columns and "overall" in df.columns:
-        df["rating"] = df["overall"]
-    if "user_id" not in df.columns and "user_id" in df.columns:
-        pass  # 已经是新名
-    if "item_id" not in df.columns and "asin" in df.columns:
-        df["item_id"] = df["asin"]
-    if "timestamp" not in df.columns and "timestamp" in df.columns:
-        pass
 
     # 确保关键列存在
     required_cols = ["user_id", "item_id", "rating", "timestamp"]
@@ -106,6 +135,10 @@ def load_reviews(filepath: Path) -> pd.DataFrame:
     if missing:
         log(f"缺少关键列: {missing}, 可用列: {list(df.columns)}", "ERROR")
         return pd.DataFrame()
+
+    # 2023 版时间戳为毫秒
+    if len(df) and df["timestamp"].max() > 1e11:
+        df["timestamp"] = (df["timestamp"] // 1000).astype("int64")
 
     return df[required_cols + [c for c in ["review_text", "summary", "verified"] if c in df.columns]]
 
@@ -182,46 +215,70 @@ def encode_ids(df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
     return df_encoded, id_maps
 
 
-def temporal_split(df: pd.DataFrame, val_ratio: float = 0.1, test_ratio: float = 0.1) -> dict:
+def temporal_split(df: pd.DataFrame, mode: str = "loo",
+                   val_ratio: float = 0.1, test_ratio: float = 0.1) -> dict:
     """
-    按时间戳划分训练/验证/测试集
-    - 每个用户的交互按时间排序
-    - 最后 test_ratio 作为测试
-    - 倒数第二个 val_ratio 作为验证
-    - 其余作为训练
+    划分训练/验证/测试集。
+
+    mode="loo"（默认，对齐 docx 5.1.1 留一法）：
+      每位用户的最后一条 → test，倒数第二条 → valid，其余 → train。
+      交互数 <3 的用户：最后一条 → test，其余 → train（无 valid）。
+
+    mode="ratio"：按比例划分（旧行为，保留用于对照实验）。
     """
-    log(f"时序划分 (val={val_ratio:.0%}, test={test_ratio:.0%})...")
+    if mode == "loo":
+        log("LOO 时序划分（最后一条→test，倒数第二条→valid）...")
+        df_sorted = df.sort_values(["user_id", "timestamp"], kind="mergesort")
 
-    df_sorted = df.sort_values("timestamp")
-    train_records, val_records, test_records = [], [], []
+        train_parts, val_parts, test_parts = [], [], []
+        for _, group in df_sorted.groupby("user_id", sort=False):
+            n = len(group)
+            if n < 3:
+                train_parts.append(group.iloc[:-1])
+                test_parts.append(group.iloc[-1:])
+                continue
+            train_parts.append(group.iloc[:-2])
+            val_parts.append(group.iloc[-2:-1])
+            test_parts.append(group.iloc[-1:])
 
-    for uid, group in df_sorted.groupby("user_id"):
-        n = len(group)
-        if n < 3:
-            train_records.append(group)
-            continue
+        result = {
+            "train": pd.concat(train_parts, ignore_index=True),
+            "val": pd.concat(val_parts, ignore_index=True) if val_parts else pd.DataFrame(),
+            "test": pd.concat(test_parts, ignore_index=True),
+        }
+    else:
+        log(f"比例时序划分 (val={val_ratio:.0%}, test={test_ratio:.0%})...")
+        df_sorted = df.sort_values(["user_id", "timestamp"], kind="mergesort")
+        train_records, val_records, test_records = [], [], []
 
-        n_test = max(1, int(n * test_ratio))
-        n_val = max(1, int(n * val_ratio))
-        n_train = n - n_val - n_test
+        for _, group in df_sorted.groupby("user_id", sort=False):
+            n = len(group)
+            if n < 3:
+                train_records.append(group)
+                continue
 
-        if n_train < 1:
-            train_records.append(group.iloc[:1])
-            val_records.append(group.iloc[1:2])
-            test_records.append(group.iloc[2:])
-        else:
-            train_records.append(group.iloc[:n_train])
-            val_records.append(group.iloc[n_train:n_train + n_val])
-            test_records.append(group.iloc[n_train + n_val:])
+            n_test = max(1, int(n * test_ratio))
+            n_val = max(1, int(n * val_ratio))
+            n_train = n - n_val - n_test
 
-    result = {
-        "train": pd.concat(train_records, ignore_index=True),
-        "val": pd.concat(val_records, ignore_index=True) if val_records else pd.DataFrame(),
-        "test": pd.concat(test_records, ignore_index=True) if test_records else pd.DataFrame(),
-    }
+            if n_train < 1:
+                train_records.append(group.iloc[:1])
+                val_records.append(group.iloc[1:2])
+                test_records.append(group.iloc[2:])
+            else:
+                train_records.append(group.iloc[:n_train])
+                val_records.append(group.iloc[n_train:n_train + n_val])
+                test_records.append(group.iloc[n_train + n_val:])
 
+        result = {
+            "train": pd.concat(train_records, ignore_index=True),
+            "val": pd.concat(val_records, ignore_index=True) if val_records else pd.DataFrame(),
+            "test": pd.concat(test_records, ignore_index=True) if test_records else pd.DataFrame(),
+        }
+
+    total = len(df)
     for split, data in result.items():
-        log(f"  {split}: {len(data):,} 条 ({len(data)/len(df)*100:.1f}%)")
+        log(f"  {split}: {len(data):,} 条 ({len(data)/total*100:.1f}%)")
 
     return result
 
@@ -272,24 +329,35 @@ def print_stats(stats: dict):
 
 
 def process_category(short_name: str, k_core: int = 0, output_format: str = "both",
-                     stats_only: bool = False, val_ratio: float = 0.1, test_ratio: float = 0.1):
+                     stats_only: bool = False, val_ratio: float = 0.1,
+                     test_ratio: float = 0.1, split_mode: str = "loo"):
     """处理单个类别的数据"""
     full_name = CATEGORIES[short_name]
     log(f"处理 [{short_name}] {full_name}")
     log(f"{'='*50}")
 
-    # 查找原始数据文件
-    review_file = None
-    meta_file = None
-    for f in RAW_DIR.glob(f"*{full_name}*"):
-        if f.name.startswith("meta_"):
-            meta_file = f
-        else:
-            review_file = f
+    # 查找原始数据文件（2023 版命名：{IS,TH,OP}_5core.csv.gz 与 raw/*_meta.jsonl.gz）
+    short_to_file = {"IS": "IS", "TH": "TH", "OP": "OP"}
+    stem = short_to_file.get(short_name, short_name)
 
-    if review_file is None:
-        log(f"未找到评论数据: *{full_name}*", "ERROR")
-        log(f"请先运行 download_data.py 下载数据", "ERROR")
+    review_file = RAW_DIR / f"{stem}_5core.csv.gz"
+    meta_file = RAW_DIR / "raw" / f"{stem}_meta.jsonl.gz"
+
+    if not review_file.exists():
+        # 兼容旧命名
+        for f in sorted(RAW_DIR.glob(f"*{full_name}*")):
+            if "meta" not in f.name:
+                review_file = f
+                break
+
+    if not meta_file.exists():
+        for f in sorted((RAW_DIR / "raw").glob(f"*{full_name}*meta*") if (RAW_DIR / "raw").exists() else []):
+            meta_file = f
+            break
+
+    if not review_file.exists():
+        log(f"未找到评分文件: {review_file}", "ERROR")
+        log(f"请先运行: python3 download_data.py --groups core", "ERROR")
         return None
 
     # 加载评论数据
@@ -318,7 +386,8 @@ def process_category(short_name: str, k_core: int = 0, output_format: str = "bot
     df_encoded, id_maps = encode_ids(df)
 
     # 时序划分
-    splits = temporal_split(df_encoded, val_ratio=val_ratio, test_ratio=test_ratio)
+    splits = temporal_split(df_encoded, mode=split_mode,
+                            val_ratio=val_ratio, test_ratio=test_ratio)
 
     # 输出目录
     out_dir = PROCESSED_DIR / short_name
@@ -409,8 +478,10 @@ def main():
                         help="输出格式")
     parser.add_argument("--stats-only", action="store_true",
                         help="只输出统计信息, 不生成训练数据")
-    parser.add_argument("--val-ratio", type=float, default=0.1, help="验证集比例")
-    parser.add_argument("--test-ratio", type=float, default=0.1, help="测试集比例")
+    parser.add_argument("--val-ratio", type=float, default=0.1, help="验证集比例（仅 --split-mode ratio 时生效）")
+    parser.add_argument("--test-ratio", type=float, default=0.1, help="测试集比例（仅 --split-mode ratio 时生效）")
+    parser.add_argument("--split-mode", choices=["loo", "ratio"], default="loo",
+                        help="划分方式：loo=留一法（默认，对齐 docx 5.1.1），ratio=按比例")
     args = parser.parse_args()
 
     log("Amazon Review 数据预处理器")
@@ -429,6 +500,7 @@ def main():
             stats_only=args.stats_only,
             val_ratio=args.val_ratio,
             test_ratio=args.test_ratio,
+            split_mode=args.split_mode,
         )
         all_stats.append(stats)
 

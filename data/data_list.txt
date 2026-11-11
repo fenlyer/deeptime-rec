@@ -1,0 +1,446 @@
+================================================================================
+  数据集下载清单
+  基准文档：docs/1109-整改V7.docx（5.1.1 数据集选取与说明、表 5-1、表 4-1、4.1.4）
+  核对日期：2026-11-11
+================================================================================
+
+【本版修订说明】
+  上一版清单存在 3 处与论文/实际数据源不符的问题，本版已全部更正：
+
+  1) 数据集版本错误：上一版给的是 SNAP v1（2018）的 reviews/meta .json.gz 地址，
+     而 docx 5.1.1 正文写的是 "Amazon Review Dataset 2023"，且引用文献 [38]
+     （Hou Y, Li J, He Z, et al. Bridging Language and Items for Retrieval and
+     Recommendation. arXiv:2403.03952）正是 2023 版数据集的论文。
+     → 本版统一改为 2023 版（mcauleylab.ucsd.edu 官方 benchmark）。
+
+  2) 数据集版本错误：上一版给的是 SNAP v1（2018）的 reviews/meta .json.gz 地址，
+     而 docx 5.1.1 正文写的是 "Amazon Review Dataset 2023"，且引用文献 [38]
+     （Hou Y, Li J, He Z, et al. Bridging Language and Items for Retrieval and
+     Recommendation. arXiv:2403.03952）正是 2023 版数据集的论文。
+     → 本版统一改为 2023 版（mcauleylab.ucsd.edu 官方 benchmark）。
+     ※ 说明：SNAP v1 的地址本身仍可访问（实测返回 200），下到的确实是 2018 版
+       数据，并非 404；问题在于版本不对，而非地址失效。
+
+  3) AJ 数据集 ID 错误：上一版写天池 dataId=46，实测 dataId=46 是「阿里移动推荐
+     算法数据集」（2014 年移动推荐赛，字段 behavior_type 取 1/2/3/4）。
+     IJCAI-15 Repeat Buyers Prediction Dataset 的实际 dataId 是 42。
+     → 本版改为 dataId=42。
+
+--------------------------------------------------------------------------------
+  零、统一说明
+--------------------------------------------------------------------------------
+
+  【数据源根地址】
+    Amazon 2023 官方：https://mcauleylab.ucsd.edu/public_datasets/data/amazon_2023/
+    （McAuley Lab, UCSD 发布；即 docx 引用文献 [38] 对应的数据集）
+
+  【与 docx 5.1.1 对齐的三条处理口径】
+    · 5-core 过滤：保留交互次数 ≥5 的用户与商品
+        → 直接使用官方 benchmark/5core/ 目录下已过滤好的文件，无需自行过滤
+    · 留一法（LOO）划分：每位用户最后一条 → 测试，倒数第二条 → 验证，其余 → 训练
+        → benchmark/5core/last_out/ 目录即为此口径
+          （已实测验证：IS 的 train/valid/test 合计 412,947 条，与 rating_only
+            全量完全一致；50,984/50,985 位用户的最后一条落在 test，
+            倒数第二条落在 valid，仅 1 位用户因同一时间戳并列存在歧义）
+    · 行为类型：Amazon 无原生加购事件，仅按评分推导 4 类（见第四节）
+        → 与 docx 5.1.1 第二段"IS、TH、OP 三个数据集实际使用四类推导行为"一致
+
+  【目录约定】
+    data/raw_2023/              5-core 评分文件（建模用，必下）
+    data/raw_2023/loo/          官方 LOO 划分（可选，用于与自建划分互校）
+    data/raw_2023/raw/          原始评论与元数据（RAG 知识库、长尾正则化用）
+    data/raw_aj/                AJ 天猫数据集
+
+  【校验方式】
+    下载后用字节数比对（见第五节脚本），并以 gzip -t 校验完整性。
+    ⚠ 2026-11-11 复盘中曾出现 TH/OP 下载中途被截断的情况（gzip 报
+      "unexpected end of file"），仅比对文件名不足以保证可用，必须跑 gzip -t。
+
+
+────────────────────────────────────────────────────────────────────────────────
+  一、主实验数据集 — Industrial_and_Scientific（IS）
+────────────────────────────────────────────────────────────────────────────────
+
+  docx 定位：5.1.1「主实验数据集选取 Amazon Review Dataset 2023 的 Industrial &
+  Scientific（IS）子集」，用于 5.2~5.4 全部主实验。
+
+  ── 1.1 5-core 评分文件（必下，建模基础）─────────────────────────────────
+
+    本地路径：data/raw_2023/IS_5core.csv.gz
+    URL：https://mcauleylab.ucsd.edu/public_datasets/data/amazon_2023/benchmark/5core/rating_only/Industrial_and_Scientific.csv.gz
+    精确大小：7,114,449 字节（6.8 MB）
+    格式：CSV（gzip），首行为表头
+    字段：user_id, parent_asin, rating, timestamp（毫秒级 UNIX 时间戳）
+    用途：TI-LightGCN 图构建、Temporal-DIN 训练、LOO 划分的原始输入
+
+  ── 1.2 官方 LOO 划分文件（建议下，用于互校）─────────────────────────────
+
+    本地路径：data/raw_2023/loo/IS.{train,valid,test}.csv.gz
+    URL 前缀：https://mcauleylab.ucsd.edu/public_datasets/data/amazon_2023/benchmark/5core/last_out/Industrial_and_Scientific.
+      Industrial_and_Scientific.train.csv.gz    5,573,983 字节（310,977 条）
+      Industrial_and_Scientific.valid.csv.gz    1,698,931 字节（ 50,985 条）
+      Industrial_and_Scientific.test.csv.gz     1,698,419 字节（ 50,985 条）
+    用途：与自建 LOO 划分做一致性校验；口径与 docx 5.1.1 完全一致
+
+  ── 1.3 原始评论（必下，RAG 知识库"用户评论摘要层"）─────────────────────
+
+    本地路径：data/raw_2023/raw/IS_reviews.jsonl.gz
+    URL：https://mcauleylab.ucsd.edu/public_datasets/data/amazon_2023/raw/review_categories/Industrial_and_Scientific.jsonl.gz
+    精确大小：675,586,079 字节（644 MB）
+    格式：JSONL（gzip），每行一个 JSON 对象
+    字段（已取样核实）：
+      rating (float), title (str), text (str), images (list),
+      asin (str), parent_asin (str), user_id (str),
+      timestamp (毫秒 UNIX), helpful_vote (int), verified_purchase (bool)
+    用途：
+      · docx 4.x「双层文档结构」第一层的用户评论摘要
+      · 4.1.4 长尾商品的训练信号补充（稀疏商品的评论语义）
+      · 若采用"verified_purchase + helpful_vote + rating"三维度行为推导，
+        该文件为必需输入（见第四节备选方案）
+
+  ── 1.4 商品元数据（必下，RAG 知识库"商品属性文档层"）───────────────────
+
+    本地路径：data/raw_2023/raw/IS_meta.jsonl.gz
+    URL：https://mcauleylab.ucsd.edu/public_datasets/data/amazon_2023/raw/meta_categories/meta_Industrial_and_Scientific.jsonl.gz
+    精确大小：281,523,932 字节（268 MB）
+    格式：JSONL（gzip）
+    字段（已取样核实）：
+      main_category, title, average_rating, rating_number,
+      features (list[str]), description (list[str]), price (float),
+      images (list[dict]), videos (list[dict]), store, categories (list[str]),
+      details (dict[str,str]), parent_asin, bought_together
+    用途：
+      · docx 3.x metadata 表（spec_text 自然语言规格描述、img_url 商品图）
+        —— details 字段直接给出 Material/Color/Brand/Style/Dimensions 等结构化键值，
+           正是 spec_text 的原料
+      · docx 4.x 双层知识库第一层「商品属性文档」（品牌、型号、技术规格、
+        兼容性说明 → 每商品 1~3 段自然语言片段）
+      · docx 4.1.4 长尾正则化的语义锚点 ẽ_i^sem
+        （Sentence-BERT 对 title + features 编码后线性投影到图嵌入维度）
+      · 前端商品展示（title / images / price / store）
+
+    ⚠ 注意：2023 版 meta 用 parent_asin 作主键，与评分文件的 parent_asin 对齐；
+      旧版 SNAP v1 用的是 asin。join 时不要混用。
+
+  ── 1.5 IS 实测统计（与 docx 表 5-1 对照）───────────────────────────────
+
+    ┌──────────────────┬──────────────┬──────────────┬──────────────┐
+    │ 指标             │ docx 表 5-1  │ 实测值       │ 结论         │
+    ├──────────────────┼──────────────┼──────────────┼──────────────┤
+    │ 用户数           │ 16,438       │ 50,985       │ 论文偏小 3.1×│
+    │ 商品数           │ 10,228       │ 25,848       │ 论文偏小 2.5×│
+    │ 交互数           │ 164,923      │ 412,947      │ 论文偏小 2.5×│
+    │ 稀疏度           │ 99.90%       │ 99.9687%     │ 差 0.07pp    │
+    │ 平均交互/用户    │ 10.0         │ 8.10         │ 论文偏大 23% │
+    │ 行为类型数       │ 4类（推导）  │ 4类（推导）  │ 一致         │
+    └──────────────────┴──────────────┴──────────────┴──────────────┘
+
+    数据完整度校验（实测）：最小用户交互数 = 5，最小商品交互数 = 5，
+    用户-商品重复对 = 0（符合 5-core 定义，无脏数据）
+    时间跨度（实测）：2001-07 ~ 2023-08
+
+    ⇒ 表 5-1 必须改用实测值，并同步修改 docx 中另外 3 处引用同一组旧数字的位置：
+      · 4.1.3 算法复杂度分析：|U|=16438, |I|=10228 → 50985, 25848
+        （同时 |E|≈520000 与唯一对数矛盾：实测唯一对数 = 412,947，
+          |A|≈680000 亦需按实际行为记录数重算）
+      · 表 3-4 向量文件说明：TI-LightGCN 商品嵌入矩阵（10228×64）→ 25848×64
+      · 3.4 技术选型"约 16,000 用户、10,000 商品" → 约 51,000 用户、26,000 商品
+        （4.x 末尾"数万用户、上万商品"的表述可保留，口径已更贴近实际）
+
+
+────────────────────────────────────────────────────────────────────────────────
+  二、跨域验证数据集 — Tools_and_Home_Improvement（TH）/ Office_Products（OP）
+────────────────────────────────────────────────────────────────────────────────
+
+  docx 定位：5.1.1「辅助数据集选取 Amazon Tools & Home Improvement（TH）与
+  Amazon Office Products（OP）用于跨域泛化验证」；对应实验为 5.4.2 跨域泛化性能
+  验证（表 5-5）。跨域验证只考察召回/排序指标，不涉及推荐解释，故评论原文
+  非必需（可选下载，见 2.3）。
+
+  ── 2.1 TH 5-core 评分文件（必下）─────────────────────────────────────
+
+    本地路径：data/raw_2023/TH_5core.csv.gz
+    URL：https://mcauleylab.ucsd.edu/public_datasets/data/amazon_2023/benchmark/5core/rating_only/Tools_and_Home_Improvement.csv.gz
+    精确大小：134,267,062 字节（128 MB）
+    格式/字段：同 1.1（user_id, parent_asin, rating, timestamp）
+
+    官方 LOO 划分（可选，data/raw_2023/loo/）：
+      Tools_and_Home_Improvement.train.csv.gz   108,356,141 字节
+      Tools_and_Home_Improvement.valid.csv.gz    28,237,090 字节
+      Tools_and_Home_Improvement.test.csv.gz     28,223,616 字节
+
+  ── 2.2 OP 5-core 评分文件（必下）─────────────────────────────────────
+
+    本地路径：data/raw_2023/OP_5core.csv.gz
+    URL：https://mcauleylab.ucsd.edu/public_datasets/data/amazon_2023/benchmark/5core/rating_only/Office_Products.csv.gz
+    精确大小：30,826,376 字节（29 MB）
+    格式/字段：同 1.1
+
+    官方 LOO 划分（可选，data/raw_2023/loo/）：
+      Office_Products.train.csv.gz   24,069,927 字节
+      Office_Products.valid.csv.gz    7,445,759 字节
+      Office_Products.test.csv.gz     7,458,359 字节
+
+  ── 2.3 TH / OP 商品元数据（建议下，知识库与长尾正则化跨域对照）────────
+
+    data/raw_2023/raw/TH_meta.jsonl.gz  1,211,372,176 字节（1.1 GB）
+      URL：https://mcauleylab.ucsd.edu/public_datasets/data/amazon_2023/raw/meta_categories/meta_Tools_and_Home_Improvement.jsonl.gz
+
+    data/raw_2023/raw/OP_meta.jsonl.gz    528,939,340 字节（504 MB）
+      URL：https://mcauleylab.ucsd.edu/public_datasets/data/amazon_2023/raw/meta_categories/meta_Office_Products.jsonl.gz
+
+  ── 2.4 TH / OP 原始评论（可选，仅当需要跨域推荐解释时）────────────────
+
+    data/raw_2023/raw/TH_reviews.jsonl.gz  3,509,652,638 字节（3.3 GB）
+    data/raw_2023/raw/OP_reviews.jsonl.gz  1,616,649,135 字节（1.5 GB）
+    默认不下载。论文 5.4.2 跨域实验只报 Recall/NDCG，不需要评论文本。
+
+  ── 2.5 TH / OP 实测统计 ──────────────────────────────────────────────
+
+    【OP — 已实测，文件完整（gzip -t 通过）】
+    ┌──────────────────┬──────────────┬──────────────┬──────────────┐
+    │ 指标             │ docx 表 5-1  │ 实测值       │ 结论         │
+    ├──────────────────┼──────────────┼──────────────┼──────────────┤
+    │ 用户数           │ 18,763       │ 223,308      │ 论文偏小 11.9×│
+    │ 商品数           │ 12,457       │ 77,551       │ 论文偏小 6.2×│
+    │ 交互数           │ 198,341      │ 1,800,878    │ 论文偏小 9.1×│
+    │ 稀疏度           │ 99.91%       │ 99.9896%     │ 差 0.08pp    │
+    │ 平均交互/用户    │ 10.6         │ 8.06         │ 论文偏大 31% │
+    │ 行为类型数       │ 4类（推导）  │ 4类（推导）  │ 一致         │
+    └──────────────────┴──────────────┴──────────────┴──────────────┘
+    完整度：最小用户交互=5，最小商品交互=5，重复对=0（符合 5-core）
+    时间跨度：1999-08 ~ 2023-09
+    行为分布：buy=73.4% collect=12.9% click=6.0% show=7.7%
+
+    ⚠ OP 的偏差远大于 IS：交互数相差 9 倍，且 OP 实测规模（180 万条）已明显
+      超过 IS（41 万条），与 docx 中"OP 为辅助数据集"的定位不符。若表 5-1
+      按实测值回填，OP 会成为四个数据集中交互量第二大的数据集，需在正文中
+      重新说明选型理由与实验成本。
+
+    【TH — 下载中，待实测】
+    当前进度约 77 MB / 134,267,062 字节，续传中。
+
+    已知的旧值（来自上一版清单，未经实测，仅作对照保留）：
+      TH：21,345 用户 / 15,672 商品 / 232,456 交互 / 99.93% / 10.9
+    ⚠ 参照 IS（差 2.5×）与 OP（差 9.1×）的实测结果，TH 这组数字同样不可直接采用。
+
+
+────────────────────────────────────────────────────────────────────────────────
+  三、多行为独立验证数据集 — Alibaba IJCAI15（AJ）
+────────────────────────────────────────────────────────────────────────────────
+
+  docx 定位：5.1.1「Alibaba IJCAI15 电商数据集（AJ）用于多行为加权机制的独立
+  验证（AJ 数据集包含原生点击/加购/成单三类行为，无需评分推导）」；对应实验为
+  5.4.2（表 5-5 AJ 行）与 5.4.x 行为加权消融。
+
+  ── 3.1 下载入口 ──────────────────────────────────────────────────────
+
+    页面：https://tianchi.aliyun.com/dataset/42
+    数据集名（实测页面标题）：IJCAI-15 Repeat Buyers Prediction Dataset
+    来源：阿里云天池（Alibaba Tianchi），需登录后下载，无直链
+    ⚠ 上一版清单写的 dataId=46 是「阿里移动推荐算法数据集」（2014 年阿里移动
+      推荐大赛，字段 behavior_type 取值 1/2/3/4），与本论文无关，已更正。
+    ⚠ 天池页面由 JS 渲染，无法静态抓取文件清单。登录后请自行核对所下文件
+      是否为 user_log_format1.csv 系列（而非 mobile_recommend 系列）。
+
+  ── 3.2 预期文件（需登录后确认）────────────────────────────────────────
+
+    user_log_format1.csv   用户行为日志（主文件，多行为验证的核心输入）
+    user_info_format1.csv  用户属性（age_range, gender），可选
+    train_format1.csv      复购标签（user_id, merchant_id, label）
+    test_format1.csv       测试集（无标签）
+
+    行为字段：action_type
+    ⚠ docx 5.1.1 称 AJ 含"原生点击/加购/成单三类行为"。天池原始数据的
+      action_type 实为 4 类编码（通常记作 click / add-to-cart / purchase /
+      add-to-favorite），即多出一个"收藏"类。表 5-1 中 AJ 行标注为
+      "3类（原生）"，若要保留该口径，需在正文说明"仅取 click/cart/purchase
+      三类用于加权验证，favorite 合并入 collect"——否则与数据集本身不符。
+      该点须在正式实验前确认。
+
+  ── 3.3 AJ 统计 ───────────────────────────────────────────────────────
+
+    ⏳ 待补：需天池账号登录下载后实测。
+    已知的旧值（来自上一版清单，未经实测，仅作对照）：
+      24,389 用户 / 12,847 商品 / 432,786 交互 / 99.86% / 17.7 / 3类（原生）
+    ⚠ 同样存在"疑似套用"风险，须以实测替换。
+
+    ⚠ 另外：docx 5.1.1 把 AJ 归为"消费品数据集"并与 IS/TH/OP 对比稀疏度
+      （"平均交互数 17.7 远高于 10.0~10.9"）。而 5.4.2 又把 AJ 与 TH、OP
+      并列为跨域验证的三个辅助数据集。同一数据集在正文中承担"多行为权重
+      验证"与"跨域泛化验证"两种角色，需在 5.1.1 统一措辞，避免评审歧义。
+
+
+────────────────────────────────────────────────────────────────────────────────
+  四、行为类型推导规则（与 docx 表 4-1、5.1.1 对齐）
+────────────────────────────────────────────────────────────────────────────────
+
+  docx 表 4-1 定义的五类行为权重：
+
+    行为     权重   依据
+    buy      3.0    直接转化行为，最强偏好信号（基准值 ×3）
+    collect  1.5    强意向但未转化（基准值 ×1.5）
+    cart     1.2    加购后放弃率高，低于收藏
+    click    1.0    标准基准行为
+    show     0.1    极低价值噪声，仅补冷启动连通性
+
+  Amazon 推导规则（docx 5.1.1 原文）：
+    rating=5   → buy      (3.0)
+    rating=4   → collect  (1.5)
+    rating=3   → click    (1.0)
+    rating=1/2 → show     (0.1)
+    ※ Amazon 无原生 cart，权重 1.2 仅用于 AJ 与线上环境（docx 5.1.1 已说明）
+
+  ⚠ IS 实测行为分布与 docx 5.1.1 末段严重不符：
+
+    ┌──────────┬───────────────┬──────────────┬──────────┐
+    │ 行为     │ docx 5.1.1    │ IS 实测      │ 偏差     │
+    ├──────────┼───────────────┼──────────────┼──────────┤
+    │ buy      │ 23.4%         │ 72.3%        │ +48.9pp  │
+    │ collect  │ 18.2%         │ 13.7%        │ -4.5pp   │
+    │ click    │ 33.7%         │ 5.8%         │ -27.9pp  │
+    │ show     │ 24.7%         │ 8.2%         │ -16.5pp  │
+    └──────────┴───────────────┴──────────────┴──────────┘
+    实测依据：rating=5 有 298,567 条，rating=4 有 56,718 条，rating=3 有 23,792 条，
+    rating=1/2 分别 20,970 / 12,900 条，合计 412,947 条。
+
+    docx 原文"购买行为占比相对消费品数据集更高"这一定性结论仍然成立（72.3%
+    确实很高），但"click(33.7%) 高于 buy(23.4%)"在 Amazon 的评分分布下不可能
+    出现（Amazon 评分极度右偏，5 分占 6~75%），这组数字必须替换。
+
+    ⚠ 同时需要正视一个建模后果：buy 占 72.3% 意味着 α_b 在 Amazon 上几乎退化为
+      常数，行为加权消融（docx 表 5-11 中"去除行为权重"约 -12.2%）在 IS 上
+      难以做出与其他数据一致的效果。可选路径：
+        A. 改用 verified_purchase + helpful_vote + rating 三维度构造更均衡的
+           四类分布（需 IS_reviews.jsonl.gz，属"本文提出的推导规则"，须在正文
+           显式声明）；
+        B. 用 rating 强度作连续权重（需重写式 4-1 与表 4-1）；
+        C. 行为加权实验只放在 AJ 上做，Amazon 侧只用 IS 做主实验、不宣称加权增益。
+      该决策会影响论文第 4、5 章，须在跑实验前定稿。
+
+
+────────────────────────────────────────────────────────────────────────────────
+  五、下载与校验命令
+────────────────────────────────────────────────────────────────────────────────
+
+  ── 5.1 必下文件（约 1.1 GB）──────────────────────────────────────────
+
+    mkdir -p data/raw_2023/loo data/raw_2023/raw
+    cd data/raw_2023
+    B=https://mcauleylab.ucsd.edu/public_datasets/data/amazon_2023
+
+    curl -L -C - -o IS_5core.csv.gz "$B/benchmark/5core/rating_only/Industrial_and_Scientific.csv.gz"
+    curl -L -C - -o TH_5core.csv.gz "$B/benchmark/5core/rating_only/Tools_and_Home_Improvement.csv.gz"
+    curl -L -C - -o OP_5core.csv.gz "$B/benchmark/5core/rating_only/Office_Products.csv.gz"
+    curl -L -C - -o raw/IS_reviews.jsonl.gz "$B/raw/review_categories/Industrial_and_Scientific.jsonl.gz"
+    curl -L -C - -o raw/IS_meta.jsonl.gz    "$B/raw/meta_categories/meta_Industrial_and_Scientific.jsonl.gz"
+
+  ── 5.2 字节数校验（务必执行）────────────────────────────────────────
+
+    目标字节数：
+      IS_5core.csv.gz            7114449
+      TH_5core.csv.gz          134267062
+      OP_5core.csv.gz           30826376
+      raw/IS_reviews.jsonl.gz  675586079
+      raw/IS_meta.jsonl.gz     281523932
+
+    一条命令同时校验大小与 gzip 完整性：
+
+      cd data/raw_2023
+      for f in IS_5core.csv.gz TH_5core.csv.gz OP_5core.csv.gz \
+               raw/IS_reviews.jsonl.gz raw/IS_meta.jsonl.gz; do
+        printf "%-28s %12s bytes  " "$f" "$(stat -f%z "$f" 2>/dev/null || echo MISSING)"
+        gzip -t "$f" 2>/dev/null && echo "OK" || echo "FAILED/INCOMPLETE"
+      done
+
+  ── 5.3 统计脚本（回填 1.5 / 2.5 / 3.3 三张表）───────────────────────
+
+    cd data/raw_2023
+    python3 -I - <<'PY'
+    import gzip, csv, sys
+    from collections import Counter
+    from datetime import datetime
+    for name in ["IS_5core.csv.gz", "TH_5core.csv.gz", "OP_5core.csv.gz"]:
+        uc, ic, rated = Counter(), Counter(), Counter()
+        n = 0; ts_min = ts_max = None; pairs = set(); dup = 0
+        with gzip.open(name, "rt") as fh:
+            r = csv.reader(fh); next(r)
+            for row in r:
+                if len(row) < 4: continue
+                k = (row[0], row[1])
+                if k in pairs: dup += 1
+                pairs.add(k)
+                uc[row[0]] += 1; ic[row[1]] += 1
+                rated[int(float(row[2]))] += 1
+                t = int(row[3]); n += 1
+                ts_min = t if ts_min is None else min(ts_min, t)
+                ts_max = t if ts_max is None else max(ts_max, t)
+        sp = 1 - n / (len(uc) * len(ic))
+        buy, coll, clk = rated[5], rated[4], rated[3]
+        show = rated[1] + rated[2]
+        print(f"== {name}")
+        print(f"   用户={len(uc):,} 商品={len(ic):,} 交互={n:,} 重复对={dup}")
+        print(f"   稀疏度={sp*100:.4f}% 平均交互/用户={n/len(uc):.2f}")
+        print(f"   时间跨度={datetime.fromtimestamp(ts_min/1000):%Y-%m}"
+              f" ~ {datetime.fromtimestamp(ts_max/1000):%Y-%m}")
+        print(f"   buy={buy/n*100:.1f}% collect={coll/n*100:.1f}% "
+              f"click={clk/n*100:.1f}% show={show/n*100:.1f}%")
+        print(f"   最小用户交互={min(uc.values())} 最小商品交互={min(ic.values())}")
+    PY
+
+  ── 5.4 AJ 下载后的校验 ──────────────────────────────────────────────
+
+    确认表头为：
+      user_id,item_id,cat_id,seller_id,brand_id,time_stamp,action_type
+    如表头为 user_id,item_id,behavior_type,user_geohash,item_category,time，
+    则下错了数据集（那是 dataId=46 的移动推荐赛数据），需重新下载。
+
+
+────────────────────────────────────────────────────────────────────────────────
+  六、当前进度（2026-11-11 实测）
+────────────────────────────────────────────────────────────────────────────────
+
+  data/raw_2023/ 实际状态：
+
+    ✅ IS_5core.csv.gz           7,114,449 字节 = 目标值，gzip -t 通过
+    ✅ OP_5core.csv.gz          30,826,376 字节 = 目标值，gzip -t 通过
+    ⏳ TH_5core.csv.gz          约 77 MB / 134,267,062，续传中（曾截断至 47 MB）
+
+    ❌ raw/IS_reviews.jsonl.gz  未下载（RAG 评论摘要层必需）
+    ❌ raw/IS_meta.jsonl.gz     未下载（商品属性文档 + 长尾正则化必需）
+    ❌ loo/IS.*.csv.gz          未下载（可选）
+    ❌ loo/TH.*.csv.gz          未下载（可选）
+    ❌ loo/OP.*.csv.gz          未下载（可选）
+    ❌ data/raw_aj/             未下载（需天池登录）
+
+  注：OP 曾截断至 25,720,801 字节（gzip 报 unexpected end of file），
+      已通过 curl -C - 续传补齐并校验通过，可作为续传流程的验证案例。
+
+  总计：
+    必下 5 个文件，约 1.1 GB
+    可选（LOO 划分）9 个文件，约 0.21 GB
+    可选（TH/OP meta）约 1.6 GB
+    可选（TH/OP 评论）约 4.8 GB —— 默认不下载
+    AJ 需登录，大小待定
+
+
+────────────────────────────────────────────────────────────────────────────────
+  七、与 docx 的差异汇总（需回改论文的清单）
+────────────────────────────────────────────────────────────────────────────────
+
+    #  位置                        问题                              处理
+    ─  ──────────────────────────  ────────────────────────────────  ────────────
+    1  表 5-1 IS 行               用户/商品/交互数偏小 2.5~3×       改用实测值
+    2  5.1.1 末段行为分布         buy/click/show 比例不成立         改用实测值
+    3  4.1.3 复杂度分析           |U|、|I|、|E|、|A| 与实测不符      按实测重算
+    4  表 3-4 向量文件            10228×64 → 25848×64               改维度
+    5  3.4 技术选型               "16,000 用户、10,000 商品"         改约 51,000/26,000
+    6  表 5-1 OP 行                用户数偏差 11.9×、交互数 9.1×   改用实测值
+    7  表 5-1 TH/AJ 行             待实测                             下载后回填
+    8  5.1.1 "辅助数据集"定位       OP 实测 180 万条 > IS 41 万条     重述选型理由
+    9  5.1.1 AJ 行为类型          "3类原生" vs 数据集实为 4 类编码   确认后统一口径
+   10  5.1.1 AJ 角色              "消费品数据集"与"跨域验证"并用     统一措辞
+   11  行为加权消融可行性          buy 占 72~73% → α_b 近似常数       三选一后重做设计
+   12  data/README.md             已按 2023 版重写，但需同步第 6 节     已更新，待脚本修复
+
+================================================================================

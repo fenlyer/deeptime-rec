@@ -44,21 +44,35 @@ AJ 不是 Amazon 数据，需从天池 `dataset/42` 登录下载，详见 `data_
 data/
 ├── data_list.txt           # 下载清单：URL、精确字节数、校验脚本（权威）
 ├── README.md               # 本文件：版本差异、字段映射、脚本用法
-├── download_data.py        # 下载脚本（⚠ 仍为 SNAP v1 版本，见第六节）
-├── prepare_data.py         # 预处理脚本（⚠ 解析逻辑仍为 SNAP v1，见第六节）
+├── compute_dataset_stats.py # 统计脚本（输出实测数据）
+├── prepare_data.py         # 预处理脚本（⚠ 仍为 SNAP v1，见第六节）
 ├── quick_start.sh          # 一键下载 + 预处理（⚠ 同上）
 │
 ├── raw_2023/               # Amazon 2023 实际数据（当前使用）
 │   ├── IS_5core.csv.gz     # 评分文件（建模基础）
 │   ├── TH_5core.csv.gz
 │   ├── OP_5core.csv.gz
-│   ├── loo/                # 可选：官方 LOO 划分
-│   │   └── IS.{train,valid,test}.csv.gz
-│   └── raw/                # 可选：评论与元数据（RAG 知识库用）
+│   ├── loo/                # 官方 LOO 划分
+│   │   ├── IS.{train,valid,test}.csv.gz
+│   │   ├── TH.{train,valid,test}.csv.gz
+│   │   └── OP.{train,valid,test}.csv.gz
+│   └── raw/                # 评论与元数据（RAG 知识库用）
 │       ├── IS_reviews.jsonl.gz
-│       └── IS_meta.jsonl.gz
+│       ├── IS_meta.jsonl.gz
+│       ├── TH_reviews.jsonl.gz
+│       ├── TH_meta.jsonl.gz
+│       ├── OP_reviews.jsonl.gz
+│       └── OP_meta.jsonl.gz
 │
-├── raw/                    # ⚠ SNAP v1 遗留目录（脚本默认读这里）
+├── raw_aj/                 # AJ 天猫数据（已解压）
+│   ├── data_format1/
+│   │   ├── user_log_format1.csv   # 核心行为日志
+│   │   ├── user_info_format1.csv  # 用户属性（可选）
+│   │   ├── train_format1.csv      # 复购标签
+│   │   └── test_format1.csv
+│   ├── data_format2/
+│   └── sample_submission.csv
+│
 └── processed/              # 预处理输出
     └── IS/
         ├── train.csv / val.csv / test.csv
@@ -157,17 +171,8 @@ helpful_vote + rating` 三维度行为推导（见 `data_list.txt` 第四节）�
 ```bash
 cd data
 
-# 下载默认组（core + rag，约 1.1GB）
-python3 download_data.py
-
-# 只下 IS
-python3 download_data.py --groups core --filter IS
-
-# 全部（core/rag/loo/meta/reviews-ext，约 7.7GB）
-python3 download_data.py --groups all
-
-# 仅校验已有文件（精确字节数 + gzip 完整性）
-python3 download_data.py --verify-only
+# 统计实测数据（输出用户数/商品数/交互数/行为分布等）
+python3 compute_dataset_stats.py
 
 # 预处理（--k-core 0：2023 benchmark 已过滤，不要再过滤一遍）
 python3 prepare_data.py --categories IS TH OP --k-core 0 --output-format csv
@@ -206,11 +211,11 @@ python3 prepare_data.py --categories IS --stats-only
 
 | 脚本 | 改动 |
 |------|------|
-| `download_data.py` | 完全重写：URL 改为 2023 官方地址、目标目录改 `raw_2023/`、精确字节数 + gzip 双校验、`.part` 原子落盘、`flock` 防并发、分组下载 |
+| `compute_dataset_stats.py` | 新增：统计 Amazon 2023 和 AJ 的实测数据 |
 | `prepare_data.py` | `RAW_DIR` 改 `raw_2023/`；新增 CSV 读取（2023 的 5-core 是 CSV 不是 JSON）；毫秒→秒时间戳转换；`temporal_split` 新增 `--split-mode loo`（默认）；`CATEGORIES` 移除错误的 `AJ=Automotive` |
 | `quick_start.sh` | 改调新分组参数；`--k-core 5` → `--k-core 0`；增加下载后校验步骤 |
 
-仍待处理：
+待处理：
 
 | # | 位置 | 问题 |
 |---|------|------|
@@ -218,6 +223,12 @@ python3 prepare_data.py --categories IS --stats-only
 | 2 | `prepare_data.py` | 行为类型推导（rating→buy/collect/click/show）尚未写入，当前输出只有 `rating` 原值 |
 | 3 | 论文 | docx 表 5-1、4.1.3、表 3-4、3.4 选型的数字与实测不符，见 `data_list.txt` 第七节 |
 | 4 | 行为加权设计 | buy 占比 72~73%，α_b 近似退化为常数，消融实验难做出差异；方案待定，见 `data_list.txt` 第四节 |
+
+已删除：
+
+| 脚本 | 说明 |
+|------|------|
+| `download_data.py` | 数据已下载完成，脚本不再需要 |
 
 ## 七、数据源
 

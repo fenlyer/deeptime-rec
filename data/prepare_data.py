@@ -376,7 +376,10 @@ def filter_kcore(df: pd.DataFrame, k: int = 5) -> tuple[pd.DataFrame, list[int]]
         if len(kept) == len(pairs):
             note = "（已是 k-core，无变化）" if iteration == 1 else ""
             log(f"  收敛于第 {iteration} 轮，保留 {len(kept):,} 个用户-物品对{note}")
-            return df, history
+            # 关键：必须把过滤结果应用到行为记录上，否则多行为数据只删了 pairs 表
+            filtered = df.merge(kept, on=["user_id", "item_id"], how="inner")
+            log(f"  行为记录: {len(df):,} → {len(filtered):,}")
+            return filtered, history
         pairs = kept
         log(f"  轮次 {iteration}: 用户-物品对 → {len(kept):,}")
     raise RuntimeError("K-core 迭代 100 轮仍未收敛")
@@ -413,9 +416,11 @@ def derive_behavior_aj(df: pd.DataFrame) -> pd.DataFrame:
         bad = sorted(df.loc[df["behavior"].isna(), "action_type"].unique().tolist())
         raise ValueError(f"AJ 出现未知 action_type: {bad}")
     df["alpha"] = BEHAVIOR_ALPHA[df["behavior"].cat.codes]
-    # AJ 无评分：成交(buy)视为正样本，收藏/加购亦为正；点击不算正样本（口径更严格）
+    # AJ 无评分：成交(buy)/收藏(collect)/加购(cart)视为正样本；点击不算正样本（口径更严格）
     df["is_positive"] = df["behavior"].isin(["buy", "collect", "cart"]).astype("int8")
     df["is_hard_negative"] = 0  # AJ 无显式负反馈，全部负样本取自未交互软负
+    # cat_id/brand_id 对齐 Amazon meta 的 category/brand 命名，供统一落盘
+    df = df.rename(columns={"cat_id": "category", "brand_id": "brand"})
     return df.drop(columns=["action_type"])
 
 
@@ -782,8 +787,9 @@ def save_all(out_dir: Path, splits: dict, edges: pd.DataFrame,
     id_dir = out_dir / "id_maps"
     id_dir.mkdir(exist_ok=True)
     for key, mapping in id_maps.items():
+        # AJ 的原始 ID 是 numpy int32，JSON 键必须是 str/int/float，需显式转换
         with open(id_dir / f"{key}.json", "w") as f:
-            json.dump(mapping, f)
+            json.dump({str(k): int(v) for k, v in mapping.items()}, f)
 
     with open(out_dir / "stats.json", "w") as f:
         json.dump(stats, f, indent=2, ensure_ascii=False, default=str)

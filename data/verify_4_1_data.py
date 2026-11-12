@@ -48,9 +48,14 @@ def load_pairs(name: str) -> pd.DataFrame:
 
     必须以「对」为单位统计：AJ 同一对有多条行为记录，按行计数会把
     行为记录数误当成交互对数，导致稀疏度与人均交互偏高。
+    AJ 无 rating 字段（原生 action_type 已在预处理折算为 alpha），
+    因此 rating 按存在与否动态取列，其余口径不受影响。
     """
-    frames = [pd.read_csv(PROCESSED_DIR / name / f"{s}.csv",
-                          usecols=["user_id", "item_id", "timestamp", "rating"])
+    base = ["user_id", "item_id", "timestamp"]
+    probe = pd.read_csv(PROCESSED_DIR / name / "train.csv", nrows=0)
+    usecols = base + (["rating"] if "rating" in probe.columns else [])
+
+    frames = [pd.read_csv(PROCESSED_DIR / name / f"{s}.csv", usecols=usecols)
               for s in ("train", "val", "test")]
     df = pd.concat(frames, ignore_index=True)
     return df.drop_duplicates(["user_id", "item_id"])
@@ -84,8 +89,9 @@ def check_scale(name: str, pairs: pd.DataFrame) -> dict:
 
 def check_rating_dist(name: str, pairs: pd.DataFrame) -> dict:
     """核验 4.1.1 局限一引用的评分分布（仅 Amazon 有 rating，AJ 无）。"""
-    if name == "AJ" or "rating" not in pairs.columns:
-        return {"说明": "AJ 无 rating 字段，4.1.1 的评分分布论据不适用"}
+    if "rating" not in pairs.columns:
+        return {"说明": f"{name} 无 rating 字段，4.1.1 的评分分布论据不适用；"
+                        "AJ 的边权重由原生 action_type 折算"}
     dist = pairs["rating"].value_counts(normalize=True).sort_index()
     return {f"{int(r)}分": f"{p:.1%}" for r, p in dist.items()}
 
@@ -126,10 +132,17 @@ def check_lambda(pairs: pd.DataFrame) -> pd.DataFrame:
 
     IS 时间跨度 22.1 年、交互年龄中位约 3.7 年；λ=0.1 的半衰期仅 6.9 天，
     会把绝大多数边压到 1e-6 以下，等同丢弃图结构——这是论文取 0.001 的直接依据。
+    AJ 无 rating，改用其预处理产物 edges.csv 的实际权重分布无法反推 α，
+    故此处对无 rating 的数据集退化为「按 α=1 计算时间衰减因子」的对比。
     """
     t_now = pairs["timestamp"].max()
     age_days = ((t_now - pairs["timestamp"]) / SECONDS_PER_DAY).to_numpy()
-    alpha = pairs["rating"].map(RATING_ALPHA).to_numpy()
+    if "rating" in pairs.columns:
+        alpha = pairs["rating"].map(RATING_ALPHA).to_numpy()
+        alpha_note = ""
+    else:
+        alpha = np.ones(len(pairs))
+        alpha_note = "（无 rating，α 取 1，仅看时间衰减因子）"
 
     rows = []
     for lam in (0.1, 0.01, 0.001):
@@ -142,7 +155,10 @@ def check_lambda(pairs: pd.DataFrame) -> pd.DataFrame:
             "权重中位数": f"{np.median(w):.4f}",
             "权重最小值": f"{w.min():.2e}",
         })
-    return pd.DataFrame(rows)
+    df = pd.DataFrame(rows)
+    if alpha_note:
+        df.attrs["note"] = alpha_note
+    return df
 
 
 def check_time_span(pairs: pd.DataFrame) -> dict:
@@ -154,7 +170,6 @@ def check_time_span(pairs: pd.DataFrame) -> dict:
         "止": pd.to_datetime(t_max, unit="s").strftime("%Y-%m-%d"),
         "跨度(年)": f"{(t_max - t_min) / SECONDS_PER_DAY / 365.25:.1f}",
         "交互年龄中位(天)": f"{age_days.median():.0f}",
-        "22年跨度下λ=0.1近零边": "见 --section lambda",
     }
 
 
@@ -183,7 +198,10 @@ def run(name: str, sections: list[str]) -> None:
 
     if not sections or "lambda" in sections:
         print("\n【4.1.2 / 5.8.1 式(4-1) λ 衰减对比】")
-        print(check_lambda(pairs).to_string(index=False))
+        lam_tbl = check_lambda(pairs)
+        print(lam_tbl.to_string(index=False))
+        if note := lam_tbl.attrs.get("note"):
+            print(f"  {note}")
 
 
 def main() -> None:

@@ -32,3 +32,4 @@ Thumbs.db
 *.csv.gz
 data/raw_2023/*
 data/raw_aj/*
+data/processed/*

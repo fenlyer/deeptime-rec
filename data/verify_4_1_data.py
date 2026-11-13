@@ -21,7 +21,6 @@
 """
 
 import argparse
-import json
 from pathlib import Path
 
 import numpy as np
@@ -130,7 +129,7 @@ def check_lambda(pairs: pd.DataFrame) -> pd.DataFrame:
     """
     复算式(4-1) 在 λ=0.1/0.01/0.001 下的边权重分布，核验 4.1.2 与 5.8.1。
 
-    IS 时间跨度 22.1 年、交互年龄中位约 3.7 年；λ=0.1 的半衰期仅 6.9 天，
+    IS 时间跨度 22.1 年、交互年龄中位 1347 天（3.7 年）；λ=0.1 的半衰期仅 6.9 天，
     会把绝大多数边压到 1e-6 以下，等同丢弃图结构——这是论文取 0.001 的直接依据。
     AJ 无 rating，改用其预处理产物 edges.csv 的实际权重分布无法反推 α，
     故此处对无 rating 的数据集退化为「按 α=1 计算时间衰减因子」的对比。

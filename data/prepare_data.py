@@ -2,7 +2,7 @@
 """
 Amazon Review 2023 / Alibaba IJCAI15 数据预处理脚本
 ====================================================
-对齐《整改V7》5.1.1「数据集选取与说明」与 4.1.2 式(4-1) 的预处理口径。
+对齐《整改V8_1112》5.1.1「数据集选取与说明」与 4.1.2 式(4-1) 的预处理口径。
 
 处理链路（每个数据集统一走这一条）:
   1. 文件探测  —— 字节数、gzip 完整性、行数
@@ -61,9 +61,9 @@ RATING_TO_BEHAVIOR = {5: "buy", 4: "collect", 3: "click", 2: "show", 1: "show"}
 AJ_ACTION_TO_BEHAVIOR = {0: "click", 1: "cart", 2: "buy", 3: "collect"}
 
 # ---- 4.1.2 式(4-1)：T=86400 秒（1 天）。λ 默认 0.001 ----
-# 论文原写 λ=0.1（半衰期 6.9 天），但 IS 数据跨度 22.2 年，实测 98.9% 的边权重 <1e-6，
-# 等于丢弃 99% 的图结构；λ=0.001 对应半衰期 1.9 年，与工业采购周期量级匹配，
-# 且全部边得以保留。论文 4.1.2 与表 5-21 的 λ 取值需同步改为 0.001。
+# λ=0.1 的半衰期仅 6.9 天，在 IS 的 22.1 年跨度上会把 98.89% 的边压到 1e-6 以下，
+# 等同丢弃图结构；λ=0.001 对应半衰期 693 天（1.9 年），与工业采购周期量级匹配。
+# 整改V8_1112 的 4.1.2 与表5-13 已同步为 0.001，无需再改论文。
 DEFAULT_DECAY_LAMBDA = 0.001
 SECONDS_PER_DAY = 86400
 
@@ -869,22 +869,26 @@ def process_dataset(short_name: str, args) -> dict | None:
         if official:
             stats["official_loo_check"] = official
 
-    # ---- 6. 式(4-1) 边权重 ----
-    edges = compute_edge_weights(df, lam=args.decay_lambda)
+    # ---- 6. 式(4-1) 边权重（仅基于训练集）----
+    # 5.1.1 LOO 划分后，边与三元组仅由训练集对构建——test/val 是未见过的对，
+    # 若进入图结构会构成端到端标签泄漏，模型在训练阶段就已"见过"答案对。
+    # 规模统计与时间跨度仍以全量 df 为准（已在前一步写入 stats）。
+    train_df = splits["train"]
+    edges = compute_edge_weights(train_df, lam=args.decay_lambda)
     stats["edge_weight"] = {
         "num_edges": int(len(edges)),
-        "min": float(edges["weight"].min()),
-        "median": float(edges["weight"].median()),
-        "max": float(edges["weight"].max()),
+        "min": float(edges["weight"].min()) if len(edges) else 0.0,
+        "median": float(edges["weight"].median()) if len(edges) else 0.0,
+        "max": float(edges["weight"].max()) if len(edges) else 0.0,
         "decay_lambda": args.decay_lambda,
-        "t_now": int(df["timestamp"].max()),
-        "near_zero_ratio": float((edges["weight"] < 1e-6).mean()),
+        "t_now": int(train_df["timestamp"].max()) if len(train_df) else 0,
+        "near_zero_ratio": float((edges["weight"] < 1e-6).mean()) if len(edges) else 0.0,
     }
 
-    # ---- 7. BPR 三元组（可选）----
+    # ---- 7. BPR 三元组（仅基于训练集，可选）----
     triples = None
     if args.with_triples:
-        triples = build_bpr_triples(df, args.neg_per_positive, args.hard_neg_ratio)
+        triples = build_bpr_triples(train_df, args.neg_per_positive, args.hard_neg_ratio)
         stats["bpr_triples"] = int(len(triples))
 
     # ---- 8. 落盘 ----

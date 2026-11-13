@@ -115,53 +115,6 @@ def probe_file(filepath: Path) -> dict:
     return stat
 
 
-def load_json_gz(filepath: Path, stat: dict | None = None) -> list[dict]:
-    """
-    逐行加载 JSONL(.gz)，返回字典列表。
-
-    兼容两种格式：
-      - Amazon 2023：标准 JSONL（双引号）
-      - SNAP v1(2018)：meta 为 Python dict 字面量（单引号），需 ast.literal_eval 回退
-    两条路径统一要求解析结果为 dict，否则计为脏行并跳过。
-    """
-    records, n_fallback = [], 0
-    log(f"加载: {filepath.name}")
-
-    open_fn = gzip.open if filepath.suffix == ".gz" else open
-    with open_fn(filepath, "rt", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            used_fallback = False
-            try:
-                obj = json.loads(line)
-            except json.JSONDecodeError:
-                used_fallback = True
-                try:
-                    obj = ast.literal_eval(line)
-                except (ValueError, SyntaxError, MemoryError, RecursionError):
-                    obj = None
-            if not isinstance(obj, dict):
-                if stat is not None:
-                    stat["failed"] += 1
-                continue
-            if used_fallback:
-                n_fallback += 1
-            records.append(obj)
-
-    if stat is not None:
-        stat["parsed"] = len(records)
-    if n_fallback:
-        log(f"  {n_fallback:,} 条经 ast.literal_eval 回退解析（SNAP v1 格式）")
-    if stat is not None and stat["failed"]:
-        log(f"  跳过 {stat['failed']:,} 条无效记录", "WARN")
-    if not records:
-        raise RuntimeError(f"{filepath.name} 解析出 0 条记录，请检查文件格式")
-
-    log(f"  读取 {len(records):,} 条记录")
-    return records
-
 
 def load_amazon_ratings(filepath: Path, stat: dict | None = None) -> pd.DataFrame:
     """
@@ -216,11 +169,13 @@ def load_aj_log(filepath: Path, stat: dict | None = None) -> pd.DataFrame:
     del parts
 
     # MMDD -> 2014 年秒级时间戳（不跨年，直接用年内第几天换算）
+    # MMDD 511 表示「5 月 11 日」，减去 2014-01-01 应得第 130 天（1 月 31 + 2 月 28 + 3 月 31 + 4 月 30 + 11）；
+    # 原公式 `days_before_month[month] + day` 会多一天，现改为 `+ day - 1` 使 day=11 → 偏移 +10。
     mmdd = df.pop("time_stamp").to_numpy()
     month, day = (mmdd // 100).astype("int64"), (mmdd % 100).astype("int64")
     days_before_month = np.array([0, 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334])
     base = int(pd.Timestamp("2014-01-01", tz="UTC").timestamp())
-    df["timestamp"] = base + (days_before_month[month] + day) * SECONDS_PER_DAY
+    df["timestamp"] = base + (days_before_month[month] + day - 1) * SECONDS_PER_DAY
 
     if stat is not None:
         stat["parsed"] = len(df)

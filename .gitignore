@@ -30,6 +30,18 @@ Thumbs.db
 # Logs
 *.log
 *.csv.gz
+
+# 数据原始目录（大文件不进仓库）
 data/raw_2023/*
 data/raw_aj/*
+
+# 处理后的数据（冻结后由 CHECKSUMS 追踪）
 data/processed/*
+
+# 构建产物与模型文件
+artifacts/
+build/
+*.npy
+*.pt
+*.parquet
+*.index

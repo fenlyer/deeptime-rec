@@ -1,80 +1,53 @@
-# CLAUDE.md — deeptime-rec 工程约定
+# 项目：工业品推荐硕士论文（deeptime-rec）
 
-> 本文件每次会话自动加载。
-**修改任何代码前先读本文件**，尤其是第六节的注释规范。
+本仓库同时承载论文实验、原型系统和论文源文件。
+执行计划：docs/plan/（任务卡 cards/、关口 gates.md）。当前进度：@docs/STATUS.md
+口径：@docs/口径冻结.md  决策记录：docs/decisions.md
 
----
+## 红线
+1. 不修改 data/processed/、data/CHECKSUMS.sha256、docs/口径冻结.md。数据或口径需要变化时停下来问我，由我决定并记入 docs/decisions.md。
+2. 论文中的实验数字只能来自 thesis/generated/numbers.json（由 scripts/make_tables.py 从 results/ 生成），正文用 {{n:key}} 引用。不手写、不估计、不取整美化任何结果数字。
+3. 不为改善指标修改 eval/、configs/eval.yaml、切分或屏蔽规则。评估代码的任何改动先说明原因，等我确认。
+4. 验证集只用于早停与选参；测试集只在最终评估读取。不在测试集上调参，不挑 seed。
+5. 不生成、不补全参考文献条目（作者、标题、DOI、页码）。refs/thesis.bib 只由我从 Zotero 导出。
+6. 论述、分析、结论段落由我执笔。你负责列事实清单、核对数字与代码一致性、指出问题、做结构与格式修改。我明确说"起草"时，草稿写到 thesis/drafts/，不直接写入 thesis/src/。
+7. 结果异常时先列出可能原因和验证办法，不要直接改代码去"修好"结果。
 
-## 一、项目定位
+## 运行规范
+- 每次训练或评估都经 common/run.py 记录到 results/{exp}/{model}/seed{n}/：metrics.json、per_user.parquet、config.yaml、train_log.csv、manifest.json。
+- 工作区有未提交改动时不启动正式实验；smoke 实验放 results/_smoke/。
+- 预计超过 10 分钟的任务：写成脚本，追加到 experiments/queue.txt，由 queue.sh 在 tmux 后台执行；告诉我日志路径，不在会话里等待。
+- 只用训练集建图、训练、生成 User Memory。原型演示版例外，manifest 中 data_scope 必须写 full_history。
+- seed 取 0–4；主结果 5 个 seed，敏感性与跨域 3 个 seed。
 
-工业资产商城推荐系统，论文配套工程。三阶段架构：
-**多路召回（TI-LightGCN）→ 深度排序（Temporal-DIN）→ LLM 增强（偏好蒸馏 + 解释）**。
+## 代码规范
+- 先写或更新测试，再实现；pytest 全过才算完成。评估、边权、注意力、损失函数必须有数值测试。
+- 边权构造、ID 映射、样本构造各只有一个实现，其他地方复用，不复制。
+- commit message 以任务卡 ID 开头，例如 "S1-a: 统一全排序评估"。
+- 改动 eval/、data/、configs/eval.yaml 时，在回复开头单独提醒我。
 
-| 目录 | 职责 |
-|---|---|
-| `data/` | 数据处理：`prepare_data.py`（预处理 + 统计唯一入口，产物写入 `processed/`） |
-| `backend/` | FastAPI + uv 依赖；`routes/` 4 个模块，`mock/` JSON 原型数据 |
-| `frontend/` | React 18 + Vite + TS + Ant Design 5 |
-| `docs/` | 论文整改稿（`revision/`）、部署方案、优化建议、`todolist.txt` |
+## 常用命令
+make test                    # 全部测试
+make gate W=3                # 第 3 周关口检查（python -m gates.w3）
+make tables                  # results/ → thesis/generated/
+make thesis [AUDIT=1]        # 生成 build/thesis_V9.docx（AUDIT=1 时数字后附来源）
+make artifacts V=v1 ...      # 导出原型产物
+make backup                  # 备份结果与论文源
 
-数据集：Amazon 2023 5-core（IS 主实验 / TH、OP 跨域）与 Alibaba IJCAI15（AJ，多行为）。
+## 环境（按实际修改）
+- GPU：AutoDL RTX 4090 24GB，16 vCPU / 60 GB；数据盘 /root/autodl-tmp
+- conda 环境：rec（RecBole）、llm（vLLM）、serve（原型，uv 锁定）
 
----
+## 符号约定（论文与代码一致）
+λ 图时间衰减率；λ₂ L2 正则；μ 长尾正则强度；α_r 反馈强度；a_k 注意力权重；
+γ 注意力时间衰减率；η 蒸馏损失权重；ρ 语义重排权重；τ 蒸馏温度；时间单位为天（Δ_day = 86400 s）。
 
-## 二、注释规范（每次生成/修改代码都必须遵守）
+## 论文源 thesis/src/
+- Markdown 正文；公式用 LaTeX（$…$ / $$…$$）；引用 [@key]；数字 {{n:key}}；表格 {{table:name}}。
+- 禁用词：首次、填补空白、创造性地、范式性突破、彻底解决、值得注意的是、充分体现了。
 
-总体原则：**中文、专业、精简、可核对**。
-注释解释 *为什么* 与 *口径*，不解释 *是什么*。
-
-### 2.1 模块 docstring——三段式，缺一不可
-
-```
-"""
-<一句话职责：这个文件做什么、产物是什么>
-
-<口径/算法：对应论文哪一节、哪条公式，关键常量与单位>
-
-<用法：可复制执行的命令；与相邻脚本的分工边界>
-"""
-```
-
-### 2.2 函数 docstring
-
-- 第一行：一句话说明**作用 + 输入输出单位**
-- 有论文依据的，明确写出 `7 对齐 docx 5.1.1`、`式(4-1)`、`表 4-1`
-- 有非显然约束的，写出**为什么**（例：*「price 混有 'from 24.87'，转数值失败置空，否则 pyarrow 写出时报类型冲突」*）
-- 时间复杂度/内存敏感的，写明量级（例：*「TH meta 147 万行 / 解压 5.6GB，须流式过滤」*）
-
-### 2.3 行内注释
-
-只允许以下三类，其余一律删掉：
-
-| 类型 | 示例 |
-|---|---|
-| 口径/单位 | `# 2023 版时间戳为毫秒，统一转秒（下游一律按秒处理）` |
-| 魔法值来源 | `# 分块 500 万行：平衡内存峰值与 CSV 解析开销` |
-| 坑与防御 | `# brand_id 约 0.1% 为空，必须用可空整型 Int32，否则 pandas 直接抛错` |
-
-**禁止**：`# 计数器`、`# 遍历所有行`、`# 返回结果` 这类复述代码；不要写 `# TODO: 以后优化`（无主的
-TODO 一律不写，待办放进 `docs/todolist.txt`）。
-
-### 2.4 分节
-
-文件内部超过 150 行时，用统一分节注释组织：
-
-```python
-# =====================================================================
-# 一、文件探测与加载
-# =====================================================================
-```
-
-章节名用中文，编号连续；与论文结构平行时优先用论文的章节号。
-
-### 2.5 提交前自检
-
-- [ ] 模块 docstring 有职责 / 口径 / 用法三段
-- [ ] 每个非平凡函数都有 docstring，且写了「为什么」
-- [ ] 所有魔法数字都能在注释里找到出处（论文表号 / 常量名 / 实测依据）
-- [ ] 没有复述代码的行内注释，没有无主 TODO
-- [ ] 注释里的数字与实际输出一致（跑一遍验证）
-- [ ] 中英文与标点统一：中文用全角标点，代码标识符保持英文原样
+## 目录
+data/ 冻结数据与预处理 common/ 运行记录 eval/ 统一评估与统计 configs/ 全部配置
+models/ 召回模型 rank/ 排序模型与样本 llm/ 教师与 Memory experiments/ 复现脚本与队列
+results/ 结果 gates/ 每周关口检查 export/ 产物导出 artifacts/ 原型产物 serving/ 原型后端 tests/ 测试
+scripts/ 表、图、论文构建与检查 refs/ 文献 thesis/ 论文源 docs/ 计划、决策、周报

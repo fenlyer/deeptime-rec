@@ -17,7 +17,7 @@
 ## G2 基线（11/28 周六）
 - [ ] results/recall_main/ 下 5 模型 × 5 seed 的 metrics.json 与 manifest.json 齐全
 - [ ] 每个 run：best_epoch ≥ 30 且停止原因为耐心耗尽
-- [ ] 测试目标口径写入 docs/口径冻结.md、docs/decisions.md、configs/eval.yaml，三处一致
+- [ ] 测试目标口径写入 docs/预处理口径冻结.md、docs/decisions.md、configs/eval.yaml，三处一致
 - [ ] rank/ 防泄漏测试通过；DIN smoke AUC > 0.5
 - [ ] 旧原型在 serving/ 中可启动
 - [ ] refs/verify.csv 每行都有你的核查结论

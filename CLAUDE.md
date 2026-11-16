@@ -2,10 +2,10 @@
 
 本仓库同时承载论文实验、原型系统和论文源文件。
 执行计划：docs/plan/（任务卡 cards/、关口 gates.md）。当前进度：@docs/STATUS.md
-口径：@docs/口径冻结.md  决策记录：docs/decisions.md
+口径：@docs/预处理口径冻结.md  决策记录：docs/decisions.md
 
 ## 红线
-1. 不修改 data/processed/、data/CHECKSUMS.sha256、docs/口径冻结.md。数据或口径需要变化时停下来问我，由我决定并记入 docs/decisions.md。
+1. 不修改 data/processed/、data/CHECKSUMS.sha256、docs/预处理口径冻结.md。数据或口径需要变化时停下来问我，由我决定并记入 docs/decisions.md。
 2. 论文中的实验数字只能来自 thesis/generated/numbers.json（由 scripts/make_tables.py 从 results/ 生成），正文用 {{n:key}} 引用。不手写、不估计、不取整美化任何结果数字。
 3. 不为改善指标修改 eval/、configs/eval.yaml、切分或屏蔽规则。评估代码的任何改动先说明原因，等我确认。
 4. 验证集只用于早停与选参；测试集只在最终评估读取。不在测试集上调参，不挑 seed。
@@ -51,3 +51,5 @@ data/ 冻结数据与预处理 common/ 运行记录 eval/ 统一评估与统计 
 models/ 召回模型 rank/ 排序模型与样本 llm/ 教师与 Memory experiments/ 复现脚本与队列
 results/ 结果 gates/ 每周关口检查 export/ 产物导出 artifacts/ 原型产物 serving/ 原型后端 tests/ 测试
 scripts/ 表、图、论文构建与检查 refs/ 文献 thesis/ 论文源 docs/ 计划、决策、周报
+backend/ 现有原型后端（FastAPI） frontend/ 现有原型前端（React） environment/ 环境锁定
+figures/ 论文实验图 build/ 论文构建产物 annotate/ 标注页 artifacts_llm/ LLM 中间产物 artifacts_static/ 模型静态输入

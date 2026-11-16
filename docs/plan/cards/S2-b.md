@@ -9,7 +9,7 @@
 
 用 LightGCN 5 个 seed 的 per_user.parquet，分别按“全部测试目标”和“仅 rating≥4 目标”计算 Recall@10/20、NDCG@10/20 和用户数，生成 results/target_policy/compare.json 与一张对比表。
 不要替我做决定，把两种口径的用户数、指标和差异列出来。
-我决定后：把决定写进 docs/口径冻结.md 第一节与 docs/decisions.md，在 configs/eval.yaml 固定默认口径，并说明另一种口径的结果放附录。
+我决定后：把决定写进 docs/预处理口径冻结.md 第一节与 docs/decisions.md，在 configs/eval.yaml 固定默认口径，并说明另一种口径的结果放附录。
 
 ## 产出
 results/target_policy/compare.json；更新后的口径冻结文件与 configs/eval.yaml

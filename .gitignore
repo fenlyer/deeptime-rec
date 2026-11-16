@@ -38,9 +38,11 @@ data/raw_aj/*
 # 处理后的数据（冻结后由 CHECKSUMS 追踪）
 data/processed/*
 
-# 构建产物与模型文件
-artifacts/
-build/
+# 构建产物与模型文件（目录内 README 例外需先放开目录再排除子项）
+artifacts/*
+build/*
+!artifacts/README.md
+!build/README.md
 *.npy
 *.pt
 *.parquet

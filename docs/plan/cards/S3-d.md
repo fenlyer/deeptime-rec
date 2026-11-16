@@ -7,8 +7,8 @@
 
 ## 提示词
 
-1. 写 data/subsample.py：TH 随机抽 10 万用户、AJ 抽 5 万用户（数量与 seed 可配置），保留其全部交互后重新做 5-core 与 LOO，复用 data/prepare_data.py 里的函数，不复制逻辑。产出 processed/TH_s100k/、processed/AJ_s50k/，更新 CHECKSUMS，打 tag data-v1-sub；抽样参数写进 docs/口径冻结.md 附录。
-2. AJ 的多行为到 α 的映射先读 docs/口径冻结.md；没有定义就停下来问我，不要自行设定。
+1. 写 data/subsample.py：TH 随机抽 10 万用户、AJ 抽 5 万用户（数量与 seed 可配置），保留其全部交互后重新做 5-core 与 LOO，复用 data/prepare_data.py 里的函数，不复制逻辑。产出 processed/TH_s100k/、processed/AJ_s50k/，更新 CHECKSUMS，打 tag data-v1-sub；抽样参数写进 docs/预处理口径冻结.md 附录。
+2. AJ 的多行为到 α 的映射先读 docs/预处理口径冻结.md；没有定义就停下来问我，不要自行设定。
 3. 在 OP、TH_s100k、AJ_s50k 上跑 LightGCN、SimGCL、TI-LightGCN，各 3 个 seed（表注写明），超参沿用 IS 上选定的比例，不在这些数据集的测试集上调参。
 
 ## 产出

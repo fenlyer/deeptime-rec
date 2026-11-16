@@ -6,7 +6,7 @@
 
 ## 提示词
 
-运行 data/ 下的 verify_loo.py 和三个 verify_*.py，输出保存到 results/verify/。
+LOO 不变量校验由 data/prepare_data.py 的 verify_loo() 在预处理时写入 processed/{DS}/stats.json 的 split_check 字段（test 每用户恰好 1 对、test/val 不泄漏进 train）。本卡只读取该字段核对，再运行 data/ 下三个 verify_*.py，全部输出保存到 results/verify/。
 任何一项失败就停下，报告失败内容，不要修改数据或脚本去“让它通过”。
 全部通过后：
 1. 为 data/processed/{IS,TH,OP,AJ}/ 下每个文件计算 sha256，写入 data/CHECKSUMS.sha256 并提交；

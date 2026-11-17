@@ -1,0 +1,164 @@
+{
+  "dataset": "IS",
+  "train_users": 50985,
+  "train_pairs": 310977,
+  "avg_train_pairs_per_user": 6.1,
+  "layers": [
+    {
+      "layer": "超冷启动 UC",
+      "range": "0~4",
+      "users": 27358,
+      "share": 0.5366,
+      "avg_train_pairs": 3.37
+    },
+    {
+      "layer": "冷启动 CS",
+      "range": "5~9",
+      "users": 17084,
+      "share": 0.3351,
+      "avg_train_pairs": 6.33
+    },
+    {
+      "layer": "普通 NU",
+      "range": "10~29",
+      "users": 6068,
+      "share": 0.119,
+      "avg_train_pairs": 14.52
+    },
+    {
+      "layer": "重度 HU",
+      "range": "≥30",
+      "users": 475,
+      "share": 0.0093,
+      "avg_train_pairs": 47.66
+    }
+  ],
+  "test": {
+    "测试用户数": 50985,
+    "测试样例行数": 50985,
+    "说明": "LOO 下每用户 1 条测试正样本，分层 Recall 分母为该层用户数"
+  }
+}
+{
+  "dataset": "TH",
+  "train_users": 842050,
+  "train_pairs": 6206924,
+  "avg_train_pairs_per_user": 7.37,
+  "layers": [
+    {
+      "layer": "超冷启动 UC",
+      "range": "0~4",
+      "users": 390719,
+      "share": 0.464,
+      "avg_train_pairs": 3.39
+    },
+    {
+      "layer": "冷启动 CS",
+      "range": "5~9",
+      "users": 294587,
+      "share": 0.3498,
+      "avg_train_pairs": 6.41
+    },
+    {
+      "layer": "普通 NU",
+      "range": "10~29",
+      "users": 138282,
+      "share": 0.1642,
+      "avg_train_pairs": 14.93
+    },
+    {
+      "layer": "重度 HU",
+      "range": "≥30",
+      "users": 18462,
+      "share": 0.0219,
+      "avg_train_pairs": 50.42
+    }
+  ],
+  "test": {
+    "测试用户数": 842050,
+    "测试样例行数": 842050,
+    "说明": "LOO 下每用户 1 条测试正样本，分层 Recall 分母为该层用户数"
+  }
+}
+{
+  "dataset": "OP",
+  "train_users": 223308,
+  "train_pairs": 1354262,
+  "avg_train_pairs_per_user": 6.06,
+  "layers": [
+    {
+      "layer": "超冷启动 UC",
+      "range": "0~4",
+      "users": 121559,
+      "share": 0.5444,
+      "avg_train_pairs": 3.37
+    },
+    {
+      "layer": "冷启动 CS",
+      "range": "5~9",
+      "users": 73904,
+      "share": 0.331,
+      "avg_train_pairs": 6.3
+    },
+    {
+      "layer": "普通 NU",
+      "range": "10~29",
+      "users": 25620,
+      "share": 0.1147,
+      "avg_train_pairs": 14.41
+    },
+    {
+      "layer": "重度 HU",
+      "range": "≥30",
+      "users": 2225,
+      "share": 0.01,
+      "avg_train_pairs": 49.46
+    }
+  ],
+  "test": {
+    "测试用户数": 223308,
+    "测试样例行数": 223308,
+    "说明": "LOO 下每用户 1 条测试正样本，分层 Recall 分母为该层用户数"
+  }
+}
+{
+  "dataset": "AJ",
+  "train_users": 420027,
+  "train_pairs": 30035717,
+  "avg_train_pairs_per_user": 71.51,
+  "layers": [
+    {
+      "layer": "超冷启动 UC",
+      "range": "0~4",
+      "users": 6826,
+      "share": 0.0163,
+      "avg_train_pairs": 3.55
+    },
+    {
+      "layer": "冷启动 CS",
+      "range": "5~9",
+      "users": 28796,
+      "share": 0.0686,
+      "avg_train_pairs": 7.17
+    },
+    {
+      "layer": "普通 NU",
+      "range": "10~29",
+      "users": 124073,
+      "share": 0.2954,
+      "avg_train_pairs": 18.95
+    },
+    {
+      "layer": "重度 HU",
+      "range": "≥30",
+      "users": 260332,
+      "share": 0.6198,
+      "avg_train_pairs": 105.46
+    }
+  ],
+  "test": {
+    "测试用户数": 420027,
+    "测试样例行数": 583906,
+    "说明": "LOO 下每用户 1 条测试正样本，分层 Recall 分母为该层用户数"
+  }
+}

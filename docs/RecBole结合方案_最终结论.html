@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>论文实验与 RecBole 的结合方案：最终结论</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  --bg:#F7F8FA; --surface:#FFFFFF; --ink:#1B2430; --muted:#5B6675; --line:#D9DEE5;
+  --own:#2F5D8A; --own-bg:#E6EEF6;
+  --rb:#2E7D6B;  --rb-bg:#E3F2EE;
+  --share:#8A6D1F; --share-bg:#F5EFDD;
+  --fix:#9B3D5A; --fix-bg:#F6E6EC;
+  --code-bg:#EEF1F5;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    color-scheme: dark;
+    --bg:#12171E; --surface:#19202A; --ink:#E6EAF0; --muted:#9AA5B4; --line:#2A3340;
+    --own:#8DB8E2; --own-bg:#1C2B3B;
+    --rb:#74C8B3;  --rb-bg:#16302A;
+    --share:#D9BC6C; --share-bg:#2E2814;
+    --fix:#E592AD; --fix-bg:#35202A;
+    --code-bg:#1F2833;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  font-size:16px; line-height:1.85;
+}
+.wrap{max-width:880px; margin:0 auto; padding:56px 24px 96px}
+h1,h2,h3{font-family:"Noto Serif SC","Songti SC","SimSun",serif; line-height:1.35; margin:0}
+h1{font-size:clamp(28px,4.6vw,40px); font-weight:900; letter-spacing:.01em}
+h2{font-size:24px; font-weight:900; margin:64px 0 18px; padding-top:20px; border-top:2px solid var(--ink)}
+h3{font-size:18px; font-weight:600; margin:28px 0 8px}
+p{margin:0 0 14px; max-width:44em}
+.meta{color:var(--muted); font-size:14px; margin:12px 0 28px}
+.verdict{
+  background:var(--surface); border-left:6px solid var(--ink);
+  padding:22px 26px; margin:8px 0 0; font-size:17px;
+}
+.verdict p{margin:0 0 10px}
+.verdict p:last-child{margin:0}
+strong{font-weight:700}
+
+/* pipeline ledger: the one memorable element */
+.ledger{margin:36px 0 8px; display:grid; gap:10px}
+.stage{
+  display:grid; grid-template-columns:40px 1fr auto; align-items:start; gap:14px;
+  background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:14px 16px;
+}
+.stage .n{font-family:"Noto Serif SC",serif; font-weight:900; font-size:22px; color:var(--muted); line-height:1.2}
+.stage .t{font-weight:700}
+.stage .d{color:var(--muted); font-size:14.5px; line-height:1.7; margin-top:2px}
+.tag{font-size:13px; font-weight:700; padding:3px 10px; border-radius:999px; white-space:nowrap}
+.tag.own{color:var(--own); background:var(--own-bg)}
+.tag.rb{color:var(--rb); background:var(--rb-bg)}
+.tag.share{color:var(--share); background:var(--share-bg)}
+.legend{display:flex; flex-wrap:wrap; gap:10px 18px; font-size:14px; color:var(--muted); margin-top:14px}
+.legend span{display:inline-flex; align-items:center; gap:6px}
+
+.scroll{overflow-x:auto; margin:14px 0 18px; border:1px solid var(--line); border-radius:6px; background:var(--surface)}
+table{border-collapse:collapse; width:100%; min-width:640px; font-size:14.5px; line-height:1.7}
+th,td{text-align:left; vertical-align:top; padding:11px 14px; border-bottom:1px solid var(--line)}
+th{font-weight:700; background:var(--code-bg)}
+tr:last-child td{border-bottom:0}
+td.fixcol{color:var(--fix)}
+.ok{color:var(--rb); font-weight:700}
+.no{color:var(--fix); font-weight:700}
+
+.callout{border-radius:6px; padding:16px 20px; margin:16px 0}
+.callout.fix{background:var(--fix-bg)}
+.callout.share{background:var(--share-bg)}
+.callout p:last-child{margin:0}
+
+ol.steps{counter-reset:s; list-style:none; padding:0; margin:18px 0}
+ol.steps>li{counter-increment:s; position:relative; padding:0 0 18px 48px; border-left:2px solid var(--line); margin-left:15px}
+ol.steps>li:last-child{border-left-color:transparent}
+ol.steps>li::before{
+  content:counter(s); position:absolute; left:-16px; top:0; width:30px; height:30px; border-radius:50%;
+  background:var(--ink); color:var(--bg); font-weight:700; font-size:14px; display:flex; align-items:center; justify-content:center;
+}
+ol.steps>li>.st{font-weight:700; display:block; margin-bottom:4px}
+
+pre{
+  background:var(--code-bg); border-radius:6px; padding:14px 16px; overflow-x:auto;
+  font-family:"JetBrains Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace; font-size:13.5px; line-height:1.65; margin:10px 0 14px;
+}
+code{font-family:"JetBrains Mono","SFMono-Regular",Consolas,monospace; font-size:.9em; background:var(--code-bg); padding:1px 5px; border-radius:4px}
+pre code{background:none; padding:0}
+ul.plain{padding-left:1.2em; margin:8px 0 14px}
+ul.plain li{margin:6px 0}
+.foot{margin-top:72px; color:var(--muted); font-size:13.5px; border-top:1px solid var(--line); padding-top:16px}
+a{color:var(--own)}
+:focus-visible{outline:3px solid var(--own); outline-offset:2px}
+
+@media (max-width:560px){
+  .wrap{padding:36px 16px 72px}
+  .stage{grid-template-columns:30px 1fr}
+  .stage .tag{grid-column:2; justify-self:start}
+}
+@media print{
+  body{background:#fff}
+  h2{break-after:avoid}
+  .stage,.callout,pre{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+
+<h1>论文实验与 RecBole 的结合方案：最终结论</h1>
+<p class="meta">依据：论文《整改V8_1116》第 4、5 章，数据预处理说明，Claude Code 对 prepare_data.py 管线的分析，RecBole 及 RecBole-GNN 官方文档。2026 年 11 月 17 日。</p>
+
+<div class="verdict">
+  <p><strong>不换数据集，不换评估，只把召回基线交给 RecBole 训练。</strong></p>
+  <p>数据管线（prepare_data.py 和六条冻结口径）、TI-LightGCN、Temporal-DIN、蒸馏和系统实验全部保持自研。BPR-MF、NGCF、LightGCN、SGL 用 RecBole 训练，SimGCL 用 RecBole-GNN 训练。训练数据由 adapter 从 <code>processed/</code> 直接导出，划分逐行一致。论文里出现的每一个数字，都由你自己的 <code>eval/</code> 统一计算。</p>
+</div>
+
+<div class="ledger" aria-label="各环节分工">
+  <div class="stage"><div class="n">1</div><div><div class="t">数据预处理</div><div class="d">prepare_data.py 唯一入口，六条口径冻结不动；表 5-1 与冷启动分层的数字不受影响。</div></div><span class="tag own">自研，保持不变</span></div>
+  <div class="stage"><div class="n">2</div><div><div class="t">划分导出</div><div class="d">新增 adapter：把 processed/ 的 train/val/test 写成 RecBole atomic 文件，一行一个 (user, item) 对。</div></div><span class="tag share">新增衔接层</span></div>
+  <div class="stage"><div class="n">3</div><div><div class="t">召回基线训练</div><div class="d">BPR-MF、NGCF、LightGCN、SGL 走 RecBole；SimGCL 走 RecBole-GNN；用 benchmark_filename 加载预切分文件。</div></div><span class="tag rb">RecBole</span></div>
+  <div class="stage"><div class="n">4</div><div><div class="t">TI-LightGCN</div><div class="d">保留 PyG 实现，与第 6 章系统代码一致；不移植进 RecBole。</div></div><span class="tag own">自研</span></div>
+  <div class="stage"><div class="n">5</div><div><div class="t">召回评估</div><div class="d">所有模型导出嵌入，统一进 eval/ 做全排序、屏蔽、冷启动分层和配对 t 检验；RecBole 自带指标只用于对账。</div></div><span class="tag own">自研，规则不改</span></div>
+  <div class="stage"><div class="n">6</div><div><div class="t">排序、蒸馏、系统</div><div class="d">Temporal-DIN、DIEN 对比、LLM 软标签、User Memory、RAG、P99 延迟，全部自研管线。</div></div><span class="tag own">自研</span></div>
+</div>
+<div class="legend">
+  <span><span class="tag own">自研</span> 你现有代码</span>
+  <span><span class="tag rb">RecBole</span> 官方实现</span>
+  <span><span class="tag share">衔接层</span> 新增 adapter</span>
+</div>
+
+<h2>两份分析的共识</h2>
+<p>两份分析在大方向上一致，以下几点可以直接作为结论：</p>
+<ul class="plain">
+  <li>不用 RecBole 处理好的 Amazon 数据替换你的数据。论文的统计数字、冷启动比例、复杂度和显存估算都绑定在官方 5-core 文件的实测值上。</li>
+  <li>RecBole 的模型不认识 α<sub>r</sub> 反馈强度和时间衰减边权，没有硬负池采样，也没有长尾语义正则。TI-LightGCN 不能直接用 RecBole 现成模型代替。</li>
+  <li>排序阶段（Temporal-DIN、LLM 蒸馏）和系统层实验与 RecBole 无关，继续自研。</li>
+  <li>RecBole 最大的价值是基线：用你自己的划分跑官方实现，需要一个 adapter 把 processed/ 数据喂进去。</li>
+  <li>引入 RecBole 前先在 <code>docs/decisions.md</code> 登记，并保证 <code>eval/</code>、<code>configs/eval.yaml</code>、切分和屏蔽规则不变。这一点是 Claude Code 提出的，符合你项目的红线流程，应当采纳。</li>
+</ul>
+
+<h2>需要修正的几处判断</h2>
+<p>Claude Code 的分析里有几条事实判断不准确。结论方向不受影响，但如果照原样写进 decisions.md 或答辩材料，会被懂 RecBole 的老师指出来。</p>
+<div class="scroll">
+<table>
+  <thead><tr><th style="width:28%">原判断</th><th>实际情况</th><th style="width:24%">影响</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>RecBole 内置的 Amazon 通常是 2014/2018 版，所以数字对不上。</td>
+      <td class="fixcol">RUCAIBox 的 RecSysDatasets 已收录 Amazon 2023 的转换脚本和处理好的文件。不用它的真正原因是<strong>处理口径</strong>（主键、去重、过滤顺序）不一定和官方 benchmark 文件一致，而不是版本旧。</td>
+      <td>结论不变，理由要换。</td>
+    </tr>
+    <tr>
+      <td>RecBole 的 LightGCN 默认在全量交互上构图，可能包含 test，与防泄漏设计冲突。</td>
+      <td class="fixcol">RecBole 的标准流程用训练集的 dataset 实例化模型，LightGCN 的邻接矩阵取自这个训练集的交互矩阵，测试交互不进图。嵌入表覆盖全部 ID，这和你的实现一样。</td>
+      <td>不构成阻碍。可以加一条校验：邻接矩阵非零数 = 训练对数。</td>
+    </tr>
+    <tr>
+      <td>你的 LOO 以 (user, item) 对为单位，RecBole 按行为记录切，会跨 split 泄漏。</td>
+      <td class="fixcol">IS/TH/OP 的 5-core 文件实测重复对为 0，一行就是一对，两者完全等价。AJ 的多行为数据由 adapter 先聚合成一行一对再导出即可。另外，用 benchmark_filename 加载预切分文件时，RecBole 根本不做切分。</td>
+      <td>由 adapter 消除。</td>
+    </tr>
+    <tr>
+      <td>.inter 文件没有连续权重的概念。</td>
+      <td class="fixcol">atomic 文件支持 float 字段，rating、timestamp、权重都能存。不支持的是<strong>模型</strong>：现成模型不读这些列。</td>
+      <td>不兼容在模型层，不在格式层。</td>
+    </tr>
+    <tr>
+      <td>RecBole evaluator 没有分层分析和配对检验，所以不能用。</td>
+      <td class="fixcol">确实没有，但这不妨碍用 RecBole 训练：导出嵌入后在 eval/ 里算，分层和检验照常进行。</td>
+      <td>正是本方案的做法。</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h2>唯一的分歧：基线在哪里训练</h2>
+<p>Claude Code 的主推荐是“参考 RecBole 的 PyTorch 实现，在你自己的训练循环里重写基线”，把 RecBole adapter 当作备选。我的建议正好相反，<strong>adapter 方案应当是主方案</strong>，理由有三条。</p>
+<ul class="plain">
+  <li><strong>说服力。</strong>论文能写“基线均采用 RecBole / RecBole-GNN 官方实现”，基线是否被压低这类质疑基本不会出现。自己重写的基线，审稿人无从核对。</li>
+  <li><strong>风险。</strong>SGL 的图增广、SimGCL 的噪声扰动细节多，自己重写容易出隐蔽 bug，而且这些 bug 都会让基线变弱，最终看起来像是你的方法更强。</li>
+  <li><strong>红线。</strong>RecBole 只负责训练，评估仍走 eval/，不碰评估代码、配置、切分和屏蔽规则，完全满足红线第 3 条。</li>
+</ul>
+<p>重写方案唯一的优势是不用多装一个框架。代价是单独建一个 conda 环境（RecBole 与 Python 3.12、NumPy 2.x 的组合可能有依赖问题，建议用 Python 3.10），这个代价不大。</p>
+
+<h2>落地步骤</h2>
+<ol class="steps">
+  <li><span class="st">登记决策</span>
+    在 <code>docs/decisions.md</code> 写一条记录，草稿见本页末尾。先登记再动代码。</li>
+  <li><span class="st">写 adapter</span>
+    新增 <code>scripts/export_recbole.py</code>，读 <code>processed/{name}/</code> 的 train、val、test，写成 <code>dataset/{name}/{name}.train.inter</code>、<code>.valid.inter</code>、<code>.test.inter</code>。表头用 RecBole 的类型标注：
+<pre><code>user_id:token	item_id:token	rating:float	timestamp:float</code></pre>
+    一行一个 (user, item) 对。AJ 先按对聚合，再导出。</li>
+  <li><span class="st">基线配置单独放</span>
+    新建 <code>configs/recbole_baselines.yaml</code>，与 <code>configs/eval.yaml</code> 分开。关键是关闭 RecBole 自己的过滤，不让它改动你的数据：
+<pre><code>dataset: IS
+benchmark_filename: [train, valid, test]
+load_col:
+  inter: [user_id, item_id, rating, timestamp]
+user_inter_num_interval: ~
+item_inter_num_interval: ~
+embedding_size: 64
+eval_args: {group_by: user, order: TO, mode: full}
+valid_metric: Recall@10</code></pre></li>
+  <li><span class="st">训练基线</span>
+    BPR、NGCF、LightGCN、SGL 用 RecBole，SimGCL 用 RecBole-GNN。超参数在 valid 上随机搜索，5 个随机种子，与表 5-3 的说法保持一致。</li>
+  <li><span class="st">导出嵌入并映射回原始 ID</span>
+    图模型取前向传播后的最终用户和物品嵌入，BPR 取嵌入表。RecBole 内部会重新编号，并且第 0 行是填充位：要先丢掉第 0 行，再用 <code>dataset.field2id_token</code> 映射回原始 user_id 和 item_id，保存为 <code>results/baselines/{model}_seed{k}.npz</code>。</li>
+  <li><span class="st">统一进 eval/</span>
+    基线嵌入和 TI-LightGCN 嵌入走同一个评估入口：全排序、同一屏蔽规则、冷启动分层、配对 t 检验，结果写入 <code>thesis/generated/numbers.json</code>。</li>
+  <li><span class="st">对账校验</span>
+    按你的 verify 脚本习惯，新增一个 <code>verify_recbole_adapter.py</code>，检查项见下一节。</li>
+</ol>
+
+<h2>对账校验</h2>
+<p>这一步决定了 RecBole 基线能不能放心写进论文。四项检查都通过，就可以在 5.1.2 加一句“基线训练与本文模型共享同一划分文件与评估器，并经逐项对账”。</p>
+<div class="scroll">
+<table>
+  <thead><tr><th style="width:30%">检查项</th><th>通过标准</th><th style="width:26%">不通过时先查</th></tr></thead>
+  <tbody>
+    <tr><td>导出行数与 ID 集合</td><td>三个 .inter 文件行数分别等于 train/val/test 对数；用户和物品集合与 processed/ 完全相同。</td><td>RecBole 过滤是否真的关掉。</td></tr>
+    <tr><td>邻接矩阵只含训练集</td><td>RecBole LightGCN 交互矩阵的非零数等于训练对数。</td><td>模型是否用训练集 dataset 实例化。</td></tr>
+    <tr><td>RecBole 指标与 eval/ 对账</td><td>同一份嵌入，RecBole 内部的 Recall@10 与 eval/ 的结果一致或差异极小。</td><td>RecBole 测试阶段屏蔽的是 train 还是 train+valid，与 eval/ 的屏蔽规则逐条比对。</td></tr>
+    <tr><td>LightGCN 双实现校准</td><td>你 PyG 版的原始 LightGCN 与 RecBole 版在同一划分上的 Recall@10，差距落在随机种子波动范围内。</td><td>归一化方式、层组合、L2 正则的写法。</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>需要提前定下的公平性口径</h2>
+<div class="callout share">
+  <p><strong>基线的训练正样本用哪些对。</strong>TI-LightGCN 的图用全部训练对加权，BPR 正样本只取 rating≥4。RecBole 基线默认把训练文件里的每一行都当正样本。如果不说明，答辩时可能被问：提升来自边加权，还是来自正样本过滤？</p>
+  <p>建议：主表基线用全部训练对，这是最常见的标准做法；另加一行“LightGCN（仅 rating≥4 训练对）”作为补充。因为是预切分文件，只需过滤 train 文件，valid 和 test 不动，划分不受影响。再配合表 5-11 的“去掉反馈强度权重”消融，就能把过滤和加权的贡献拆开。</p>
+</div>
+<div class="callout fix">
+  <p><strong>测试目标里的低分交互。</strong>训练时把 rating≤2 当硬负样本往下压，测试时又把 rating≤2 的最后一条当召回目标（约 11.2%）。口径本身说得通，因为用户确实发生了购买。但建议在 5.1.1 补一句：测试衡量的是“下一次交互”，不是“下一次满意交互”。</p>
+</div>
+
+<h2>论文需要同步修改的地方</h2>
+<ul class="plain">
+  <li>5.2 节：写明基线采用 RecBole（BPR-MF、NGCF、LightGCN、SGL）和 RecBole-GNN（SimGCL）官方实现，在本文划分上独立调参；参考文献加 RecBole 论文。</li>
+  <li>表 5-2：软件环境补上 RecBole 和 RecBole-GNN 的版本，以及基线训练所用的独立 Python 环境。</li>
+  <li>5.1.2 或 5.3 节：加一句共享划分、统一评估、逐项对账的说明。</li>
+  <li>5.3 节：“需要对全量 1 万余件商品排序”改为“2.5 万余件”（IS 实测 25,848 件）。</li>
+  <li>预处理说明文档：删掉“按评分推导 4 类行为”的旧说法，与 docx 5.1.1“以评分作为反馈强度而非离散行为类型”保持一致；表 5-1 对照表标注为已修正。管线里的“行为推导”步骤名也建议改成“反馈强度映射”，避免和论文表述打架。</li>
+</ul>
+
+<h2>decisions.md 记录草稿</h2>
+<pre><code>## D-xxx  引入 RecBole 作为召回基线训练器（2026-11-17）
+
+决策：BPR-MF / NGCF / LightGCN / SGL 使用 RecBole 官方实现训练，
+      SimGCL 使用 RecBole-GNN 官方实现训练。
+
+范围：仅替换基线的训练代码。数据来自 processed/{name}/，经
+      scripts/export_recbole.py 导出为预切分 atomic 文件，通过
+      benchmark_filename 加载，RecBole 内部过滤全部关闭。
+
+不变项：prepare_data.py 及六条冻结口径；eval/、configs/eval.yaml；
+        LOO 切分与屏蔽规则；TI-LightGCN 与排序阶段实现。
+
+评估：所有模型导出嵌入后统一由 eval/ 计算，RecBole 自带指标仅用于对账。
+
+校验：verify_recbole_adapter.py（行数与 ID 集合、邻接矩阵只含训练对、
+      RecBole 与 eval/ 指标对账、LightGCN 双实现校准）。
+
+理由：官方实现可核对、避免自写基线引入偏弱 bug，且不触碰红线第 3 条。</code></pre>
+
+<p class="foot">本页结论基于当前 docx 与两份分析。RecBole 版本特性请以安装时的官方文档为准，尤其是测试阶段的屏蔽规则和 benchmark_filename 的加载行为，上线前务必通过对账校验确认。</p>
+
+</main>
+</body>
+</html>

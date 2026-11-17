@@ -35,7 +35,7 @@ make artifacts V=v1 ...      # 导出原型产物
 make backup                  # 备份结果与论文源
 
 ## 环境（按实际修改）
-- GPU：AutoDL RTX 4090 24GB，16 vCPU / 60 GB；数据盘 /root/autodl-tmp
+- GPU：AutoDL RTX 4090 24GB，16 vCPU / 60 GB；数据盘 /root/autodl-tmp 50G
 - conda 环境：rec（RecBole）、llm（vLLM）、serve（原型，uv 锁定）
 
 ## 符号约定（论文与代码一致）

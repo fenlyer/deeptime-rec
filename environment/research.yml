@@ -1,0 +1,30 @@
+# environment/research.yml — 研究侧 CPU 环境（评估、数据画像、表格管线）
+#
+# 用途：eval/、scripts/、common/、gates/、tests/ 的依赖锁定。
+#       不含 GPU 训练框架；RecBole 见 environment/recbole.yml（S1-b 产出）。
+#
+# 创建：
+#   conda env create -f environment/research.yml
+# 使用：
+#   make test PY=$(conda run -n research which python)
+#   make check-env PY=$(conda run -n research which python)
+#
+# 版本对齐依据：本机 /opt/anaconda3 base 实际安装（2026-11-17 核对）。
+# 改动此文件须同步 docs/decisions.md。
+
+name: research
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pandas=2.2.2
+  - numpy=1.26.4
+  - scipy=1.13.1
+  - pyarrow=19.0.0
+  - matplotlib=3.9.2
+  - pyyaml=6.0.2
+  - pytest=7.4.4
+  - pip
+  - pip:
+      # 论文构建链（S1-d、T-a 使用）
+      - pypandoc

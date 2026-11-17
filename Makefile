@@ -4,17 +4,27 @@
 # 目标未实现时以非零码退出，避免误判为通过。
 
 SHELL := /bin/bash
-PY    := python3
+# 研究侧解释器。默认 python3（解析结果取决于 PATH，不保证），任何机器上都可用 PY= 覆盖：
+#   make test PY=/opt/anaconda3/bin/python3
+# 依赖缺失时 check-env 会给出明确提示，而不是抛 ModuleNotFoundError。
+PY    ?= python3
 
-.PHONY: help test gate tables thesis smoke artifacts
+.PHONY: help check-env test gate tables thesis smoke artifacts
 
 help:
+	@echo "make check-env             检查解释器依赖是否齐全          (W1 环境)"
 	@echo "make test                  全部测试                      (S1-a,S1-c,S1-d)"
 	@echo "make gate W=3              第 N 周关口检查               (.claude/commands/gate.md)"
 	@echo "make tables                results/ → thesis/generated/ (S1-d)"
 	@echo "make thesis [AUDIT=1]      生成 build/thesis_V9.docx    (T-a,T-l)"
 	@echo "make smoke                 pandoc 冒烟文档               (T-a)"
 	@echo "make artifacts V=v1 ...    导出原型产物                  (E1,E2,E3)"
+
+check-env:
+	@echo "解释器：$(PY)"
+	@$(PY) -c "import sys; print('  ' + sys.executable); print('  Python ' + sys.version.split()[0])"
+	@$(PY) -c "import pandas, numpy, pyarrow, matplotlib, pytest; print('  pandas %s / numpy %s / pyarrow %s / matplotlib %s / pytest %s' % (pandas.__version__, numpy.__version__, pyarrow.__version__, matplotlib.__version__, pytest.__version__))" \
+		|| { echo ""; echo "缺少依赖。用锁定的研究环境："; echo "  conda env create -f environment/research.yml"; echo "  然后 make <目标> PY=\$$(conda run -n research which python)"; exit 1; }
 
 test:
 	@ls tests/**/test_*.py tests/test_*.py >/dev/null 2>&1 || { echo "tests/ 尚无测试文件，见 docs/plan/cards/S1-a.md"; exit 1; }

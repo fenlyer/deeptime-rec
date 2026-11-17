@@ -1,0 +1,16 @@
+# 统一评估配置（S1-a）
+
+# 截断 K
+K: [10, 20]
+
+# 测试目标口径：
+#   all — 全部测试目标（LOO 下每用户 1 个）
+#   pos — 只评 rating >= pos_threshold 的测试目标
+target: all
+pos_threshold: 4
+
+# 并列分数的排名策略：
+#   pessimistic — 与测试物品同分的物品都算排在它前面（保守估计）
+#   optimistic  — 与测试物品同分的物品都算排在它后面（乐观估计）
+#   average     — 取平均排名
+rank_tie: pessimistic

@@ -1,0 +1,4 @@
+# 实验队列：每行一条命令，由 experiments/queue.sh 顺序执行
+# 已执行的行会自动加上 "# done " 前缀
+# 查看待执行：bash experiments/queue.sh --dry-run
+# 查看进度：  bash experiments/queue.sh --status

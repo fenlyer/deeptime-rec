@@ -32,7 +32,6 @@ make gate W=3                # 第 3 周关口检查（python -m gates.w3）
 make tables                  # results/ → thesis/generated/
 make thesis [AUDIT=1]        # 生成 build/thesis_V9.docx（AUDIT=1 时数字后附来源）
 make artifacts V=v1 ...      # 导出原型产物
-make backup                  # 备份结果与论文源
 
 ## 环境（按实际修改）
 - GPU：AutoDL RTX 4090 24GB，16 vCPU / 60 GB；数据盘 /root/autodl-tmp 50G

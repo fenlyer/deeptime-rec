@@ -42,6 +42,9 @@ data/processed/*
 # parquet 不做全局忽略：results/ 下的 per_user.parquet 与 candidates/ti_top100.parquet
 # 是后续排序与一致性测试的输入，必须入库；artifacts/ 已由上面的目录通配排除
 artifacts/*
+!artifacts/*/
+artifacts/*/*
+!artifacts/*/manifest.json
 build/*
 !artifacts/README.md
 !build/README.md

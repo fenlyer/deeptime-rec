@@ -6,7 +6,7 @@
 SHELL := /bin/bash
 PY    := python3
 
-.PHONY: help test gate tables thesis smoke artifacts backup
+.PHONY: help test gate tables thesis smoke artifacts
 
 help:
 	@echo "make test                  全部测试                      (S1-a,S1-c,S1-d)"
@@ -15,7 +15,6 @@ help:
 	@echo "make thesis [AUDIT=1]      生成 build/thesis_V9.docx    (T-a,T-l)"
 	@echo "make smoke                 pandoc 冒烟文档               (T-a)"
 	@echo "make artifacts V=v1 ...    导出原型产物                  (E1,E2,E3)"
-	@echo "make backup                备份结果与论文源              (W0-c)"
 
 test:
 	@ls tests/**/test_*.py tests/test_*.py >/dev/null 2>&1 || { echo "tests/ 尚无测试文件，见 docs/plan/cards/S1-a.md"; exit 1; }
@@ -44,7 +43,3 @@ artifacts:
 	@test -f export/export_artifacts.py || { echo "export/export_artifacts.py 尚未实现，见 docs/plan/cards/E1.md"; exit 1; }
 	$(PY) export/export_artifacts.py --version $(V) \
 		$(if $(MODEL),--model $(MODEL),) $(if $(CKPT),--ckpt $(CKPT),) $(if $(MODE),--mode $(MODE),)
-
-backup:
-	@test -f scripts/backup.sh || { echo "scripts/backup.sh 尚未实现，见 docs/plan/cards/W0-c.md"; exit 1; }
-	bash scripts/backup.sh

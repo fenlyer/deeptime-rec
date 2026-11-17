@@ -7,7 +7,7 @@
 ## 已完成（卡片 ID｜commit｜日期）
 - W0-a｜仓库骨架与规则（CLAUDE.md、6 个命令、58 张卡片、目录与 README、Makefile 骨架）｜2026-11-16
 - W0-b｜三样外部信息已确认（送审截止 2027-06、CNKI TMLC2 ≤10%/15%、AIGC ≤10%、模板已放入 thesis/template/）｜2026-11-17
-- W0-c｜AutoDL 环境已选定（RTX 4090 / 数据盘 50G）；scripts/backup.sh 与 experiments/queue.sh 已完成并通过验收｜2026-11-17
+- W0-c｜数据盘确认（RTX 4090 / 数据盘 50G）；experiments/queue.sh 已完成；backup 简化为 git 追踪（删除 backup.sh 与 Makefile backup 目标）｜2026-11-17
 - L-a｜refs/verify.csv（43 行，三列已核查填完）+ refs/missing_mentions.md + refs/verify_summary.md；refs/thesis.bib 扩至 64 篇｜2026-11-17
 
 ## 阻塞与待决定

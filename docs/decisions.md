@@ -10,4 +10,5 @@
 - 2026-11-17｜W0-b 三样外部信息已确认：① 送审截止日不卡，2027-06 前答辩（系统已盲审过）；② 查重平台 CNKI TMLC2/VIP，全文及单章 ≤ 10% 或 15%，AIGC 疑似率 ≤ 10%（严控线）；③ 学校模板已放入 thesis/template/｜—｜docs/plan/gates.md G10、thesis/template/｜否
 - 2026-11-17｜W0-c AutoDL 环境已选定（RTX 4090 24GB / 16 vCPU / 60 GB / 数据盘 50G），当前无余额，待晚间确认释放实例｜CLAUDE.md 环境一节已更新｜—｜否
 - 2026-11-17｜备份目标定为本地目录 `~/deeptime-rec-backup`，可用环境变量 `BACKUP_DEST` 覆盖；备份范围：results/ 下所有 metrics.json 与 manifest.json、artifacts/*/manifest.json、thesis/、refs/、docs/｜W0-c 卡片要求由我指定备份位置；本地目录无需网络、可随时执行｜scripts/backup.sh、Makefile backup 目标｜否
+- 2026-11-17｜取消独立备份脚本 scripts/backup.sh 与 Makefile backup 目标，改用 git 统一管理：.gitignore 放行 `artifacts/*/manifest.json`（逐层放行：`!artifacts/*/` → `artifacts/*/*` → `!artifacts/*/manifest.json`），其余备份内容（thesis/、refs/、docs/、results/ 下的 json）本就由 git 追踪。定期 push 到 GitHub 即完成备份｜backup.sh 与 Makefile backup 目标已删除；CLAUDE.md 中 `make backup` 行已移除｜.gitignore、Makefile、CLAUDE.md、docs/plan/cards/W0-c.md｜否
 - 2026-11-17｜实验队列 experiments/queue.sh 采用 `--foreground` / `--dry-run` / `--status` 三种模式；tmux 模式在本机不可用（未安装 tmux），AutoDL 上可用｜macOS 自带 bash 3.2 无 mapfile，脚本已改写为 while read 兼容写法｜experiments/queue.sh、experiments/queue.txt｜否

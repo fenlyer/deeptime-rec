@@ -1,0 +1,60 @@
+{
+  "dataset": "IS",
+  "scale": {
+    "num_users": 50985,
+    "num_items": 25848,
+    "num_pairs": 412947
+  },
+  "stats_json_scale": {
+    "num_users": 50985,
+    "num_items": 25848,
+    "num_pairs": 412947
+  },
+  "train_pairs_per_user": {
+    "median": 4.0,
+    "mean": 6.099382171226831,
+    "min": 3,
+    "max": 202,
+    "n_users": 50985
+  },
+  "inter_gap_days": {
+    "median": 22.11318287037037,
+    "mean": 165.53960568232839,
+    "p90": 509.2268055555556,
+    "n_gaps": 259983,
+    "definition": "同一用户按时间排序后相邻两条训练交互的间隔，单位天；同一秒内的多条交互不计入"
+  },
+  "interaction_age_days": {
+    "median": 1520.5417708333334,
+    "mean": 1611.1221008705807,
+    "t_now": 1692892488,
+    "definition": "训练集最大时间戳减去交互时间戳，单位天；t_now 取该数据集训练集 timestamp 最大值"
+  },
+  "gamma0": {
+    "value": 0.031345427956854584,
+    "formula": "ln2 / 相邻交互间隔中位数（天）",
+    "interpretation": "注意力权重在间隔中位数天数后衰减一半"
+  },
+  "lambda0": {
+    "value": 0.0004558554022360502,
+    "formula": "ln2 / 训练集交互年龄中位数（天）",
+    "interpretation": "边权重在年龄中位数天数后衰减一半"
+  },
+  "test_item_in_train_ratio": {
+    "value": 0.9934882808669216,
+    "n_test": 50985,
+    "definition": "测试行的物品在训练集出现过的比例"
+  },
+  "user_all_same_rating_ratio": {
+    "value": 0.3781504364028636,
+    "definition": "训练集中一个用户所有交互评分相同的用户占比"
+  },
+  "rating_distribution_train": {
+    "1": 14081,
+    "2": 9226,
+    "3": 17651,
+    "4": 44275,
+    "5": 225744
+  },
+  "has_rating": true
+}

@@ -51,3 +51,4 @@ build/*
 *.npy
 *.pt
 *.index
+tmp/*

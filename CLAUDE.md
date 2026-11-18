@@ -35,6 +35,7 @@ make artifacts V=v1 ...      # 导出原型产物
 
 ## 环境（按实际修改）
 - GPU：AutoDL RTX 4090 24GB，16 vCPU / 60 GB；数据盘 /root/autodl-tmp 50G
+- AutoDL 镜像：基础镜像 → Miniconda → py310 / Ubuntu 22.04 / CUDA 11.8（不用 PyTorch 基础镜像与社区镜像）；环境装好后存「我的镜像」，后续从它启动
 - AutoDL conda 环境：rec（RecBole）、llm（vLLM）、serve（原型，uv 锁定）
 - 本机 conda 环境：`recbole_env`（Python 3.10.18 / recbole 1.2.1 / torch 2.5.1）对应 AutoDL 的 `rec`；`base`（Python 3.12.2）跑 CPU 侧脚本
 - 解释器约定：`make` 里的 `PY` 默认 `python3`，取决于 PATH（`backend/.venv` 可能抢先）。跑研究侧任务前用 `make check-env` 确认，或显式指定 `PY=/opt/anaconda3/bin/python3`

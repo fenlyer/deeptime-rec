@@ -1,0 +1,37 @@
+# environment/recbole.yml — RecBole 实验环境（S1-b）
+#
+# 用途：运行 RecBole 基线模型（LightGCN、SimGCL、BPR、NeuMF 等）。
+#       依赖冻结切分，由 scripts/export_recbole.py 导出。
+#
+# 创建：
+#   conda env create -f environment/recbole.yml
+# 使用：
+#   conda activate recbole_env
+#   python experiments/run_recbole.py --model LightGCN --config configs/recbole_baselines.yaml
+#
+# 版本选择依据：
+#   - Python 3.10：RecBole 官方推荐，与 AutoDL 镜像一致
+#   - PyTorch 2.5.1：本机 recbole_env 实际安装版本
+#   - RecBole 1.2.1：本机 recbole_env 实际安装版本（2026-11-18 核对）
+#
+# 改动此文件须同步 docs/decisions.md。
+
+name: recbole_env
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pytorch=2.5.1
+  - numpy
+  - pandas
+  - scipy
+  - scikit-learn
+  - pyyaml
+  - matplotlib
+  - tqdm
+  - colorlog
+  - pip
+  - pip:
+      - recbole==1.2.1

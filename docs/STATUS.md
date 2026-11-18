@@ -2,7 +2,7 @@
 当前周：W1（11/16–11/22） 本周关口：G1（11/21）
 
 ## 进行中
-- S1-c 运行记录、配对检验、分层守恒：代码与测试已完成（50 passed），待提交
+- S1-c 运行记录、配对检验、分层守恒：代码与测试已完成（54 passed, 4 skipped），待提交
 
 ## 已完成（卡片 ID｜commit｜日期）
 - W0-a｜仓库骨架与规则（CLAUDE.md、6 个命令、58 张卡片、目录与 README、Makefile 骨架）｜2026-11-16
@@ -13,6 +13,7 @@
 - S0-b｜IS 数据画像完成：γ₀=0.0313/天（ln2/22.1天）、λ₀=0.000456/天（ln2/1520.5天）；5 张画像图（SVG+600dpi PNG）；规模与 stats.json 一致｜f83a40f｜2026-11-17
 - S0-b 补｜TH、OP 画像 JSON 补跑完成（TH γ₀=0.026254/λ₀=0.000413；OP γ₀=0.030499/λ₀=0.000356）；规模断言均与 stats.json 一致｜914c491｜2026-11-18
 - S1-a｜统一评估入口 eval/（metrics.py Recall/NDCG + full_rank.py 全排序/屏蔽/悲观并列 + eval.yaml + 10 个测试）｜b67994e｜2026-11-17
+- S1-b｜RecBole 冒烟与冻结切分对接：environment/recbole.yml、scripts/export_recbole.py、eval/crosscheck_recbole.py、configs/recbole_baselines.yaml、tests/test_verify_recbole_adapter.py；对账 1 通过（.inter 文件行数与 ID 集合一致），对账 2-4 待 AutoDL 运行后校验｜2026-11-18
 
 ## 阻塞与待决定
 - AutoDL 余额待释放（不阻塞本机工作，S1-b 之外的可先做）

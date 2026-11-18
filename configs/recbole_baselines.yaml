@@ -1,0 +1,131 @@
+# RecBole 基线模型配置（S1-b）
+#
+# 使用 benchmark_filename 方式加载冻结切分，不使用 RecBole 自带的随机切分。
+# 评估口径与 eval/ 保持一致：LOO、全排序、屏蔽训练+验证物品。
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 通用配置
+# ─────────────────────────────────────────────────────────────────────────────
+
+# 数据集
+dataset: IS
+data_path: data/recbole/
+# 使用冻结切分（benchmark_filename 模式）
+# RecBole 会查找 {dataset}.{split_name}.inter 文件
+benchmark_filename: [train, val, test]
+
+# 评估设置
+eval_args:
+  split:
+    # 不使用 RecBole 的切分，直接用冻结文件
+    mode: custom
+  group_by: user
+  order: RO
+  repeat: none
+
+# LOO 评估（每用户 1 个测试物品）
+# 注意：benchmark_filename 模式下 RecBole 自动识别 train/val/test
+
+# 评估指标
+metrics: ["Recall", "NDCG"]
+topk: [10, 20]
+valid_metric: Recall@10
+
+# 评估时屏蔽训练+验证物品
+# RecBole 默认行为：评估时排除训练物品
+# 但我们需要同时排除训练+验证物品，需要配置
+# 注意：RecBole 的 negative_sampling 只在训练时使用，评估时是全排序
+
+# ─────────────────────────────────────────────────────────────────────────────
+# LightGCN
+# ─────────────────────────────────────────────────────────────────────────────
+
+lightgcn:
+  model: LightGCN
+  epochs: 100
+  train_batch_size: 2048
+  eval_batch_size: 4096
+  eval_step: 1
+
+  # 图神经网络参数
+  embedding_size: 64
+  n_layers: 3
+
+  # 训练参数
+  learner: adam
+  learning_rate: 0.001
+  weight_decay: 1e-4
+  early_stop: 10
+  seed: 0
+
+  # GPU
+  use_gpu: true
+  gpu_id: 0
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 其他基线（后续扩展）
+# ─────────────────────────────────────────────────────────────────────────────
+
+# SimGCL（需要 recbole_gnn）
+simgcl:
+  model: SimGCL
+  epochs: 100
+  train_batch_size: 2048
+  eval_batch_size: 4096
+  eval_step: 1
+
+  embedding_size: 64
+  n_layers: 3
+
+  # SimGCL 特有参数
+  cl_loss: 0.2
+  eps: 0.1
+
+  learner: adam
+  learning_rate: 0.001
+  weight_decay: 1e-4
+  early_stop: 10
+  seed: 0
+
+  use_gpu: true
+  gpu_id: 0
+
+# BPR-MF（简单基线）
+bpr:
+  model: BPR
+  epochs: 100
+  train_batch_size: 2048
+  eval_batch_size: 4096
+  eval_step: 1
+
+  embedding_size: 64
+
+  learner: adam
+  learning_rate: 0.001
+  weight_decay: 1e-4
+  early_stop: 10
+  seed: 0
+
+  use_gpu: true
+  gpu_id: 0
+
+# NeuMF（简单基线）
+neumf:
+  model: NeuMF
+  epochs: 100
+  train_batch_size: 2048
+  eval_batch_size: 4096
+  eval_step: 1
+
+  embedding_size: 64
+  mf_dim: 64
+  mlp_layers: [128, 64, 32]
+
+  learner: adam
+  learning_rate: 0.001
+  weight_decay: 1e-4
+  early_stop: 10
+  seed: 0
+
+  use_gpu: true
+  gpu_id: 0

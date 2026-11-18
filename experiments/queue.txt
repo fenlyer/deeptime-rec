@@ -2,3 +2,7 @@
 # 已执行的行会自动加上 "# done " 前缀
 # 查看待执行：bash experiments/queue.sh --dry-run
 # 查看进度：  bash experiments/queue.sh --status
+
+# S1-b: RecBole LightGCN smoke 训练 + 交叉校验
+python experiments/recbole_smoke.py --epochs 50
+python eval/crosscheck_recbole.py --checkpoint $(ls -t results/_smoke/recbole/LightGCN-*.pth | head -1) --data-path data/recbole --output results/_smoke/crosscheck.json

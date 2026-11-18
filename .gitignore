@@ -50,5 +50,8 @@ build/*
 !build/README.md
 *.npy
 *.pt
+*.pth
 *.index
 tmp/*
+
+log_tensorboard/

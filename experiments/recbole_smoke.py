@@ -134,18 +134,18 @@ def run_smoke(data_path: Path, output_dir: Path, epochs: int = 10, use_gpu: bool
     test_result = trainer.evaluate(test_data, load_best_model=True, show_progress=False)
 
     print("\n===== 测试结果 =====")
-    print(f"Recall@10:  {test_result['recall-recall@10']:.6f}")
-    print(f"Recall@20:  {test_result['recall-recall@20']:.6f}")
-    print(f"NDCG@10:    {test_result['ndcg-ndcg@10']:.6f}")
-    print(f"NDCG@20:    {test_result['ndcg-ndcg@20']:.6f}")
+    print(f"Recall@10:  {test_result['recall@10']:.6f}")
+    print(f"Recall@20:  {test_result['recall@20']:.6f}")
+    print(f"NDCG@10:    {test_result['ndcg@10']:.6f}")
+    print(f"NDCG@20:    {test_result['ndcg@20']:.6f}")
 
     # 保存结果
     output_dir.mkdir(parents=True, exist_ok=True)
     result = {
-        "recall@10": float(test_result["recall-recall@10"]),
-        "recall@20": float(test_result["recall-recall@20"]),
-        "ndcg@10": float(test_result["ndcg-ndcg@10"]),
-        "ndcg@20": float(test_result["ndcg-ndcg@20"]),
+        "recall@10": float(test_result["recall@10"]),
+        "recall@20": float(test_result["recall@20"]),
+        "ndcg@10": float(test_result["ndcg@10"]),
+        "ndcg@20": float(test_result["ndcg@20"]),
         "device": device_name,
         "epochs": epochs,
     }

@@ -11,8 +11,10 @@
 #
 # 版本选择依据：
 #   - Python 3.10：RecBole 官方推荐，与 AutoDL 镜像一致
-#   - PyTorch 2.5.1：本机 recbole_env 实际安装版本
-#   - RecBole 1.2.1：本机 recbole_env 实际安装版本（2026-11-18 核对）
+#   - PyTorch 2.5.1+cu121：AutoDL RTX 2080 Ti / CUDA 13.2 兼容
+#   - RecBole 1.2.1：AutoDL recbole_env 实际安装版本（2026-11-19 核对）
+#   - torch_geometric 2.8.1：RecBole-GNN 依赖
+#   - RecBole-GNN：源码安装自 https://github.com/RUCAIBox/RecBole-GNN.git
 #
 # 改动此文件须同步 docs/decisions.md。
 
@@ -23,7 +25,6 @@ channels:
   - defaults
 dependencies:
   - python=3.10
-  - pytorch=2.5.1
   - numpy
   - pandas
   - scipy
@@ -34,4 +35,11 @@ dependencies:
   - colorlog
   - pip
   - pip:
+      - torch==2.5.1+cu121
+      - --index-url https://download.pytorch.org/whl/cu121
+      - torchvision==0.20.1+cu121
       - recbole==1.2.1
+      - torch-geometric==2.8.1
+      # RecBole-GNN 无 PyPI 包，源码安装：
+      #   git clone https://github.com/RUCAIBox/RecBole-GNN.git
+      #   cp -r RecBole-GNN/recbole_gnn $SITE_PACKAGES/

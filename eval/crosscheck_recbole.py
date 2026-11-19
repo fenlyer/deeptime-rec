@@ -110,15 +110,15 @@ def load_recbole_eval_results(checkpoint_path: Path, data_path: Path):
     recbole_result = trainer.evaluate(test_data, load_best_model=False, show_progress=False)
 
     recbole_metrics = {
-        "recall@10": float(recbole_result["recall-recall@10"]),
-        "recall@20": float(recbole_result["recall-recall@20"]),
-        "ndcg@10": float(recbole_result["ndcg-ndcg@10"]),
-        "ndcg@20": float(recbole_result["ndcg-ndcg@20"]),
+        "recall@10": float(recbole_result["recall@10"]),
+        "recall@20": float(recbole_result["recall@20"]),
+        "ndcg@10": float(recbole_result["ndcg@10"]),
+        "ndcg@20": float(recbole_result["ndcg@20"]),
     }
 
     # 提取嵌入（在 GPU 上算完再搬到 CPU）
-    user_embeddings = model.get_user_embedding().cpu().numpy()
-    item_embeddings = model.get_item_embedding().cpu().numpy()
+    user_embeddings = model.user_embedding.weight.detach().cpu().numpy()
+    item_embeddings = model.item_embedding.weight.detach().cpu().numpy()
 
     return recbole_metrics, user_embeddings, item_embeddings
 
@@ -130,7 +130,7 @@ def compute_our_eval_results(
     val_path: Path,
     test_path: Path,
 ) -> tuple[Dict[str, float], pd.DataFrame]:
-    """用 eval/ 计算指标。
+    """用 eval/ 计算指标（向量化版本）。
 
     参数
     ----
@@ -143,7 +143,6 @@ def compute_our_eval_results(
     our_metrics : dict，eval/ 的评估结果
     per_user : DataFrame，每用户一行（user_id, test_item, rank, ...）
     """
-    from eval.full_rank import full_rank
     from eval.metrics import recall_at_k, ndcg_at_k
 
     # 加载数据
@@ -151,51 +150,66 @@ def compute_our_eval_results(
     val = pd.read_parquet(val_path)
     test = pd.read_parquet(test_path)
 
-    all_items = sorted(
-        pd.concat([train["item_idx"], val["item_idx"], test["item_idx"]]).unique().tolist()
-    )
-    shielded = set(
-        (str(r["user_idx"]), str(r["item_idx"]))
-        for _, r in pd.concat([
-            train[["user_idx", "item_idx"]],
-            val[["user_idx", "item_idx"]],
-        ]).iterrows()
-    )
+    n_users_total = user_embeddings.shape[0]
+    n_items_total = item_embeddings.shape[0]
+
+    # 构建屏蔽矩阵（训练+验证物品设为 -inf）
+    print("  构建屏蔽矩阵...")
+    train_val_pairs = pd.concat([
+        train[["user_idx", "item_idx"]],
+        val[["user_idx", "item_idx"]],
+    ]).values
+    shield_mat = np.zeros((n_users_total, n_items_total), dtype=bool)
+    shield_mat[train_val_pairs[:, 0], train_val_pairs[:, 1]] = True
 
     # 矩阵运算打分：scores[u, i] = user_emb[u] · item_emb[i]
-    # 然后转成 DataFrame（user_id, item_id, score）
     print("  计算打分矩阵...")
     score_matrix = user_embeddings @ item_embeddings.T  # (n_users, n_items)
 
-    # 转为 (user_id, item_id, score) 三列 DataFrame
-    # 用 numpy 展开比逐行循环快得多
-    n_users, n_items = score_matrix.shape
-    user_ids = np.repeat(np.arange(n_users), n_items)
-    item_ids = np.tile(np.arange(n_items), n_users)
-    scores_flat = score_matrix.flatten()
+    # 屏蔽训练+验证物品
+    score_matrix[shield_mat] = -np.inf
 
-    scores = pd.DataFrame({
-        "user_id": user_ids.astype(str),
-        "item_id": item_ids.astype(str),
-        "score": scores_flat,
-    })
+    # 逐用户计算测试物品排名（向量化）
+    print("  计算排名...")
+    test_users = test["user_idx"].values
+    test_items = test["item_idx"].values
 
-    # 全排序评估
-    print("  全排序评估...")
-    test_renamed = test[["user_idx", "item_idx", "rating"]].rename(columns={
-        "user_idx": "user_id",
-        "item_idx": "item_id",
-    })
-    per_user = full_rank(
-        scores=scores,
-        all_items=all_items,
-        shielded=shielded,
-        test_df=test_renamed,
-        tie="pessimistic",
-    )
+    ranks = {}
+    per_user_rows = []
+    for idx in range(len(test)):
+        u = int(test_users[idx])
+        i = int(test_items[idx])
+
+        # 该用户的打分（已屏蔽）
+        user_scores = score_matrix[u]  # (n_items,)
+
+        # 测试物品的分数
+        test_score = user_scores[i]
+
+        if test_score == -np.inf:
+            # 测试物品被屏蔽（在训练/验证中出现过）
+            rank = float("inf")
+        else:
+            # 悲观排名：1 + (比它大的个数) + (与它同分的个数)
+            # 只考虑未被屏蔽的物品
+            valid_mask = user_scores != -np.inf
+            valid_scores = user_scores[valid_mask]
+
+            n_better = (valid_scores > test_score).sum()
+            n_equal = (valid_scores == test_score).sum()
+            rank = 1 + int(n_better) + int(n_equal)
+
+        uid_str = str(u)
+        ranks[uid_str] = rank
+        per_user_rows.append({
+            "user_id": uid_str,
+            "test_item": str(i),
+            "rank": rank,
+        })
+
+    per_user = pd.DataFrame(per_user_rows)
 
     # 计算指标
-    ranks = dict(zip(per_user["user_id"], per_user["rank"]))
     our_metrics = {
         "recall@10": recall_at_k(ranks, 10),
         "recall@20": recall_at_k(ranks, 20),

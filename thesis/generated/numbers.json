@@ -1,0 +1,338 @@
+{
+  "profile.IS.gamma0.value": {
+    "source": "profile/IS.json",
+    "value": 0.031345427956854584
+  },
+  "profile.IS.inter_gap_days.mean": {
+    "source": "profile/IS.json",
+    "value": 165.53960568232839
+  },
+  "profile.IS.inter_gap_days.median": {
+    "source": "profile/IS.json",
+    "value": 22.11318287037037
+  },
+  "profile.IS.inter_gap_days.n_gaps": {
+    "source": "profile/IS.json",
+    "value": 259983
+  },
+  "profile.IS.inter_gap_days.p90": {
+    "source": "profile/IS.json",
+    "value": 509.2268055555556
+  },
+  "profile.IS.interaction_age_days.mean": {
+    "source": "profile/IS.json",
+    "value": 1611.1221008705807
+  },
+  "profile.IS.interaction_age_days.median": {
+    "source": "profile/IS.json",
+    "value": 1520.5417708333334
+  },
+  "profile.IS.interaction_age_days.t_now": {
+    "source": "profile/IS.json",
+    "value": 1692892488
+  },
+  "profile.IS.lambda0.value": {
+    "source": "profile/IS.json",
+    "value": 0.0004558554022360502
+  },
+  "profile.IS.rating_distribution_train.1": {
+    "source": "profile/IS.json",
+    "value": 14081
+  },
+  "profile.IS.rating_distribution_train.2": {
+    "source": "profile/IS.json",
+    "value": 9226
+  },
+  "profile.IS.rating_distribution_train.3": {
+    "source": "profile/IS.json",
+    "value": 17651
+  },
+  "profile.IS.rating_distribution_train.4": {
+    "source": "profile/IS.json",
+    "value": 44275
+  },
+  "profile.IS.rating_distribution_train.5": {
+    "source": "profile/IS.json",
+    "value": 225744
+  },
+  "profile.IS.scale.num_items": {
+    "source": "profile/IS.json",
+    "value": 25848
+  },
+  "profile.IS.scale.num_pairs": {
+    "source": "profile/IS.json",
+    "value": 412947
+  },
+  "profile.IS.scale.num_users": {
+    "source": "profile/IS.json",
+    "value": 50985
+  },
+  "profile.IS.stats_json_scale.num_items": {
+    "source": "profile/IS.json",
+    "value": 25848
+  },
+  "profile.IS.stats_json_scale.num_pairs": {
+    "source": "profile/IS.json",
+    "value": 412947
+  },
+  "profile.IS.stats_json_scale.num_users": {
+    "source": "profile/IS.json",
+    "value": 50985
+  },
+  "profile.IS.test_item_in_train_ratio.n_test": {
+    "source": "profile/IS.json",
+    "value": 50985
+  },
+  "profile.IS.test_item_in_train_ratio.value": {
+    "source": "profile/IS.json",
+    "value": 0.9934882808669216
+  },
+  "profile.IS.train_pairs_per_user.max": {
+    "source": "profile/IS.json",
+    "value": 202
+  },
+  "profile.IS.train_pairs_per_user.mean": {
+    "source": "profile/IS.json",
+    "value": 6.099382171226831
+  },
+  "profile.IS.train_pairs_per_user.median": {
+    "source": "profile/IS.json",
+    "value": 4.0
+  },
+  "profile.IS.train_pairs_per_user.min": {
+    "source": "profile/IS.json",
+    "value": 3
+  },
+  "profile.IS.train_pairs_per_user.n_users": {
+    "source": "profile/IS.json",
+    "value": 50985
+  },
+  "profile.IS.user_all_same_rating_ratio.value": {
+    "source": "profile/IS.json",
+    "value": 0.3781504364028636
+  },
+  "profile.OP.gamma0.value": {
+    "source": "profile/OP.json",
+    "value": 0.030499133935212305
+  },
+  "profile.OP.inter_gap_days.mean": {
+    "source": "profile/OP.json",
+    "value": 183.01484930455408
+  },
+  "profile.OP.inter_gap_days.median": {
+    "source": "profile/OP.json",
+    "value": 22.72678240740741
+  },
+  "profile.OP.inter_gap_days.n_gaps": {
+    "source": "profile/OP.json",
+    "value": 1130907
+  },
+  "profile.OP.inter_gap_days.p90": {
+    "source": "profile/OP.json",
+    "value": 563.9677685185187
+  },
+  "profile.OP.interaction_age_days.mean": {
+    "source": "profile/OP.json",
+    "value": 1956.4543833636005
+  },
+  "profile.OP.interaction_age_days.median": {
+    "source": "profile/OP.json",
+    "value": 1949.0733043981481
+  },
+  "profile.OP.interaction_age_days.t_now": {
+    "source": "profile/OP.json",
+    "value": 1693576800
+  },
+  "profile.OP.lambda0.value": {
+    "source": "profile/OP.json",
+    "value": 0.00035562909768238875
+  },
+  "profile.OP.rating_distribution_train.1": {
+    "source": "profile/OP.json",
+    "value": 55159
+  },
+  "profile.OP.rating_distribution_train.2": {
+    "source": "profile/OP.json",
+    "value": 39851
+  },
+  "profile.OP.rating_distribution_train.3": {
+    "source": "profile/OP.json",
+    "value": 80494
+  },
+  "profile.OP.rating_distribution_train.4": {
+    "source": "profile/OP.json",
+    "value": 183419
+  },
+  "profile.OP.rating_distribution_train.5": {
+    "source": "profile/OP.json",
+    "value": 995339
+  },
+  "profile.OP.scale.num_items": {
+    "source": "profile/OP.json",
+    "value": 77551
+  },
+  "profile.OP.scale.num_pairs": {
+    "source": "profile/OP.json",
+    "value": 1800878
+  },
+  "profile.OP.scale.num_users": {
+    "source": "profile/OP.json",
+    "value": 223308
+  },
+  "profile.OP.stats_json_scale.num_items": {
+    "source": "profile/OP.json",
+    "value": 77551
+  },
+  "profile.OP.stats_json_scale.num_pairs": {
+    "source": "profile/OP.json",
+    "value": 1800878
+  },
+  "profile.OP.stats_json_scale.num_users": {
+    "source": "profile/OP.json",
+    "value": 223308
+  },
+  "profile.OP.test_item_in_train_ratio.n_test": {
+    "source": "profile/OP.json",
+    "value": 223308
+  },
+  "profile.OP.test_item_in_train_ratio.value": {
+    "source": "profile/OP.json",
+    "value": 0.9943530907983592
+  },
+  "profile.OP.train_pairs_per_user.max": {
+    "source": "profile/OP.json",
+    "value": 716
+  },
+  "profile.OP.train_pairs_per_user.mean": {
+    "source": "profile/OP.json",
+    "value": 6.064547620327082
+  },
+  "profile.OP.train_pairs_per_user.median": {
+    "source": "profile/OP.json",
+    "value": 4.0
+  },
+  "profile.OP.train_pairs_per_user.min": {
+    "source": "profile/OP.json",
+    "value": 3
+  },
+  "profile.OP.train_pairs_per_user.n_users": {
+    "source": "profile/OP.json",
+    "value": 223308
+  },
+  "profile.OP.user_all_same_rating_ratio.value": {
+    "source": "profile/OP.json",
+    "value": 0.3849615777312053
+  },
+  "profile.TH.gamma0.value": {
+    "source": "profile/TH.json",
+    "value": 0.026254067198712927
+  },
+  "profile.TH.inter_gap_days.mean": {
+    "source": "profile/TH.json",
+    "value": 178.39621381561204
+  },
+  "profile.TH.inter_gap_days.median": {
+    "source": "profile/TH.json",
+    "value": 26.401516203703704
+  },
+  "profile.TH.inter_gap_days.n_gaps": {
+    "source": "profile/TH.json",
+    "value": 5364736
+  },
+  "profile.TH.inter_gap_days.p90": {
+    "source": "profile/TH.json",
+    "value": 540.4772800925925
+  },
+  "profile.TH.interaction_age_days.mean": {
+    "source": "profile/TH.json",
+    "value": 1799.330548471474
+  },
+  "profile.TH.interaction_age_days.median": {
+    "source": "profile/TH.json",
+    "value": 1679.3658043981482
+  },
+  "profile.TH.interaction_age_days.t_now": {
+    "source": "profile/TH.json",
+    "value": 1694326715
+  },
+  "profile.TH.lambda0.value": {
+    "source": "profile/TH.json",
+    "value": 0.00041274341703554914
+  },
+  "profile.TH.rating_distribution_train.1": {
+    "source": "profile/TH.json",
+    "value": 364345
+  },
+  "profile.TH.rating_distribution_train.2": {
+    "source": "profile/TH.json",
+    "value": 223977
+  },
+  "profile.TH.rating_distribution_train.3": {
+    "source": "profile/TH.json",
+    "value": 387458
+  },
+  "profile.TH.rating_distribution_train.4": {
+    "source": "profile/TH.json",
+    "value": 851266
+  },
+  "profile.TH.rating_distribution_train.5": {
+    "source": "profile/TH.json",
+    "value": 4379878
+  },
+  "profile.TH.scale.num_items": {
+    "source": "profile/TH.json",
+    "value": 274732
+  },
+  "profile.TH.scale.num_pairs": {
+    "source": "profile/TH.json",
+    "value": 7891024
+  },
+  "profile.TH.scale.num_users": {
+    "source": "profile/TH.json",
+    "value": 842050
+  },
+  "profile.TH.stats_json_scale.num_items": {
+    "source": "profile/TH.json",
+    "value": 274732
+  },
+  "profile.TH.stats_json_scale.num_pairs": {
+    "source": "profile/TH.json",
+    "value": 7891024
+  },
+  "profile.TH.stats_json_scale.num_users": {
+    "source": "profile/TH.json",
+    "value": 842050
+  },
+  "profile.TH.test_item_in_train_ratio.n_test": {
+    "source": "profile/TH.json",
+    "value": 842050
+  },
+  "profile.TH.test_item_in_train_ratio.value": {
+    "source": "profile/TH.json",
+    "value": 0.9973635769847397
+  },
+  "profile.TH.train_pairs_per_user.max": {
+    "source": "profile/TH.json",
+    "value": 914
+  },
+  "profile.TH.train_pairs_per_user.mean": {
+    "source": "profile/TH.json",
+    "value": 7.371205985392791
+  },
+  "profile.TH.train_pairs_per_user.median": {
+    "source": "profile/TH.json",
+    "value": 5.0
+  },
+  "profile.TH.train_pairs_per_user.min": {
+    "source": "profile/TH.json",
+    "value": 3
+  },
+  "profile.TH.train_pairs_per_user.n_users": {
+    "source": "profile/TH.json",
+    "value": 842050
+  },
+  "profile.TH.user_all_same_rating_ratio.value": {
+    "source": "profile/TH.json",
+    "value": 0.30684044890445933
+  }
+}

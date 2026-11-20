@@ -1,7 +1,7 @@
 """S1-c 冷启动分层测试：eval/strata.py
 
 覆盖：
-    - 五层边界：1-2 / 3-4 / 5-9 / 10-29 / >=30，边界值归属正确
+    - 四层边界：0-4 / 5-9 / 10-29 / >=30，边界值归属正确（与论文表 3-11 一致）
     - 分层按训练集交互数（不含测试交互）划分
     - 按人数加权的层均值 == 整体指标（差 < 1e-9）
     - 层内 Recall@K / NDCG@K 与 eval/metrics.py 逐层重算一致
@@ -39,9 +39,12 @@ def _per_user(ranks: dict) -> pd.DataFrame:
 
 
 def _edge_counts() -> dict:
-    """覆盖每个层边界：1,2 / 3,4 / 5,9 / 10,29 / 30,31。"""
+    """覆盖每个层边界：3,4 / 5,9 / 10,29 / 30,31。
+
+    0-4 层用 3 与 4：训练集 5-core 过滤后最小交互数为 3，0 条交互的用户
+    不可能出现在 train.parquet 里（per_user 会因找不到该用户而报错）。
+    """
     return {
-        "u1": 1, "u2": 2,
         "u3": 3, "u4": 4,
         "u5": 5, "u9": 9,
         "u10": 10, "u29": 29,
@@ -56,13 +59,12 @@ def test_layer_boundaries():
     ranks = {u: 1 for u in counts}
     result = st.compute_strata(_per_user(ranks), _train_df(counts), ks=(10,))
 
-    assert set(result["layers"]) == {"1-2", "3-4", "5-9", "10-29", ">=30"}
-    assert result["layers"]["1-2"]["n"] == 2       # u1, u2
-    assert result["layers"]["3-4"]["n"] == 2       # u3, u4
+    assert set(result["layers"]) == {"0-4", "5-9", "10-29", ">=30"}
+    assert result["layers"]["0-4"]["n"] == 2       # u3, u4
     assert result["layers"]["5-9"]["n"] == 2       # u5, u9
     assert result["layers"]["10-29"]["n"] == 2     # u10, u29
     assert result["layers"][">=30"]["n"] == 2      # u30, u31
-    assert result["n"] == 10
+    assert result["n"] == 8
 
 
 def test_no_user_dropped():
@@ -80,7 +82,7 @@ def test_strata_uses_train_counts_not_per_user_df():
     ranks = _per_user({"u": 1})
     r_small = st.compute_strata(ranks, _train_df({"u": 4}), ks=(10,))
     r_big = st.compute_strata(ranks, _train_df({"u": 40}), ks=(10,))
-    assert r_small["layers"]["3-4"]["n"] == 1
+    assert r_small["layers"]["0-4"]["n"] == 1
     assert r_big["layers"][">=30"]["n"] == 1
 
 
@@ -118,7 +120,7 @@ def test_assert_conservation_raises_on_mismatch():
     counts = {"a": 3, "b": 8}
     ranks = {"a": 1, "b": 2}
     result = st.compute_strata(_per_user(ranks), _train_df(counts), ks=(10,))
-    result["layers"]["3-4"]["metrics"]["Recall@10"] = 0.999  # 篡改
+    result["layers"]["0-4"]["metrics"]["Recall@10"] = 0.999  # 篡改
     with pytest.raises(AssertionError):
         st.assert_conservation(result, tol=1e-9)
 
@@ -138,7 +140,7 @@ def test_layer_metrics_match_metrics_module():
     result = st.compute_strata(_per_user(ranks), _train_df(counts), ks=(10,))
 
     for layer, members in (
-        ("3-4", ["a", "b"]),
+        ("0-4", ["a", "b"]),
         ("10-29", ["c", "d"]),
     ):
         sub = {u: ranks[u] for u in members}
@@ -151,7 +153,7 @@ def test_ndcg_in_layers():
     counts = {"a": 3, "b": 3}
     ranks = {"a": 1, "b": 2}
     result = st.compute_strata(_per_user(ranks), _train_df(counts), ks=(10,))
-    assert result["layers"]["3-4"]["metrics"]["NDCG@10"] == pytest.approx(
+    assert result["layers"]["0-4"]["metrics"]["NDCG@10"] == pytest.approx(
         ndcg_at_k(ranks, 10)
     )
 
@@ -159,10 +161,10 @@ def test_ndcg_in_layers():
 # --------------------------------------------------------------------------- 空层与异常
 def test_empty_layer_reports_zero_and_null():
     """没有用户落入的层：n=0，指标为 None。"""
-    counts = {"a": 3, "b": 3}
+    counts = {"a": 3, "b": 30}
     result = st.compute_strata(_per_user({"a": 1, "b": 2}), _train_df(counts), ks=(10,))
-    assert result["layers"]["1-2"]["n"] == 0
-    assert result["layers"]["1-2"]["metrics"]["Recall@10"] is None
+    assert result["layers"]["10-29"]["n"] == 0
+    assert result["layers"]["10-29"]["metrics"]["Recall@10"] is None
 
 
 def test_user_missing_from_train_raises():
@@ -189,6 +191,6 @@ def test_compute_strata_from_files(tmp_path):
         train_path=tmp_path / "train.parquet",
         ks=(10,),
     )
-    assert result["layers"]["3-4"]["n"] == 1
+    assert result["layers"]["0-4"]["n"] == 1
     assert result["layers"]["10-29"]["n"] == 1
     assert result["overall"]["Recall@10"] == pytest.approx(1.0)  # 两个 rank 都 <= 10

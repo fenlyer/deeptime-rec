@@ -18,3 +18,20 @@
 - 2026-11-18｜`.gitignore` 不全局排除 `*.parquet`（仅排除 `data/processed/*`、`artifacts/*/*`、`build/*`），`results/**/per_user.parquet` 与 `results/**/candidates/ti_top100.parquet` 入库｜W0-a 卡片要求全局排除 `*.parquet`，但这两份产物是后续排序模型与一致性测试的必需输入，排除后无法被 git 追踪；保留 .gitignore 注释说明，不在红线里再写｜.gitignore｜否
 - 2026-11-18｜S1-b RecBole 环境版本：Python 3.10 / PyTorch 2.5.1 / RecBole 1.2.1（本机 `recbole_env` 实际安装，与 CLAUDE.md 记录一致）；AutoDL 侧使用镜像内的 `rec` 环境（同版本），不另建环境｜按本机已装版本锁定，避免新建环境引入未验证组合；数据经 scripts/export_recbole.py 导出为 atomic 文件，用 benchmark_filename=["train","val","test"] 加载，不修改 RecBole 内部切分与评估逻辑｜environment/recbole.yml、scripts/export_recbole.py、configs/recbole_baselines.yaml｜是（第 3 章软件环境表）
 - 2026-11-19｜S1-b 对账 4（PyG LightGCN 独立实现 vs RecBole 版对比）推迟到后期，不影响 S1-b 完成。tests/verify_recbole_adapter.py 中 TestPyGvsRecBole 标记为 skip｜对账 4 依赖自研 PyG LightGCN 实现，该实现不在 S1-b 卡片范围内，且后续可能由其他卡片覆盖；先完成对账 1-3，确保 RecBole 管线与 eval/ 一致｜tests/test_verify_recbole_adapter.py、docs/plan/cards/S1-b.md｜否
+- 2026-11-20｜V9 简化计划补 S1-d 数字管线卡（`scripts/make_tables.py` → `thesis/generated/numbers.json`），作为 CLAUDE.md 红线 2 的唯一实现｜简化版原计划漏掉该卡，导致 T-ch3/4/5 回填无溯源链，`make tables` 目标长期报"尚未实现"｜docs/plan/cards/S1-d.md（新增）、scripts/make_tables.py（新增）、tests/test_make_tables.py（新增）、thesis/generated/numbers.json（产出）｜否
+- 2026-11-20｜补写 `docs/plan/gates.md`（V9 版 G1–G5 关口条件）与 `gates/w1.py`（G1 实现）｜CLAUDE.md、Makefile 的 gate 目标、`/gate` 命令、decisions.md 多处引用 `docs/plan/gates.md` 但该文件此前不存在；`gates/` 仅有 README｜docs/plan/gates.md（新增）、gates/w1.py（新增）｜否
+- 2026-11-20｜新增 `docs/prototype_inventory.md`（G1-7 条件 7 的产物）｜第五章写作必须明确现有原型的能力边界，否则 5.3.1 表 5-3 与 5.4 节会写出与代码不符的内容；现状表同时指出 E-serve 卡须决策的三个问题（改 backend/ 还是新建 serving/、mock 数据是否替换、frontend 截图是否保留）｜docs/prototype_inventory.md（新增）｜否（该文件本身就是论文写作的前置核对）
+- 2026-11-20｜`eval/strata.py` 与 `tests/test_strata.py` 改为四层口径（0-4/5-9/10-29/≥30），与论文表 3-11 一致｜原代码为五层（1-2/3-4/5-9/10-29/≥30），IS/OP/TH 的 1-2 层恒为空且论文表 3-11 只给四层；不改则表 3-12 与表 3-11 无法对齐。按红线 3（eval/ 改动须告知），已说明原因｜eval/strata.py、tests/test_strata.py｜是（分层表 3-11/3-12 口径以代码为准）
+- 2026-11-20｜DIEN 基线**保留**在 RecBole 内可跑（recbole.model.sequential_recommender.dien 存在），但推迟到送审前｜DIEN 在 RecBole 内置，实现成本不高；但表 4-1/4-2 的 DIEN 行若留空，答辩会显突兀。本卡列入推迟而非删除，以便 4.5.1 节仍可写"与 DIN 对比"。S-rank-dien 卡片已在 deferred 清单中｜docs/plan/cards/README-deferred.md｜否
+- 2026-11-20｜**论文待手动修改清单**（按本决定执行，操作记录在 V9执行计划_简化版.html 的"复核结论"板块）｜V9 简化计划推迟了若干任务卡，其对应的论文小节须改写/删除，否则正文会出现无实验支撑的结论。具体段落见下。详见 scripts 下的 `patch_v9_pending.md`（本决定的具体段落清单）｜docs/revision/整改V9_1120.docx 的以下段落须在 Word 中人工处理｜是
+  - **删除 3.5.4 节（设计空间：变体对比）**：从「3.5.4」标题到「3.5.5」标题前，含表 3-9 与待实验标记。原因：对应 S-recall-variants 已列入 deferred，该节整节无实验支撑。
+  - **删除 3.5.9 节（各召回路贡献）**：从「3.5.9」标题到「3.6」标题前，含表 3-16、图 3-12、正文分析。原因：对应四路召回命中率评估无实现，且 E-serve 卡片尚未决策 backend/ 改造路径。
+  - **删除 5.5.5 节（推荐解释质量评估）**：从「5.5.5」标题到「5.5.6」标题前，含表 5-12、表 5-13、人工评估与自动化评估段落。原因：S-explain 已列入 deferred，该节所有数字无法回填。
+  - **改写 3.6 结果讨论**：删除【待实验】标记与失败案例（失败案例引用了 IS 中不存在的"Mil-Spec 认证""工程项目采购"信息，正文 3.3 与 4.3 段已有【待核】标记，需换真实测试用户）。
+  - **改写 5.5 节首段（章节总览）**：5.5.5 删除后，总览段"5.5.5 节评估推荐解释质量"须删去，后续小节编号不变（不重编号 5.5.6）。
+  - **改写 5.2.2 节表 5-2 的接口需求编号**：正文 5.4.8 提到"编号与 5.5.6 节及附录 C 的测试用例对应"，5.5.6 若保留则此引用仍有效；若 5.5.6 被删（见下），则改引用 5.5 节。
+  - **改写 1.3.3 节创新点二**：末句"在线推理延迟较 DIEN 降低-（待实验补齐，见 4.5 节）"，DIEN 已推迟到送审前，本句改为"在线推理延迟较 DIN 仅增加-（待实验补齐，见 4.5 节）"或保留占位。
+  - **保留 3.5.6 节表 3-13**：表 3-13（多路召回 vs LightGCN 分层）归并到 S-system-test 卡，因它依赖四路召回产物。若 5.5.6 保留，表 3-13 的数字来自多路召回命中统计；否则整段改写为"多路召回整体相对单路增益"的定性描述。
+  - **补 5.6 节图注**：若截图基于 mock 数据，图注须写明"演示数据，非 IS 真实实验"（prototype_inventory.md 已记录）。
+  - **3.5.7 跨域泛化保留 AJ 列**：AJ 数据已冻结（420K 用户/30.9M 交互），S-recall-cross 卡片扩到 AJ 即可（~14 小时，3 seed × 2 模型）。删除 AJ 列的代价（改 3.5.1 + 表 3-14 + 6.3 节）大于补跑。
+  - **4.3.3 节 MLP 维度统一为代码口径**：正文 4.3.3 写 256→128→64→1，5.4.3 节写 1024→512→1，S-rank-main 实现时须以代码为准并在 T-ch4 回填时统一两节表述。

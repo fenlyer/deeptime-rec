@@ -142,6 +142,68 @@ h1 { font-size: 24px; margin-bottom: 8px; }
 }
 .mapping-item .table-num { font-weight: 600; color: var(--research); font-size: 14px; }
 .mapping-item .task-link { font-size: 11px; color: var(--muted); margin-top: 4px; }
+/* ===== 复核结论 / 论文落点 ===== */
+.verdict {
+  background: var(--surface); border-radius: 12px; padding: 20px; margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-left: 4px solid var(--research);
+}
+.verdict h2 { font-size: 17px; margin-bottom: 10px; }
+.verdict p { font-size: 13.5px; color: var(--ink); margin-bottom: 10px; }
+.verdict .concl {
+  background: rgba(37,99,235,0.08); border-radius: 8px; padding: 12px 14px;
+  font-size: 13.5px; margin-bottom: 14px;
+}
+.issue-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.issue {
+  display: grid; grid-template-columns: 62px 1fr; gap: 12px;
+  background: var(--paper); border-radius: 8px; padding: 12px 14px; font-size: 13px;
+  border-left: 3px solid var(--rule);
+}
+.issue.p0 { border-left-color: #dc2626; }
+.issue.p1 { border-left-color: #f59e0b; }
+.issue.p2 { border-left-color: #0891b2; }
+.issue-tag {
+  font-size: 11px; font-weight: 700; letter-spacing: .3px; align-self: start;
+  padding: 2px 8px; border-radius: 10px; text-align: center; white-space: nowrap;
+}
+.issue.p0 .issue-tag { background: rgba(220,38,38,.14); color: #dc2626; }
+.issue.p1 .issue-tag { background: rgba(245,158,11,.16); color: #b45309; }
+.issue.p2 .issue-tag { background: rgba(8,145,194,.14); color: #0891b2; }
+.issue-body b { font-weight: 600; }
+.issue-body .fix { color: var(--muted); display: block; margin-top: 3px; font-size: 12.5px; }
+
+.landing {
+  margin-top: 10px; padding: 10px 12px; border-radius: 6px;
+  background: rgba(37,99,235,0.06); border-left: 3px solid var(--research);
+  font-size: 12.5px; color: var(--ink);
+}
+.landing .l-label {
+  font-size: 10.5px; text-transform: uppercase; letter-spacing: .4px;
+  color: var(--research); font-weight: 700; display: block; margin-bottom: 3px;
+}
+.landing .l-row { color: var(--muted); }
+.landing .l-row code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11.5px; color: var(--ink); background: var(--paper);
+  padding: 1px 5px; border-radius: 4px;
+}
+.coverage-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px; }
+.coverage-table th, .coverage-table td {
+  padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--rule); vertical-align: top;
+}
+.coverage-table th { font-size: 11.5px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .3px; }
+.coverage-table td.art { font-weight: 600; color: var(--research); white-space: nowrap; }
+.coverage-table td.sec { color: var(--muted); white-space: nowrap; }
+.coverage-table tr.uncovered td { background: rgba(220,38,38,.05); }
+.coverage-table tr.uncovered td.art { color: #dc2626; }
+.chip {
+  display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 10px;
+  background: var(--paper); color: var(--muted); white-space: nowrap;
+}
+.chip.ok { background: rgba(16,185,129,.14); color: var(--done); }
+.chip.gap { background: rgba(220,38,38,.12); color: #dc2626; }
+.chip.part { background: rgba(245,158,11,.16); color: #b45309; }
+
 footer {
   text-align: center; padding: 24px; color: var(--muted); font-size: 12px;
 }
@@ -174,22 +236,225 @@ footer {
   </div>
 </header>
 
+<!-- 复核结论 -->
+<section class="verdict">
+  <h2>🔍 复核结论（2026-11-20，对照 整改V9_1120.docx 逐节核对）</h2>
+  <div class="concl">
+    <b>总体结论：</b>规划的<b>主线对得上</b>——16 张任务卡（含新增的 S1-d）覆盖了第三、四、五章全部实验、
+    数字管线、降级清单与关口。P0-1（数字管线）与 P0-2（回填路径）均已解决。
+    仍有 <b>6 项 P1 级建议调整</b>（避免 T-ch3/4/5 回填时返工或自相矛盾）。
+    已对论文正文做出<b>明确降级</b>：删除 3.5.4 / 3.5.9 / 5.5.5 三个无实验支撑的小节，
+    操作清单记录在 <code>docs/decisions.md</code>（2026-11-20 条目），须你在 Word 中执行。
+  </div>
+  <div style="font-size:12.5px;color:var(--muted);margin-bottom:6px">按严重度排序：P0 = 已解决（或必须调整）／P1 = 建议调整（避免返工）／P2 = 口径对齐（低成本）</div>
+  <ul class="issue-list">
+    <li class="issue p0">
+      <span class="issue-tag">P0-1 ✓</span>
+      <div class="issue-body">
+        <b>【已解决】简化计划删掉了 S1-d（数字管线），现已补回。</b>
+        已创建 <code>docs/plan/cards/S1-d.md</code>、<code>scripts/make_tables.py</code>、<code>tests/test_make_tables.py</code>，
+        产出 <code>thesis/generated/numbers.json</code>（当前 84 个数字，随实验结果增长）。<code>make tables</code> 已可运行。
+        T-ch3/4/5 回填时每个数字都有可溯源的 source 字段。
+      </div>
+    </li>
+    <li class="issue p0">
+      <span class="issue-tag">P0-2 ✓</span>
+      <div class="issue-body">
+        <b>【已解决】T-ch3/T-ch4/T-ch5 的产出路径与论文源形式已确认。</b>
+        保留 md 追踪链路：每张回填卡在回填时先把实验数字写到 <code>thesis/src/</code> 下的 markdown（如
+        <code>thesis/src/ch3_recall.md</code>），每个数字通过 <code>{{n:key}}</code> 占位符指向
+        <code>thesis/generated/numbers.json</code> 的 source。最终回填到 docx 时，按 markdown 中记录的 key
+        查 numbers.json 的 value，避免手抄。markdown 同时作为"数字可追溯"的证据链。
+        <span class="fix">落地方式：T-ch3/4/5 卡片产出路径保持不变（<code>thesis/src/*.md</code>），回填时同时维护 markdown + docx，二者通过 key 同步。</span>
+      </div>
+    </li>
+    <li class="issue p1">
+      <span class="issue-tag">P1-1</span>
+      <div class="issue-body">
+        <b>冷启动分层口径冲突：代码是五层，论文表 3-11 是四层。</b>
+        <code>eval/strata.py</code> 的 LAYERS 为 1-2／3-4／5-9／10-29／≥30（五层，且代码注释说明 IS 的 1-2 层为空），
+        S-recall-cold 卡片抄的是 0-4／5-9／10-29／≥30（四层）。实测 IS 训练集：0-4 占 53.7%、5-9 占 33.5%、10-29 占 11.9%、≥30 占 0.9%，与论文一致。
+        <span class="fix">建议：分层定义统一为"0-4 / 5-9 / 10-29 / ≥30"四层（论文口径），评估时把 strata.py 的 1-2 与 3-4 合并为 0-4 输出；不要反过来改论文表 3-11（该表数值已验证）。这是唯一需要改 eval/ 的地方，按红线 3 需先与你确认。</span>
+      </div>
+    </li>
+    <li class="issue p1">
+      <span class="issue-tag">P1-2</span>
+      <div class="issue-body">
+        <b>系统评测的量级与论文表 5-9 标题冲突。</b>
+        表 5-9 标题为「系统推荐接口性能测试结果（CPU环境，<b>50并发</b>）」，表 5-10 含「混合流量（70%命中）」「吞吐量(QPS)」列，表 5-11 有「接口回放」项；
+        而 S-system-test 卡片写「<b>不做压测</b>，单并发测延迟即可」「只抽样 10 个用户」。
+        <span class="fix">建议：把卡片改成"轻量压测"——用 <code>wrk</code>/<code>ab</code> 固定 50 并发跑 60 秒拿到 P50/P95/P99 与 QPS（10 分钟可完成，不是"压测平台"），否则 5.5.3 整节没有可写内容。若坚持不做，则须改论文表 5-9 标题为"单并发"并删掉 QPS 列。</span>
+      </div>
+    </li>
+    <li class="issue p1">
+      <span class="issue-tag">P1-3</span>
+      <div class="issue-body">
+        <b>S-rank-distill 的"简化策略"把第四章 4.4 节的核心机制删掉了。</b>
+        卡片写「不做教师信号：简化为直接用 LLM 生成用户偏好摘要」「不做联合训练：User Memory 作为静态特征，不参与梯度」「η 固定 0.5」；
+        但论文 4.4.2（教师信号生成）、4.4.3（联合损失与梯度分析）、表 4-7（α/β 敏感性）、表 4-6（教师质量）都建立在这套机制上。
+        <span class="fix">建议：改成"最小可行蒸馏"——保留<b>是/否概率软标签 + 单个蒸馏温度 τ + 固定 α=0.7/β=0.3</b>（论文设定值），只砍 τ 与 β 的敏感性扫描。这样 4.4.2/4.4.3 有实现支撑，表 4-7 保留"本文设定"一行即可，成本只比原计划多半天。</span>
+      </div>
+    </li>
+    <li class="issue p1">
+      <span class="issue-tag">P1-4</span>
+      <div class="issue-body">
+        <b>S-rank-main 卡片"不做门控"与论文 4.3.3 / 表 4-5 直接矛盾。</b>
+        卡片简化说明写「User Memory 直接拼接，不做门控（可后续改进）」；论文 4.3.3 节标题就是「门控融合与预测层」，
+        表 4-5 第一行消融是「移除门控融合（简单拼接 h_st 与 m_u）」，图 4-5 是门控值分布。
+        <span class="fix">建议：删除卡片里"不做门控"这句。门控是 3 行代码（sigmoid(MLP([h_short, m_u]))），保留它同时获得 4.3.3 正文、表 4-5 一行消融、图 4-5 一张图，性价比最高。</span>
+      </div>
+    </li>
+    <li class="issue p1">
+      <span class="issue-tag">P1-5</span>
+      <div class="issue-body">
+        <b>T-profile 的图清单与实际脚本产出对不上，2 张图无脚本。</b>
+        论文 3.1 节要 5 张图：评分分布、用户交互数分布、相邻交互间隔、<b>商品交互长尾分布</b>、<b>边权重 w(u,i) 分布</b>。
+        现有 <code>scripts/profile_data.py</code> 已产出前 3 张（<code>figures/profile/IS_*.svg|png</code> 已在库），
+        但它画的另外 2 张是「测试物品是否在训练集」「用户内评分多样性」——<b>不是</b>论文要的那 2 张。
+        <span class="fix">建议：T-profile 卡片补两项开发：① 商品长尾曲线（按交互次数降序的累计占比，训练集统计，10 行 pandas）；② 边权重分布（λ=0.001 vs 0.1，直接用式(3-1)算 w，含 α_r 映射，~20 行）。两张图合计半天，且图 3-5 同时是 3.3.1 边权设计的直接论据，不能省。</span>
+      </div>
+    </li>
+    <li class="issue p1">
+      <span class="issue-tag">P1-6</span>
+      <div class="issue-body">
+        <b>表 3-14 的 AJ 列与 3.5.1 的 AJ 论证，与"AJ 推迟"的规划矛盾。</b>
+        论文表 3-14 列了 IS/TH/OP/<b>AJ</b> 四列，3.5.1 有整段 AJ 多行为论证（原生四类行为、边权重公式兼容性）；
+        S-recall-cross 卡片写「AJ 数据集推迟（数据量大，非必要）」，表 3-14 那列会留空。
+        <span class="fix">建议：AJ 数据已在 <code>data/processed/AJ/</code> 冻结（420K 用户 / 30.9M 交互），且只需 LightGCN+TI-LightGCN 各 3 seed（卡片估 ~8 小时可扩到 ~14 小时）。若确实不跑，须同步改论文：删表 3-14 的 AJ 列、删 3.5.1 的 AJ 段、删 6.3 的 AJ 展望——这三处删改比跑一次 AJ 更贵。</span>
+      </div>
+    </li>
+    <li class="issue p2">
+      <span class="issue-tag">P2-1</span>
+      <div class="issue-body">
+        <b>S-recall-ablation 卡片仍用 γ 表示长尾正则强度。</b>
+        卡片变体表写「w/o 长尾正则 | γ=0」；论文已于 2026-11-20 改为 μ（修改记录已记录 γ→μ，全文 γ 剩 22 处均为注意力衰减率）。
+        <span class="fix">建议：卡片改为 μ=0。同时 configs 里若用 <code>tail_reg_gamma</code> 之类的键名，统一改 <code>tail_reg_mu</code>。</span>
+      </div>
+    </li>
+    <li class="issue p2">
+      <span class="issue-tag">P2-2</span>
+      <div class="issue-body">
+        <b>S-recall-sens 只扫 λ/L/d，但表 3-10 有 5 行。</b>
+        表 3-10 含 λ、L、d、<b>μ</b>、<b>α_5</b> 五行，卡片只扫前 3 个（μ、α_5 推为 deferred），且有 5 个候选值的设计（λ 0.0001~0.01、d 32~256）。
+        <span class="fix">建议：至少补 μ 一行（μ∈{0,0.01,0.1}，2 个新 run × 3 seed ≈ 2 小时）——μ 是第三章 3.3.4 节唯一的创新组件，敏感性里没有它很扎眼。α_5 可以留在"本文设定值"一行由表 3-1 直接给出，不扫。</span>
+      </div>
+    </li>
+    <li class="issue p2">
+      <span class="issue-tag">P2-3</span>
+      <div class="issue-body">
+        <b>docs/plan/gates.md 不存在，但 5 处引用它。</b>
+        CLAUDE.md「常用命令」、Makefile 的 <code>gate</code> 目标（<code>test -f gates/w$(W).py</code>）、<code>/gate</code> 命令、decisions.md 两条、STATUS.md 均引用 <code>docs/plan/gates.md</code>；实际只有 <code>docs/plan/V9匹配性检查.md</code>，
+        <code>gates/</code> 只有 README，G1 在 STATUS.md 里写"gates/w1.py 尚未实现"。
+        <span class="fix">建议：要么补一份 V9 版 gates.md（5 个周关口，每个 3-5 条件，1 小时），要么把 Makefile / CLAUDE.md / decisions 里的引用改成"本周关口见 HTML 计划底部 G1-G5"。后者更省，但 /gate 命令就失效了。</span>
+      </div>
+    </li>
+    <li class="issue p2">
+      <span class="issue-tag">P2-4</span>
+      <div class="issue-body">
+        <b>表 3-7 显著性检验无人承接，但代码已就绪。</b>
+        V9 正文与附录 D 都把表 3-7 标成「待做」，而 <code>eval/paired_test.py</code>（S1-c 已完成，按用户配对 t + Wilcoxon + 效应量 d_z）正好是它需要的实现。
+        <span class="fix">建议：不必单开卡片，挂在 T-ch3 的回填清单里加一行"表 3-7 ← <code>python -m eval.paired_test --dir-a ... --dir-b ...</code>"，成本 ≈ 0。</span>
+      </div>
+    </li>
+    <li class="issue p2">
+      <span class="issue-tag">P2-5</span>
+      <div class="issue-body">
+        <b>表 4-5 的消融项数量与 S-rank-distill 覆盖范围不一致。</b>
+        表 4-5 有 6 行（含移除时间衰减注意力、移除 User Memory、移除门控、移除 LLM 蒸馏、全移除=标准DIN）；
+        S-rank-distill 卡片只承诺"数字填入表 4-5（消融的一行）"。
+        <span class="fix">建议：明确表 4-5 由 S-rank-main（时间衰减/User Memory/门控三行）+ S-rank-distill（蒸馏两行）共同填，并在两张卡片各写清负责哪几行，否则回填时会漏。</span>
+      </div>
+    </li>
+    <li class="issue p2">
+      <span class="issue-tag">P2-6</span>
+      <div class="issue-body">
+        <b>表 3-12 与表 3-13 的双口径需要说清。</b>
+        表 3-12 是「召回模型冷启动分层」（LightGCN/SimGCL/TI-LightGCN 三列），表 3-13 是「LightGCN vs 本文完整系统」（两列，需要 E-serve 的多路召回）；S-recall-cold 卡片只写了一行「数字填入表 3-12」。
+        <span class="fix">建议：表 3-12 归 S-recall-cold；表 3-13 归 S-system-test（需四路召回产物）或直接降级为"仅 LightGCN vs TI-LightGCN（图召回单路）"并在表题注明。不要让它悬空。</span>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<!-- 论文要件覆盖表 -->
+<section class="verdict">
+  <h2>📋 论文要件 → 任务卡覆盖表（逐节核对结果）</h2>
+  <p style="font-size:12.5px;color:var(--muted);margin-bottom:4px">
+    下表列出 V9 第三～五章每个实验小节对应的表/图，以及当前是否有任务卡承接。<span class="chip gap">无卡</span> 的 14 项需你决定"计入"还是"降级改论文"。
+  </p>
+  <table class="coverage-table">
+    <thead><tr><th>论文要件</th><th>章节</th><th>内容</th><th>任务卡</th><th>状态</th></tr></thead>
+    <tbody>
+      <tr><td class="art">表 3-3 / 表 3-4 / 表 3-5</td><td class="sec">3.5.1</td><td>数据集统计 / 环境 / 基线汇总</td><td>S0-a、S1-b</td><td><span class="chip ok">已验证</span></td></tr>
+      <tr><td class="art">图 3-1 ~ 3-5</td><td class="sec">3.1</td><td>数据画像五图</td><td>T-profile</td><td><span class="chip part">3/5 有脚本</span></td></tr>
+      <tr><td class="art">图 3-6</td><td class="sec">3.3.2</td><td>TI-LightGCN 模型结构示意</td><td class="sec">—</td><td><span class="chip gap">无卡</span></td></tr>
+      <tr><td class="art">图 3-7</td><td class="sec">3.4.1</td><td>多路召回与融合结构示意</td><td class="sec">—</td><td><span class="chip gap">无卡</span></td></tr>
+      <tr><td class="art">表 3-6 / 图 3-8 / 图 3-9</td><td class="sec">3.5.2</td><td>召回主结果 + 性能柱图 + 训练曲线</td><td>S-recall-base + S-recall-main</td><td><span class="chip ok">已覆盖</span></td></tr>
+      <tr><td class="art">表 3-7</td><td class="sec">3.5.2</td><td>显著性检验（按用户）</td><td>eval/paired_test.py（S1-c）</td><td><span class="chip part">代码就绪，无卡挂接</span></td></tr>
+      <tr><td class="art">表 3-8</td><td class="sec">3.5.3</td><td>组件消融（5 行）</td><td>S-recall-ablation</td><td><span class="chip ok">已覆盖</span></td></tr>
+      <tr><td class="art">表 3-9</td><td class="sec">3.5.4</td><td>边权设计变体对比</td><td class="sec">deferred</td><td><span class="chip gap">已降级（3.5.4 整节从论文删除）</span></td></tr>
+      <tr><td class="art">表 3-10 / 图 3-10</td><td class="sec">3.5.5</td><td>超参数敏感性（5 行）</td><td>S-recall-sens</td><td><span class="chip part">3/5 行</span></td></tr>
+      <tr><td class="art">表 3-11 / 3-12 / 3-13</td><td class="sec">3.5.6</td><td>分层定义 / 模型分层 / 多路分层</td><td>S-recall-cold（仅 3-12）</td><td><span class="chip part">口径需改四层</span></td></tr>
+      <tr><td class="art">图 3-11</td><td class="sec">3.5.6</td><td>召回阶段分层增益柱状图</td><td class="sec">—</td><td><span class="chip gap">无卡</span></td></tr>
+      <tr><td class="art">表 3-14</td><td class="sec">3.5.7</td><td>跨域泛化（含 AJ 列）</td><td>S-recall-cross</td><td><span class="chip ok">AJ 数据已冻结，补跑即可</span></td></tr>
+      <tr><td class="art">表 3-15</td><td class="sec">3.5.8</td><td>训练效率（耗时/显存/参数量）</td><td>训练日志 + T-ch3</td><td><span class="chip part">需写提取脚本</span></td></tr>
+      <tr><td class="art">表 3-16 / 图 3-12</td><td class="sec">3.5.9</td><td>各召回路命中率 / 堆叠柱图</td><td class="sec">deferred</td><td><span class="chip gap">已降级（3.5.9 整节从论文删除）</span></td></tr>
+      <tr><td class="art">图 4-1</td><td class="sec">4.3</td><td>Temporal-DIN 模型结构示意</td><td class="sec">—</td><td><span class="chip gap">无卡</span></td></tr>
+      <tr><td class="art">图 4-2</td><td class="sec">4.4.3</td><td>LLM 偏好蒸馏框架示意</td><td class="sec">—</td><td><span class="chip gap">无卡</span></td></tr>
+      <tr><td class="art">表 4-1 / 表 4-2 / 图 4-3</td><td class="sec">4.5.1-2</td><td>基线汇总 / 排序主结果 / 训练曲线</td><td>S-rank-base + S-rank-main</td><td><span class="chip ok">已覆盖</span></td></tr>
+      <tr><td class="art">表 4-3</td><td class="sec">4.5.3</td><td>端到端系统综合性能</td><td class="sec">deferred</td><td><span class="chip part">已显式降级</span></td></tr>
+      <tr><td class="art">表 4-4 / 图 4-4</td><td class="sec">4.5.4</td><td>全链路冷启动分层</td><td class="sec">deferred</td><td><span class="chip part">已显式降级</span></td></tr>
+      <tr><td class="art">表 4-5 / 图 4-5</td><td class="sec">4.5.5</td><td>排序消融（6 行）/ 门控值分布</td><td>S-rank-main + S-rank-distill</td><td><span class="chip part">行归属需写清</span></td></tr>
+      <tr><td class="art">表 4-6 / 图 4-6</td><td class="sec">4.5.6</td><td>教师信号质量 / 校准曲线</td><td class="sec">deferred</td><td><span class="chip part">已显式降级</span></td></tr>
+      <tr><td class="art">表 4-7 / 图 4-7</td><td class="sec">4.5.7</td><td>蒸馏权重敏感性 / 敏感性折线</td><td class="sec">deferred</td><td><span class="chip part">已显式降级</span></td></tr>
+      <tr><td class="art">图 4-8</td><td class="sec">4.5.8</td><td>案例用户注意力热力图</td><td class="sec">—</td><td><span class="chip gap">无卡</span></td></tr>
+      <tr><td class="art">图 5-1</td><td class="sec">5.2.1</td><td>系统用例图</td><td class="sec">—</td><td><span class="chip gap">无卡</span></td></tr>
+      <tr><td class="art">图 5-2</td><td class="sec">5.3.1</td><td>系统总体三层架构</td><td class="sec">—</td><td><span class="chip gap">无卡（且需重绘）</span></td></tr>
+      <tr><td class="art">图 5-3 / 5-4</td><td class="sec">5.3.2</td><td>在线推荐流程 / 离线训练流程</td><td class="sec">—</td><td><span class="chip gap">无卡（且需重绘）</span></td></tr>
+      <tr><td class="art">图 5-5</td><td class="sec">5.5.1</td><td>系统部署架构</td><td class="sec">—</td><td><span class="chip gap">无卡（且需重绘）</span></td></tr>
+      <tr><td class="art">表 5-9 / 5-10 / 图 5-6 / 表 5-11</td><td class="sec">5.5.3-4</td><td>压测 / 延迟分解 / 延迟分布 / 一致性</td><td>S-system-test</td><td><span class="chip ok">已覆盖</span></td></tr>
+      <tr><td class="art">表 5-12 / 5-13</td><td class="sec">5.5.5</td><td>解释质量自动+人工评估</td><td class="sec">deferred</td><td><span class="chip gap">已降级（5.5.5 整节从论文删除）</span></td></tr>
+      <tr><td class="art">表 5-14 / 表 C-1</td><td class="sec">5.5.6 / 附录C</td><td>功能测试用例（8 条）</td><td>S-system-test</td><td><span class="chip part">并入系统评测卡</span></td></tr>
+      <tr><td class="art">图 5-7 ~ 5-10</td><td class="sec">5.6</td><td>平台展示四张截图</td><td class="sec">deferred（E-frontend）</td><td><span class="chip part">已显式降级</span></td></tr>
+      <tr><td class="art">附录 A / B / D</td><td class="sec">附录</td><td>Prompt 原文 / 超参数表 / 复现命令</td><td class="sec">—</td><td><span class="chip gap">无卡</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
 <!-- 论文表格映射 -->
 <section class="table-mapping">
-  <h3>📊 V9 论文表格 → 任务卡映射</h3>
+  <h3>📊 V9 论文表/图 → 任务卡映射（按章节索引）</h3>
   <div class="mapping-grid">
+    <div class="mapping-item"><span class="table-num">表 3-3 / 3-4</span> 数据集统计 / 环境<div class="task-link">→ S0-a, S1-b（已验证）</div></div>
+    <div class="mapping-item"><span class="table-num">表 3-1 / 3-2</span> α_r 权重 / 复杂度<div class="task-link">→ S-recall-main（与代码常量核对）</div></div>
+    <div class="mapping-item"><span class="table-num">表 3-5</span> 召回基线汇总<div class="task-link">→ S1-b, S-recall-base</div></div>
     <div class="mapping-item"><span class="table-num">表 3-6</span> 召回主结果<div class="task-link">→ S-recall-base, S-recall-main</div></div>
-    <div class="mapping-item"><span class="table-num">表 3-7</span> 显著性检验<div class="task-link">→ eval/paired_test.py</div></div>
-    <div class="mapping-item"><span class="table-num">表 3-8</span> 消融实验<div class="task-link">→ S-recall-ablation</div></div>
-    <div class="mapping-item"><span class="table-num">表 3-10</span> 超参数敏感性<div class="task-link">→ S-recall-sens</div></div>
-    <div class="mapping-item"><span class="table-num">表 3-12</span> 冷启动分层<div class="task-link">→ S-recall-cold</div></div>
-    <div class="mapping-item"><span class="table-num">表 3-14</span> 跨域泛化<div class="task-link">→ S-recall-cross</div></div>
-    <div class="mapping-item"><span class="table-num">表 4-2</span> 排序主结果<div class="task-link">→ S-rank-base, S-rank-main</div></div>
-    <div class="mapping-item"><span class="table-num">表 4-5</span> 排序消融<div class="task-link">→ S-rank-distill</div></div>
-    <div class="mapping-item"><span class="table-num">表 5-9</span> 压测<div class="task-link">→ S-system-test</div></div>
-    <div class="mapping-item"><span class="table-num">表 5-10</span> 延迟分解<div class="task-link">→ S-system-test</div></div>
-    <div class="mapping-item"><span class="table-num">表 5-11</span> 一致性校验<div class="task-link">→ S-system-test</div></div>
-    <div class="mapping-item"><span class="table-num">图 3-1~5</span> 数据画像<div class="task-link">→ T-profile</div></div>
+    <div class="mapping-item"><span class="table-num">表 3-7</span> 显著性检验<div class="task-link">→ eval/paired_test.py（S1-c）</div></div>
+    <div class="mapping-item"><span class="table-num">表 3-8</span> 组件消融<div class="task-link">→ S-recall-ablation</div></div>
+    <div class="mapping-item"><span class="table-num">表 3-9</span> 变体对比<div class="task-link">→ deferred（S-recall-variants）</div></div>
+    <div class="mapping-item"><span class="table-num">表 3-10</span> 超参数敏感性<div class="task-link">→ S-recall-sens（3/5 行）</div></div>
+    <div class="mapping-item"><span class="table-num">表 3-11 / 3-12</span> 分层定义 / 模型分层<div class="task-link">→ S-recall-cold</div></div>
+    <div class="mapping-item"><span class="table-num">表 3-13</span> 多路召回分层<div class="task-link">→ 建议归 S-system-test</div></div>
+    <div class="mapping-item"><span class="table-num">表 3-14</span> 跨域泛化<div class="task-link">→ S-recall-cross（AJ 列待定）</div></div>
+    <div class="mapping-item"><span class="table-num">表 3-15</span> 训练效率<div class="task-link">→ 训练日志 + T-ch3</div></div>
+    <div class="mapping-item"><span class="table-num">表 3-16</span> 各召回路命中<div class="task-link">→ <b>无卡</b></div></div>
+    <div class="mapping-item"><span class="table-num">表 4-1 / 4-2</span> 排序基线 / 主结果<div class="task-link">→ S-rank-base, S-rank-main, S-rank-distill</div></div>
+    <div class="mapping-item"><span class="table-num">表 4-3 / 4-4</span> 端到端 / 全链路分层<div class="task-link">→ deferred（S-rank-e2e）</div></div>
+    <div class="mapping-item"><span class="table-num">表 4-5</span> 排序消融<div class="task-link">→ S-rank-main(3)+S-rank-distill(2)</div></div>
+    <div class="mapping-item"><span class="table-num">表 4-6 / 4-7</span> 教师质量 / 敏感性<div class="task-link">→ deferred</div></div>
+    <div class="mapping-item"><span class="table-num">表 5-3 / 5-7 / 5-8</span> 架构对照 / 接口 / 目录<div class="task-link">→ E-serve</div></div>
+    <div class="mapping-item"><span class="table-num">表 5-9 / 5-10 / 5-11</span> 压测 / 延迟 / 一致性<div class="task-link">→ S-system-test</div></div>
+    <div class="mapping-item"><span class="table-num">表 5-12 / 5-13</span> 解释质量<div class="task-link">→ deferred（S-explain）</div></div>
+    <div class="mapping-item"><span class="table-num">表 5-14 / C-1</span> 功能用例<div class="task-link">→ <b>无卡</b>（E-serve 后可跑）</div></div>
+    <div class="mapping-item"><span class="table-num">图 3-1~3-5</span> 数据画像<div class="task-link">→ T-profile（3/5 已有脚本）</div></div>
+    <div class="mapping-item"><span class="table-num">图 3-8 / 3-9</span> 性能柱图 / 训练曲线<div class="task-link">→ T-ch3（须重绘）</div></div>
+    <div class="mapping-item"><span class="table-num">图 3-11 / 3-12</span> 分层增益 / 召回占比<div class="task-link">→ T-ch3 / <b>无卡</b></div></div>
+    <div class="mapping-item"><span class="table-num">图 4-3 / 4-5</span> 训练曲线 / 门控分布<div class="task-link">→ S-rank-main, T-ch4</div></div>
+    <div class="mapping-item"><span class="table-num">图 5-6</span> 端到端延迟分布<div class="task-link">→ S-system-test</div></div>
+    <div class="mapping-item"><span class="table-num">图 1-1 / 3-6 / 3-7 / 4-1 / 4-2</span> 五张示意图<div class="task-link">→ <b>无卡</b>（draw.io 绘制）</div></div>
+    <div class="mapping-item"><span class="table-num">图 5-1~5-5</span> 用例/架构/流程<div class="task-link">→ <b>无卡</b>（3 张需重绘）</div></div>
+    <div class="mapping-item"><span class="table-num">图 5-7~5-10</span> 平台截图<div class="task-link">→ deferred（E-frontend）</div></div>
+    <div class="mapping-item"><span class="table-num">附录 A / B / D</span> Prompt / 超参 / 复现命令<div class="task-link">→ <b>无卡</b>（可从代码反填）</div></div>
   </div>
 </section>
 
@@ -207,18 +472,6 @@ footer {
         <input type="checkbox" class="task-check" checked>
         <span class="task-id">S0-a</span>
         <span class="task-name">冻结数据校验</span>
-        <div class="task-badges">
-          <span class="badge badge-line">研究</span>
-          <span class="badge badge-cpu">本机</span>
-          <span class="badge badge-status done">✓ 完成</span>
-        </div>
-      </div>
-      <div class="task-details">
-        <div class="detail-item"><span class="detail-label">时长</span><span class="detail-value">0.5 天</span></div>
-        <div class="detail-item"><span class="detail-label">依赖</span><span class="detail-value">无</span></div>
-      </div>
-      <div class="task-desc">data/ 冻结，CHECKSUMS 生成，tag data-v1。本机完成。</div>
-    </div>
     <div class="task" data-status="done" data-gpu="false">
       <div class="task-top">
         <input type="checkbox" class="task-check" checked>
@@ -235,6 +488,13 @@ footer {
         <div class="detail-item"><span class="detail-label">依赖</span><span class="detail-value">S0-a</span></div>
       </div>
       <div class="task-desc">γ₀=0.0313/天，λ₀=0.000456/天，5 张画像图。本机完成。</div>
+      <div class="landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row">3.1 节 研究动机：γ₀=0.0313/天（相邻交互间隔中位 22.1 天）、λ₀=0.000456/天（交互年龄中位 1520.5 天）</div>
+        <div class="l-row">3.3.1 节 λ=0.001 的取值依据（半衰期 693 天 ≈ 1.9 年，与中位交互年龄 3.7 年匹配）</div>
+        <div class="l-row">4.3.1 节 γ 取值依据、4.3.2 节 短期通道长度 N 依据（图 3-3 相邻间隔分布）</div>
+        <div class="l-row">产出 <code>results/profile/IS.json</code>（key: gamma0 / lambda0 / inter_gap_days / interaction_age_days）</div>
+      </div>
     </div>
     <div class="task" data-status="done" data-gpu="false">
       <div class="task-top">
@@ -252,6 +512,12 @@ footer {
         <div class="detail-item"><span class="detail-label">依赖</span><span class="detail-value">无</span></div>
       </div>
       <div class="task-desc">metrics.py, full_rank.py, 10 个测试通过。本机完成。</div>
+      <div class="landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row">2.5 节 评价指标与离线评估协议（Recall@K / NDCG@K 定义、全排序协议）</div>
+        <div class="l-row">全文所有表 3-6 / 3-8 / 3-10 / 3-12 / 3-14 / 4-2 / 4-5 的指标口径来源</div>
+        <div class="l-row">口径三要素须在 3.5.1 节写明：target=all（含负向目标）、rank_tie=pessimistic（悲观并列）、LOO 全排序</div>
+      </div>
     </div>
     <div class="task" data-status="done" data-gpu="true">
       <div class="task-top">
@@ -270,6 +536,12 @@ footer {
         <div class="detail-item"><span class="detail-label">SSH</span><span class="detail-value">需要登录 AutoDL</span></div>
       </div>
       <div class="task-desc">RecBole 环境搭建，LightGCN smoke 完成。需要 GPU 服务器。</div>
+      <div class="landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row">3.5.1 节 补充句：召回基线由 RecBole 1.2.1 + RecBole-GNN 实现，统一冻结切分（已在 V9 写入）</div>
+        <div class="l-row">表 3-4 软件环境行（RecBole / RecBole-GNN / torch 2.5.1 / PyG 版本）</div>
+        <div class="l-row">表 3-5 基线汇总（BPR-MF / NGCF / LightGCN / SGL / SimGCL 五个模型的 RecBole 可得性）</div>
+      </div>
     </div>
     <div class="task" data-status="todo" data-gpu="false">
       <div class="task-top">
@@ -288,6 +560,41 @@ footer {
         <div class="detail-item"><span class="detail-label">GPU</span><span class="detail-value">❌ 不需要</span></div>
       </div>
       <div class="task-desc">生成图 3-1 ~ 图 3-5（5 张画像图）。matplotlib 绘图，本机完成。</div>
+      <div class="landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row"><b>图 3-1</b> 3.1 节 IS 评分分布 → 已产出 <code>figures/profile/IS_rating_dist.svg</code>（5 分 72.3% / 4 分 13.7% / 3 分 5.8% / 1~2 分 8.2%）</div>
+        <div class="l-row"><b>图 3-2</b> 3.1 节 用户交互数分布 → 已产出 <code>IS_train_pairs_per_user.svg</code>（须标出四层占比 53.7/33.5/11.9/0.9）</div>
+        <div class="l-row"><b>图 3-3</b> 3.1 节 相邻交互间隔 → 已产出 <code>IS_inter_gap.svg</code>（中位 22.1 天），<b>同时供 4.3.1 γ 与 4.3.2 N 定值</b></div>
+        <div class="l-row"><b>图 3-4</b> 3.1 节 商品交互长尾分布 → <span class="chip gap">缺脚本</span>（须新写：按交互次数降序累计占比，标出前 20% 覆盖 56.5%）</div>
+        <div class="l-row"><b>图 3-5</b> 3.1 节 边权重 w(u,i) 分布 → <span class="chip gap">缺脚本</span>（须新写：λ=0.001 vs 0.1，用式(3-1) 含 α_r 映射，结论"λ=0.1 时 98.89% 权重 &lt; 1e-6"）</div>
+        <div class="l-row" style="margin-top:4px;color:#dc2626">⚠ 现有脚本另外画的两张（测试物品是否在训练集、用户内评分多样性）<b>论文正文未引用</b>，不必插入论文</div>
+      </div>
+    </div>
+    <div class="task" data-status="done" data-gpu="false">
+      <div class="task-top">
+        <input type="checkbox" class="task-check" checked>
+        <span class="task-id">S1-d</span>
+        <span class="task-name">数字管线 results/ → numbers.json</span>
+        <div class="task-badges">
+          <span class="badge badge-line">研究</span>
+          <span class="badge badge-cpu">本机</span>
+          <span class="badge badge-status done">✓ 完成</span>
+        </div>
+      </div>
+      <div class="task-details">
+        <div class="detail-item"><span class="detail-label">时长</span><span class="detail-value">0.5 天</span></div>
+        <div class="detail-item"><span class="detail-label">依赖</span><span class="detail-value">S1-a, S1-c</span></div>
+        <div class="detail-item"><span class="detail-label">GPU</span><span class="detail-value">❌ 不需要</span></div>
+      </div>
+      <div class="task-desc">CLAUDE.md 红线 2 的唯一实现。本机完成。</div>
+      <div class="landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row"><b>所有</b>实验表的数字均经本卡落到 <code>thesis/generated/numbers.json</code> 后回填</div>
+        <div class="l-row">key 命名：<code>recall.{model}.{metric}.mean|std|seeds</code>、<code>rank.*</code>、<code>strata.*</code>、<code>sig.*</code>、<code>profile.*</code>、<code>sys.*</code></div>
+        <div class="l-row">口径：<b>均值/标准差只对 seed 聚合，不做取整</b>；缺失指标不产生 key；输出按键名排序，字节确定</div>
+        <div class="l-row">产出：<code>scripts/make_tables.py</code> + <code>tests/test_make_tables.py</code> + <code>thesis/generated/numbers.json</code></div>
+        <div class="l-row">已跑通：当前 results/ 含 84 个数字（profile 已全量，召回待 S-recall-base 跑完后继续聚合）</div>
+      </div>
     </div>
     <div class="task" data-status="todo" data-gpu="true">
       <div class="task-top">
@@ -307,6 +614,14 @@ footer {
         <div class="detail-item"><span class="detail-label">预计耗时</span><span class="detail-value">~20 小时 (RTX 4090)</span></div>
       </div>
       <div class="task-desc">5 基线 × 5 seed = 25 runs，产出表 3-6 基线行。需要 GPU 服务器。</div>
+      <div class="landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row"><b>表 3-6</b> 3.5.2 召回阶段性能对比 → 前 5 行（BPR-MF / NGCF / LightGCN / SGL / SimGCL），列：Recall@10/20、NDCG@10/20、训练时长(min/epoch)</div>
+        <div class="l-row"><b>表 3-15</b> 3.5.8 训练效率 → LightGCN / SGL / SimGCL 三行（图构建耗时、单 Epoch 耗时、收敛 Epoch、峰值显存、参数量）</div>
+        <div class="l-row"><b>图 3-8 / 图 3-9</b> 3.5.2 → 只提供数据，绘制归 T-ch3（注意：图中旧数值不得沿用）</div>
+        <div class="l-row"><b>表 4-2</b> 4.5.2 间接：LightGCN 召回嵌入是排序阶段候选来源</div>
+        <div class="l-row">结果目录：<code>results/ch3_recall/baselines/{model}/seed{0-4}/</code></div>
+      </div>
     </div>
   </div>
 </section>
@@ -338,6 +653,15 @@ footer {
         <div class="detail-item"><span class="detail-label">预计耗时</span><span class="detail-value">~4 小时</span></div>
       </div>
       <div class="task-desc">实现边权函数 w(u,i)=α_r×exp(-λΔt/T)，5 seed 主实验，产出表 3-6 最后一行。</div>
+      <div class="landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row"><b>表 3-6</b> 最后一行 TI-LightGCN + 「相对 LightGCN 提升」行（必须与 LightGCN 行同口径）</div>
+        <div class="l-row"><b>表 3-15</b> TI-LightGCN 行：参数量 4.9M（(50,985+25,848)×64），与 LightGCN 相同 → 支撑 3.3.5 节复杂度分析「图传播部分无额外参数」</div>
+        <div class="l-row"><b>表 3-1</b> 3.3.1 α_r 权重表（5分 3.0 / 4分 1.5 / 3分 1.0 / 1~2分 0.1）须与代码常量逐项一致</div>
+        <div class="l-row"><b>表 3-2</b> 3.3.5 复杂度对比（LightGCN vs TI-LightGCN）</div>
+        <div class="l-row"><b>附录 B 表B-1</b> TI-LightGCN 超参数行（d=64 / L=3 / lr=1e-3 / λ₂=1e-4 / B=2048 / 负采样 1:4 / λ=0.001 / T=86400 / 早停 5 轮）</div>
+        <div class="l-row">结果目录：<code>results/ch3_recall/ti_lightgcn/seed{0-4}/</code>（含 per_user.parquet）</div>
+      </div>
     </div>
     <div class="task" data-status="wait" data-gpu="true">
       <div class="task-top">
@@ -357,6 +681,13 @@ footer {
         <div class="detail-item"><span class="detail-label">预计耗时</span><span class="detail-value">~6 小时</span></div>
       </div>
       <div class="task-desc">3 变体 × 3 seed = 9 runs，产出表 3-8。变体：无时间衰减/无反馈强度/无长尾正则。</div>
+      <div class="landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row"><b>表 3-8</b> 3.5.3 组件消融（5 行）：完整 / 移除反馈强度 / 移除时间衰减 / 两者均移除(=LightGCN) / 移除长尾正则(μ=0)</div>
+        <div class="l-row"><b>图 3-6</b> 3.3.2 结构示意的数据不需要，但消融结论支撑 3.6 结果讨论</div>
+        <div class="l-row" style="color:#b45309">⚠ 卡片原写「w/o 长尾正则 γ=0」，应改为 <b>μ=0</b>（V9 已把长尾正则强度符号由 γ 改为 μ）</div>
+        <div class="l-row">结果目录：<code>results/ch3_recall/ablation/{variant}/seed{0-2}/</code></div>
+      </div>
     </div>
     <div class="task" data-status="wait" data-gpu="true">
       <div class="task-top">
@@ -376,6 +707,15 @@ footer {
         <div class="detail-item"><span class="detail-label">预计耗时</span><span class="detail-value">~12 小时</span></div>
       </div>
       <div class="task-desc">扫描 λ、L、d 三个参数（简化），产出表 3-10、图 3-10。</div>
+      <div class="landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row"><b>表 3-10</b> 3.5.5 超参数敏感性（论文 5 行，卡片覆盖 3 行）</div>
+        <div class="l-row">λ：0.0001/0.0005/0.001/0.005/0.01（论文 5 值，卡片 4 值，须补齐 0.0005 与 0.005）</div>
+        <div class="l-row">L：1/2/3/4 ✅　d：32/64/128/256 ✅</div>
+        <div class="l-row"><span class="chip gap">未覆盖</span> μ：0/0.001/0.01/0.1　<span class="chip gap">未覆盖</span> α_5：1.5/2.0/3.0/5.0</div>
+        <div class="l-row"><b>图 3-10</b> 3.5.5 敏感性折线图（论文要 5 个子图 λ/L/d/μ/α_5，卡片只画 3 个）</div>
+        <div class="l-row">正文 3.5.5 末段已有结论句「λ 中度敏感、L 与 d 稳健、λ=0.001 半衰期 693 天」→ 须由本卡数字支撑</div>
+      </div>
     </div>
   </div>
 </section>
@@ -407,6 +747,13 @@ footer {
         <div class="detail-item"><span class="detail-label">预计耗时</span><span class="detail-value">~8 小时</span></div>
       </div>
       <div class="task-desc">TH、OP 数据集，LightGCN + TI-LightGCN，产出表 3-14。</div>
+      <div class="landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row"><b>表 3-14</b> 3.5.7 跨域泛化（4 行：LightGCN / SimGCL(最强基线) / TI-LightGCN / 相对 SimGCL 提升）</div>
+        <div class="l-row">列：IS（主）/ TH / OP / <b>AJ</b> / 平均提升(vs LightGCN)</div>
+        <div class="l-row" style="color:#b45309">⚠ AJ 列在卡片里被推迟 → 该列将留空，但 3.5.1 与表 3-14 表头都写了 AJ</div>
+        <div class="l-row">说明：SimGCL 行也须补 TH/OP（卡片只写跑 LightGCN+TI），或表 3-14 删 SimGCL 行</div>
+      </div>
     </div>
     <div class="task" data-status="wait" data-gpu="false">
       <div class="task-top">
@@ -425,6 +772,14 @@ footer {
         <div class="detail-item"><span class="detail-label">GPU</span><span class="detail-value">❌ 不需要（只做评估）</span></div>
       </div>
       <div class="task-desc">4 层用户分层（超冷启动/冷启动/普通/重度），产出表 3-12。复用 eval/strata.py。</div>
+      <div class="landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row"><b>表 3-11</b> 3.5.6 用户交互历史分层定义（0~4 / 5~9 / 10~29 / ≥30，占比 53.7/33.5/11.9/0.9 —— 已用 IS 训练集实测复核一致）</div>
+        <div class="l-row"><b>表 3-12</b> 召回模型冷启动分层（LightGCN / SimGCL / TI-LightGCN 三列 + 相对提升列，5 行含"全体用户"）</div>
+        <div class="l-row"><b>图 3-11</b> 召回阶段分层增益柱状图（数据来自表 3-12 与 3-13）</div>
+        <div class="l-row" style="color:#dc2626">⚠ 口径冲突：<code>eval/strata.py</code> 现为五层（1-2／3-4／5-9／10-29／≥30），论文为四层。须把 1-2 与 3-4 合并为 0-4 再输出（按红线 3，改 eval/ 需你确认）</div>
+        <div class="l-row">守恒校验：Σ(nᵢ·metricᵢ)/Σnᵢ = 全体用户值（strata.py 已有 assert_conservation）</div>
+      </div>
     </div>
     <div class="task" data-status="wait" data-gpu="true">
       <div class="task-top">
@@ -444,6 +799,13 @@ footer {
         <div class="detail-item"><span class="detail-label">预计耗时</span><span class="detail-value">~5 小时</span></div>
       </div>
       <div class="task-desc">RecBole DIN，5 seed，候选集固定 Top-100，产出表 4-2 基线行。</div>
+      <div class="landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row"><b>表 4-2</b> 4.5.2 排序阶段性能对比 → DIN（基线）行，列：AUC / NDCG@10 / NDCG@20 / P99延迟(CPU) / 参数量(M)</div>
+        <div class="l-row"><b>表 4-1</b> 4.5.1 排序基线汇总（DIN / DIEN 两行 —— DIEN 已 deferred，须从表中删除或留空）</div>
+        <div class="l-row"><b>图 4-3</b> 排序模型训练曲线（DIN 一条线）</div>
+        <div class="l-row">候选集固定：TI-LightGCN 召回 Top-100 → <code>results/ch4_rank/candidates/ti_top100.parquet</code>（与 S-recall-main 强耦合，须先完成）</div>
+      </div>
     </div>
   </div>
 </section>
@@ -475,6 +837,16 @@ footer {
         <div class="detail-item"><span class="detail-label">预计耗时</span><span class="detail-value">~8 小时</span></div>
       </div>
       <div class="task-desc">时间偏置注意力 + 双通道（短期 N=5 + 长期 User Memory），产出表 4-2。</div>
+      <div class="landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row"><b>表 4-2</b> Temporal-DIN（本文，无蒸馏）行 + 「相对 DIN 提升」行</div>
+        <div class="l-row"><b>表 4-5</b> 4.5.5 排序消融 → 本卡负责 3 行：移除时间衰减注意力(γ=0) / 移除 User Memory / 移除门控融合</div>
+        <div class="l-row"><b>图 4-1</b> 4.3 Temporal-DIN 模型结构示意（可按代码绘制）</div>
+        <div class="l-row"><b>图 4-3</b> 排序训练曲线（Temporal-DIN 无蒸馏一条线）　<b>图 4-5</b> 门控值分布（按用户层次分组）</div>
+        <div class="l-row"><b>附录 B</b> Temporal-DIN 超参数字段：N=5 / 长期通道 256 维 / γ / 门控 MLP 维度</div>
+        <div class="l-row" style="color:#dc2626">⚠ 卡片「简化说明」写「不做门控」，但 4.3.3 节与表 4-5 都要门控 → 必须保留门控</div>
+        <div class="l-row" style="color:#b45309">⚠ 论文 4.3.3 节 MLP 写 256→128→64→1，5.4.3 节写 1024→512→1，<b>须以代码为准统一</b></div>
+      </div>
     </div>
     <div class="task" data-status="wait" data-gpu="false">
       <div class="task-top">
@@ -494,6 +866,17 @@ footer {
         <div class="detail-item"><span class="detail-label">预计耗时</span><span class="detail-value">~2 小时</span></div>
       </div>
       <div class="task-desc">User Memory 生成（256 维），简化蒸馏。需要 Qwen API Key。</div>
+      <div class="landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row"><b>表 4-2</b> Temporal-DIN+LLM蒸馏（本文，完整）行 ← 主结果</div>
+        <div class="l-row"><b>表 4-5</b> 本卡负责 2 行：移除 LLM 蒸馏（仅行为监督）/ 移除 LLM 蒸馏+User Memory（=标准 DIN）</div>
+        <div class="l-row"><b>4.4.2 节</b> 教师信号生成（是/否概率，须 logprobs 支持）　<b>4.4.3 节</b> 联合损失权重 α=0.7 / β=0.3</div>
+        <div class="l-row"><b>附录 A</b> A.1 User Memory 生成 Prompt 原文、A.2 教师信号 Prompt 原文（须替换骨架为代码真实 Prompt）</div>
+        <div class="l-row"><b>图 4-2</b> 4.4.3 LLM 偏好蒸馏框架示意</div>
+        <div class="l-row" style="color:#dc2626">⚠ 卡片写「不做教师信号、不做联合训练、η 固定 0.5」，与 4.4.2/4.4.3/表 4-7(α/β) 矛盾 → 建议保留软标签 + 固定 α=0.7/β=0.3</div>
+        <div class="l-row" style="color:#b45309">⚠ 论文 4.3.2 标注：paraphrase-multilingual-MiniLM-L12-v2 输出 384 维，User Memory 写 256 维、知识库写 768 维，须核对是否有投影层</div>
+        <div class="l-row"><span class="chip part">deferred</span> 表 4-6 教师质量 / 表 4-7 α-β 敏感性 / 图 4-6 校准曲线 / 图 4-7 敏感性折线</div>
+      </div>
     </div>
     <div class="task" data-status="wait" data-gpu="false">
       <div class="task-top">
@@ -512,6 +895,17 @@ footer {
         <div class="detail-item"><span class="detail-label">GPU</span><span class="detail-value">❌ 不需要</span></div>
       </div>
       <div class="task-desc">FastAPI 服务，召回+排序+重排管线。本机开发。</div>
+      <div class="landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row"><b>表 5-3</b> 5.3.1 目标架构与原型实现对照（MySQL→离线产物、Redis→进程内字典、ChromaDB 嵌入式等 8 行）</div>
+        <div class="l-row"><b>表 5-7</b> 5.3.4 推荐服务核心接口（/api/recommend、/api/recommend/explain、/api/search、/api/products、/api/users/{id}）</div>
+        <div class="l-row"><b>表 5-8</b> 5.4.1 项目代码目录结构（core/recall.py、core/ti_lightgcn.py、core/temporal_din.py、api/recommend.py 等 15 行）</div>
+        <div class="l-row"><b>表 5-14 / 表 C-1</b> 5.5.6 与附录 C 功能测试用例（TC-01~TC-08）→ 由本卡实现后才有"实际结果"可填</div>
+        <div class="l-row"><b>图 5-3 / 5-4</b> 在线推荐流程 / 离线训练流程（按实现绘制）　<b>图 5-5</b> 部署架构（systemd + Nginx）</div>
+        <div class="l-row"><b>表 5-6</b> 本地文件存储设计（user_emb.npy 13MB / item_emb.npy 6.6MB 等）</div>
+        <div class="l-row" style="color:#b45309">⚠ 仓库已有 <code>backend/</code>（FastAPI + mock JSON 数据，路由 recommend/products/search/user）为<b>现有原型</b>；卡片却要求新建 <code>serving/</code>。建议明确：改造 backend/ 还是新建 serving/，二者择一，不要并存（表 5-8 目录结构与两者都对不上）</div>
+        <div class="l-row" style="color:#b45309">⚠ 接口路径不一致：表 5-7 写 /api/recommend，表 5-8 写 /api/rec/recommend，正文 5.3.3 又不同 → 以代码为准统一</div>
+      </div>
     </div>
     <div class="task" data-status="wait" data-gpu="false">
       <div class="task-top">
@@ -530,6 +924,16 @@ footer {
         <div class="detail-item"><span class="detail-label">GPU</span><span class="detail-value">❌ 不需要</span></div>
       </div>
       <div class="task-desc">延迟测试 + 一致性校验（抽样 10 用户），产出表 5-9/5-10/5-11。</div>
+      <div class="landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row"><b>表 5-9</b> 5.5.3 接口性能（<b>标题写"CPU环境，50并发"</b>；4 行：完整链路/缓存命中/混合流量70%/行为埋点，列含 QPS）</div>
+        <div class="l-row"><b>表 5-10</b> 5.5.3 延迟分解 7 步（①缓存 ②特征 ③四路并行召回 ④精排 ⑤语义重排 ⑥解释异步 ⑦返回 + 端到端）</div>
+        <div class="l-row"><b>图 5-6</b> 端到端延迟分布 CDF/直方图（标 P50/P95/P99 与 80ms 目标线）</div>
+        <div class="l-row"><b>表 5-11</b> 5.5.4 一致性校验 4 项（打分一致性/检索一致性/指标复现/版本一致性）</div>
+        <div class="l-row"><b>表 5-13 间接</b> 5.5.5 解释评估若做，人工评估也在此卡</div>
+        <div class="l-row" style="color:#dc2626">⚠ 硬冲突：卡片写「不做压测，单并发」，表 5-9 标题是「50并发」且要 QPS 列 → 建议改卡片为轻量压测（wrk/ab 固定 50 并发 60 秒，10 分钟）</div>
+        <div class="l-row">正文 5.1/5.3.2/表 5-1 的设计目标 P99&lt;80ms 须在本卡拿到实测值后判断保留/改写</div>
+      </div>
     </div>
   </div>
 </section>
@@ -559,6 +963,17 @@ footer {
         <div class="detail-item"><span class="detail-label">依赖</span><span class="detail-value">召回实验全部完成</span></div>
       </div>
       <div class="task-desc">回填表 3-6/3-7/3-8/3-10/3-12/3-14/3-15，确保数字与结果文件一致。</div>
+      <div class="landing">
+        <span class="l-label">论文落点（第三章全表清单）</span>
+        <div class="l-row"><b>表 3-6</b> 主结果 7 行 ← S-recall-base + S-recall-main　<b>表 3-7</b> 显著性 ← <code>python -m eval.paired_test</code>（S1-c 已就绪）</div>
+        <div class="l-row"><b>表 3-8</b> 消融 5 行 ← S-recall-ablation　<b>表 3-9</b> 变体 4 行 ← deferred（须在正文注明或删表）</div>
+        <div class="l-row"><b>表 3-10</b> 敏感性 5 行 + <b>图 3-10</b> ← S-recall-sens（仅 3 行）</div>
+        <div class="l-row"><b>表 3-11/3-12/3-13</b> 分层 + <b>图 3-11</b> ← S-recall-cold（3-13 无卡）</div>
+        <div class="l-row"><b>表 3-14</b> 跨域 ← S-recall-cross　<b>表 3-15</b> 效率 ← 训练日志（须写提取脚本）　<b>表 3-16 + 图 3-12</b> 召回路命中 ← <span class="chip gap">无卡</span></div>
+        <div class="l-row"><b>图 3-8</b> 性能柱图、<b>图 3-9</b> 训练曲线 ← 须重绘（图 3-8 现存旧数值 0.0962/0.0748 不得沿用）</div>
+        <div class="l-row"><b>3.6 结果讨论 / 3.7 本章小结</b> 的结论句须依实测改写（正文已有【待实验】标记）</div>
+        <div class="l-row" style="color:#b45309">⚠ 卡片产出写 <code>thesis/src/ch3_recall.md</code> + <code>numbers_ch3.json</code>，二者均无着落 → 建议改为直接在 <code>整改V9_1120.docx</code> 回填并版本递增</div>
+      </div>
     </div>
     <div class="task" data-status="wait" data-gpu="false">
       <div class="task-top">
@@ -576,6 +991,16 @@ footer {
         <div class="detail-item"><span class="detail-label">依赖</span><span class="detail-value">排序实验完成</span></div>
       </div>
       <div class="task-desc">回填表 4-2、4-5。</div>
+      <div class="landing">
+        <span class="l-label">论文落点（第四章全表清单）</span>
+        <div class="l-row"><b>表 4-1</b> 排序基线（DIN / DIEN）← DIEN deferred 须删行</div>
+        <div class="l-row"><b>表 4-2</b> 排序主结果 5 行 + <b>图 4-3</b> 训练曲线 ← S-rank-base + S-rank-main + S-rank-distill</div>
+        <div class="l-row"><b>表 4-3</b> 端到端 + <b>表 4-4/图 4-4</b> 全链路分层 ← <span class="chip part">deferred</span></div>
+        <div class="l-row"><b>表 4-5</b> 排序消融 6 行 + <b>图 4-5</b> 门控值分布 ← S-rank-main(3 行) + S-rank-distill(2 行) + DIN 基准行</div>
+        <div class="l-row"><b>表 4-6/图 4-6</b> 教师质量、<b>表 4-7/图 4-7</b> 敏感性 ← <span class="chip part">deferred</span></div>
+        <div class="l-row"><b>图 4-8</b> 案例注意力热力图 + 4.5.8 三个案例 ← <span class="chip gap">无卡</span>（且正文案例为虚构示例，须换真实用户）</div>
+        <div class="l-row"><b>4.6 结果讨论 / 4.7 本章小结</b> 结论句须依实测改写</div>
+      </div>
     </div>
     <div class="task" data-status="wait" data-gpu="false">
       <div class="task-top">
@@ -593,6 +1018,15 @@ footer {
         <div class="detail-item"><span class="detail-label">依赖</span><span class="detail-value">系统评测完成</span></div>
       </div>
       <div class="task-desc">回填表 5-9/5-10/5-11。</div>
+      <div class="landing">
+        <span class="l-label">论文落点（第五章全表清单）</span>
+        <div class="l-row"><b>表 5-1/5-2</b> 设计目标 / 功能需求 ← 写作（无需实验）</div>
+        <div class="l-row"><b>表 5-3/5-4/5-5/5-6/5-7/5-8</b> 架构对照 / 模块 / MySQL / 文件存储 / 接口 / 代码目录 ← E-serve 实现后可写</div>
+        <div class="l-row"><b>表 5-9/5-10/图 5-6/表 5-11</b> 压测 / 延迟分解 / 延迟分布 / 一致性 ← S-system-test</div>
+        <div class="l-row"><b>表 5-12/5-13</b> 解释质量 ← <span class="chip part">deferred</span>　<b>表 5-14/表 C-1</b> 功能用例 8 条 ← <span class="chip gap">无卡</span>（E-serve 实现后可直接跑）</div>
+        <div class="l-row"><b>图 5-1~5-5</b> 用例图/三层架构/在线流程/离线流程/部署架构 ← <span class="chip gap">无卡</span>，且 5-2、5-4、5-5 正文标注需重绘</div>
+        <div class="l-row"><b>图 5-7~5-10</b> 四张平台截图 ← <span class="chip part">deferred（E-frontend）</span>；仓库 <code>frontend/</code> 已有 React 工程，若不截图则 5.6 整节缺失</div>
+      </div>
     </div>
   </div>
 </section>
@@ -603,31 +1037,68 @@ footer {
   <ul class="gate-checks">
     <li>☐ RecBole 环境可复现（recbole.yml）</li>
     <li>☐ eval/ 模块 10 个测试通过</li>
-    <li>☐ 数据画像图 5 张生成（或脚本就绪）</li>
+    <li>☐ 数据画像图 5 张生成（或脚本就绪；<b>注意图 3-4、3-5 尚无脚本</b>）</li>
     <li>☐ 召回基线至少 1 个模型跑通</li>
+  </ul>
+  <div style="font-size:12.5px;color:var(--muted);margin-top:10px">
+    ⚠ <code>docs/plan/gates.md</code> 在仓库中<b>不存在</b>，而 CLAUDE.md、Makefile 的 gate 目标、<code>/gate</code> 命令、decisions.md 均引用它；<code>gates/</code> 下只有 README，无 <code>w1.py</code>。
+    需决定：补写 V9 版 gates.md（含下表 G1–G5），或把引用改为"本周关口见本 HTML 底部"。
+  </div>
+</section>
+
+<!-- 关口 G2-G5 -->
+<section class="gate-section">
+  <div class="gate-title">⬥ G2–G5 关口（建议，待你确认后写入 gates.md）</div>
+  <ul class="gate-checks">
+    <li><b>G2（11/28）</b>☐ 召回基线 25 runs 完成　☐ 表 3-6 基线行有数　☐ TI-LightGCN 代码 + 单测通过　☐ 表 3-1 α_r 与代码常量一致</li>
+    <li><b>G3（12/05）</b>☐ 表 3-6 完整 + 表 3-7 显著性完成　☐ 表 3-8 消融 9 runs　☐ 表 3-10 至少 λ/L/d 三行　☐ 图 3-1~3-5 五张齐（含长尾与边权图）</li>
+    <li><b>G4（12/12）</b>☐ 表 3-12 分层（四层口径）+ 守恒校验通过　☐ 表 3-14 跨域（AJ 列已决）　☐ 表 3-15 效率　☐ DIN 5 seed 完成　☐ 第三章全部数字可溯源到 results/</li>
+    <li><b>G5（12/19）</b>☐ Temporal-DIN 5 seed + 蒸馏版完成　☐ 表 4-2/4-5 有数　☐ E-serve 可启动且接口路径与表 5-7 一致　☐ 表 5-9/5-10/5-11 完成　☐ 第三章/第四章表格全部回填、无【待实验】残留</li>
   </ul>
 </section>
 
 <!-- 推迟任务 -->
 <section class="deferred-section">
-  <div class="deferred-title">⏭ 推迟到后续整改（非毕业必需）</div>
+  <div class="deferred-title">⏭ 推迟到后续整改（非毕业必需，论文对应小节已降级删除）</div>
   <div class="deferred-list">
-    <div class="deferred-item"><span class="name">S-recall-variants</span><span class="desc">设计变体对比（表 3-9）</span></div>
-    <div class="deferred-item"><span class="name">S-recall-new-baseline</span><span class="desc">近三年强基线（XSimGCL 等）</span></div>
-    <div class="deferred-item"><span class="name">S-rank-dien</span><span class="desc">DIEN 基线（需自研）</span></div>
-    <div class="deferred-item"><span class="name">S-rank-teacher</span><span class="desc">教师质量评估（表 4-6）</span></div>
-    <div class="deferred-item"><span class="name">S-rank-e2e</span><span class="desc">端到端实验（表 4-3/4-4）</span></div>
-    <div class="deferred-item"><span class="name">S-explain</span><span class="desc">解释质量评估（表 5-12/5-13）</span></div>
-    <div class="deferred-item"><span class="name">E-frontend</span><span class="desc">前端界面截图</span></div>
-    <div class="deferred-item"><span class="name">E-rag</span><span class="desc">RAG 解释模块</span></div>
+    <div class="deferred-item"><span class="name">S-recall-variants</span><span class="desc">表 3-9（已降级：3.5.4 整节从论文删除）</span></div>
+    <div class="deferred-item"><span class="name">S-recall-new-baseline</span><span class="desc">近三年强基线（XSimGCL 等）· 正文仍标【待实验】</span></div>
+    <div class="deferred-item"><span class="name">S-rank-dien</span><span class="desc">DIEN 基线（RecBole 内置，可跑）· 表 4-1/4-2 有行</span></div>
+    <div class="deferred-item"><span class="name">S-rank-teacher</span><span class="desc">教师质量评估（表 4-6 / 图 4-6）</span></div>
+    <div class="deferred-item"><span class="name">S-rank-e2e</span><span class="desc">端到端实验（表 4-3 / 4-4 / 图 4-4）</span></div>
+    <div class="deferred-item"><span class="name">S-explain</span><span class="desc">解释质量评估（表 5-12 / 5-13，已降级：5.5.5 整节从论文删除）</span></div>
+    <div class="deferred-item"><span class="name">E-frontend</span><span class="desc">前端界面截图（图 5-7~5-10）</span></div>
+    <div class="deferred-item"><span class="name">E-rag</span><span class="desc">RAG 解释模块（ChromaDB + Qwen）</span></div>
     <div class="deferred-item"><span class="name">T-abstract</span><span class="desc">摘要撰写</span></div>
-    <div class="deferred-item"><span class="name">T-refs</span><span class="desc">参考文献扩充</span></div>
+    <div class="deferred-item"><span class="name">T-refs</span><span class="desc">参考文献扩充（现 43 篇 → 60–70 篇）</span></div>
+  </div>
+  <div style="margin-top:14px;font-size:12.5px;color:var(--muted)">
+    <b>推迟项的论文代价（须在正文处理，否则留下空缺）：</b>
+    表 4-3/4-4/4-6/4-7、图 4-4/4-6/4-7、图 5-7~5-10 若不做，正文对应小节必须改写或删除，不能留空表。
+    已明确降级并删除的小节：3.5.4、3.5.9、5.5.5（操作清单见 docs/decisions.md 的 2026-11-20 条目）。
+  </div>
+</section>
+
+<!-- 无卡要件 -->
+<section class="deferred-section">
+  <div class="deferred-title">⚠ 既不在主计划、也未列入推迟清单的论文要件（6 项，需逐项决定）</div>
+  <div class="deferred-list">
+    <div class="deferred-item"><span class="name">示意图 ×9</span><span class="desc">图 1-1、3-6、3-7、4-1、4-2、5-1、5-2、5-3、5-4、5-5（draw.io / 按代码绘制，约 1 天）</span></div>
+    <div class="deferred-item"><span class="name">图 3-11</span><span class="desc">分层增益柱图（数据来自表 3-12/3-13，可并入 T-ch3）</span></div>
+    <div class="deferred-item"><span class="name">图 4-8</span><span class="desc">案例注意力热力图（4.5.8 整节，且正文案例须换真实用户）</span></div>
+    <div class="deferred-item"><span class="name">附录 A</span><span class="desc">Prompt 原文（A.1/A.2/A.3，须与代码一致，S-rank-distill 顺手产出）</span></div>
+    <div class="deferred-item"><span class="name">附录 B</span><span class="desc">超参数表（已列 11 行，可从 configs/ 反填）</span></div>
+    <div class="deferred-item"><span class="name">附录 D</span><span class="desc">复现命令与结果文件对照（30 行，大部分为【待定】，须由实际命令替换）</span></div>
+  </div>
+  <div style="margin-top:14px;font-size:12.5px;color:var(--muted)">
+    原清单中 3 项已归并：<b>表 3-13</b> → S-system-test；<b>表 3-16 + 图 3-12</b> → 随 3.5.9 整节降级删除；<b>表 5-14 / 表 C-1</b> → S-system-test。
   </div>
 </section>
 
 <footer>
   <p>基于《整改V9_1120》· 简化版执行计划 · 毕业优先</p>
-  <p>最后更新：2026-11-20 · GPU 任务需 SSH 登录 AutoDL 服务器</p>
+  <p>最后更新：2026-11-20（本次补入：复核结论 12 项、论文要件覆盖表 32 行、16 张任务卡的「论文落点」、G2–G5 关口、无卡要件 14 项）</p>
+  <p>GPU 任务需 SSH 登录 AutoDL 服务器</p>
 </footer>
 </div>
 

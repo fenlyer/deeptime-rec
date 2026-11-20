@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>V9 论文整改执行计划（简化版）</title>
+<style>
+:root {
+  --paper:#f5f7fa; --surface:#fff; --ink:#1a1f2e; --muted:#6b7280; --rule:#e5e7eb;
+  --research:#2563eb; --eng:#059669; --write:#9333ea; --gate:#d97706;
+  --done:#10b981; --todo:#ef4443; --wait:#f59e0b;
+  --gpu:#dc2626; --cpu:#0891b2;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper:#0f172a; --surface:#1e293b; --ink:#f1f5f9; --muted:#94a3b8; --rule:#334155;
+    --research:#60a5fa; --eng:#34d399; --write:#a78bfa; --gate:#fbbf24;
+    --done:#10b981; --todo:#f87171; --wait:#fbbf24;
+    --gpu:#f87171; --cpu:#22d3ee;
+  }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--paper); color: var(--ink); line-height: 1.6; padding: 20px;
+}
+.container { max-width: 1400px; margin: 0 auto; }
+header {
+  background: var(--surface); border-radius: 12px; padding: 24px; margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+h1 { font-size: 24px; margin-bottom: 8px; }
+.subtitle { color: var(--muted); font-size: 14px; }
+.summary {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px; margin-top: 16px;
+}
+.stat {
+  background: var(--paper); border-radius: 8px; padding: 12px; text-align: center;
+}
+.stat-num { font-size: 28px; font-weight: 700; }
+.stat-label { font-size: 12px; color: var(--muted); }
+.stat-num.done { color: var(--done); }
+.stat-num.todo { color: var(--todo); }
+.stat-num.wait { color: var(--wait); }
+.stat-num.gpu { color: var(--gpu); }
+.progress-bar {
+  height: 8px; background: var(--rule); border-radius: 4px; overflow: hidden; margin-top: 16px;
+}
+.progress-fill {
+  height: 100%; background: linear-gradient(90deg, var(--done), var(--research));
+  transition: width 0.3s;
+}
+.legend {
+  display: flex; flex-wrap: wrap; gap: 16px; margin-top: 16px; font-size: 13px;
+}
+.legend-item { display: flex; align-items: center; gap: 6px; }
+.legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+.week-section {
+  background: var(--surface); border-radius: 12px; padding: 20px; margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.week-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--rule);
+}
+.week-title { font-size: 18px; font-weight: 600; }
+.week-dates { color: var(--muted); font-size: 13px; }
+.task-list { display: flex; flex-direction: column; gap: 12px; }
+.task {
+  background: var(--paper); border-radius: 10px; padding: 16px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.task:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.task-top {
+  display: grid; grid-template-columns: 24px 80px 1fr auto;
+  gap: 12px; align-items: center;
+}
+.task-check { width: 20px; height: 20px; cursor: pointer; }
+.task-id { font-family: monospace; font-weight: 600; font-size: 13px; color: var(--research); }
+.task-name { font-size: 15px; font-weight: 500; }
+.task-badges { display: flex; gap: 8px; align-items: center; }
+.badge {
+  font-size: 11px; padding: 3px 10px; border-radius: 12px; font-weight: 500;
+  white-space: nowrap;
+}
+.badge-line { background: rgba(37,99,235,0.1); color: var(--research); }
+.badge-line.eng { background: rgba(5,150,105,0.1); color: var(--eng); }
+.badge-line.write { background: rgba(147,51,234,0.1); color: var(--write); }
+.badge-gpu { background: rgba(220,38,38,0.1); color: var(--gpu); }
+.badge-cpu { background: rgba(8,145,194,0.1); color: var(--cpu); }
+.badge-status { font-size: 12px; padding: 4px 12px; border-radius: 6px; }
+.badge-status.done { background: rgba(16,185,129,0.15); color: var(--done); }
+.badge-status.todo { background: rgba(239,68,68,0.15); color: var(--todo); }
+.badge-status.wait { background: rgba(245,158,11,0.15); color: var(--wait); }
+.task-details {
+  margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--rule);
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px; font-size: 13px;
+}
+.detail-item { display: flex; flex-direction: column; gap: 2px; }
+.detail-label { color: var(--muted); font-size: 11px; text-transform: uppercase; }
+.detail-value { font-size: 13px; }
+.task-desc {
+  margin-top: 12px; font-size: 13px; color: var(--muted);
+  padding: 10px 12px; background: var(--surface); border-radius: 6px;
+}
+.gate-section {
+  background: linear-gradient(135deg, rgba(217,119,6,0.08), rgba(217,119,6,0.02));
+  border: 1px solid var(--gate); border-radius: 12px; padding: 20px; margin-bottom: 16px;
+}
+.gate-title { color: var(--gate); font-weight: 600; margin-bottom: 12px; font-size: 16px; }
+.gate-checks { list-style: none; }
+.gate-checks li {
+  padding: 10px 0; border-bottom: 1px solid var(--rule); font-size: 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.gate-checks li:last-child { border-bottom: none; }
+.deferred-section {
+  background: var(--surface); border-radius: 12px; padding: 20px;
+  border: 1px dashed var(--rule); opacity: 0.85;
+}
+.deferred-title { color: var(--muted); font-size: 14px; margin-bottom: 12px; font-weight: 600; }
+.deferred-list {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px;
+}
+.deferred-item {
+  font-size: 12px; padding: 10px 14px; background: var(--paper); border-radius: 8px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.deferred-item .name { font-weight: 500; }
+.deferred-item .desc { color: var(--muted); font-size: 11px; }
+.table-mapping {
+  background: var(--surface); border-radius: 12px; padding: 20px; margin-bottom: 16px;
+}
+.table-mapping h3 { margin-bottom: 12px; font-size: 16px; }
+.mapping-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px;
+}
+.mapping-item {
+  padding: 12px; background: var(--paper); border-radius: 8px; font-size: 13px;
+}
+.mapping-item .table-num { font-weight: 600; color: var(--research); font-size: 14px; }
+.mapping-item .task-link { font-size: 11px; color: var(--muted); margin-top: 4px; }
+footer {
+  text-align: center; padding: 24px; color: var(--muted); font-size: 12px;
+}
+@media (max-width: 768px) {
+  .task-top { grid-template-columns: 24px 1fr; }
+  .task-badges { grid-column: 2; justify-content: flex-start; }
+  .task-details { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <h1>📐 V9 论文整改执行计划（简化版）</h1>
+  <p class="subtitle">基于《整改V9_1120》论文结构 · 5 周冲刺 · 毕业优先</p>
+  <div class="summary">
+    <div class="stat"><div class="stat-num done" id="done-count">0</div><div class="stat-label">已完成</div></div>
+    <div class="stat"><div class="stat-num todo" id="todo-count">0</div><div class="stat-label">待执行</div></div>
+    <div class="stat"><div class="stat-num wait" id="wait-count">0</div><div class="stat-label">等待中</div></div>
+    <div class="stat"><div class="stat-num gpu" id="gpu-count">0</div><div class="stat-label">需 GPU</div></div>
+    <div class="stat"><div class="stat-num" id="total-count">0</div><div class="stat-label">总计</div></div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width: 0%"></div></div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background: var(--done)"></div>已完成</div>
+    <div class="legend-item"><div class="legend-dot" style="background: var(--todo)"></div>待执行</div>
+    <div class="legend-item"><div class="legend-dot" style="background: var(--wait)"></div>等待依赖</div>
+    <div class="legend-item"><div class="legend-dot" style="background: var(--gpu)"></div>需 GPU/SSH</div>
+    <div class="legend-item"><div class="legend-dot" style="background: var(--cpu)"></div>本机可完成</div>
+  </div>
+</header>
+
+<!-- 论文表格映射 -->
+<section class="table-mapping">
+  <h3>📊 V9 论文表格 → 任务卡映射</h3>
+  <div class="mapping-grid">
+    <div class="mapping-item"><span class="table-num">表 3-6</span> 召回主结果<div class="task-link">→ S-recall-base, S-recall-main</div></div>
+    <div class="mapping-item"><span class="table-num">表 3-7</span> 显著性检验<div class="task-link">→ eval/paired_test.py</div></div>
+    <div class="mapping-item"><span class="table-num">表 3-8</span> 消融实验<div class="task-link">→ S-recall-ablation</div></div>
+    <div class="mapping-item"><span class="table-num">表 3-10</span> 超参数敏感性<div class="task-link">→ S-recall-sens</div></div>
+    <div class="mapping-item"><span class="table-num">表 3-12</span> 冷启动分层<div class="task-link">→ S-recall-cold</div></div>
+    <div class="mapping-item"><span class="table-num">表 3-14</span> 跨域泛化<div class="task-link">→ S-recall-cross</div></div>
+    <div class="mapping-item"><span class="table-num">表 4-2</span> 排序主结果<div class="task-link">→ S-rank-base, S-rank-main</div></div>
+    <div class="mapping-item"><span class="table-num">表 4-5</span> 排序消融<div class="task-link">→ S-rank-distill</div></div>
+    <div class="mapping-item"><span class="table-num">表 5-9</span> 压测<div class="task-link">→ S-system-test</div></div>
+    <div class="mapping-item"><span class="table-num">表 5-10</span> 延迟分解<div class="task-link">→ S-system-test</div></div>
+    <div class="mapping-item"><span class="table-num">表 5-11</span> 一致性校验<div class="task-link">→ S-system-test</div></div>
+    <div class="mapping-item"><span class="table-num">图 3-1~5</span> 数据画像<div class="task-link">→ T-profile</div></div>
+  </div>
+</section>
+
+<!-- W1: 评估地基 + 召回启动 -->
+<section class="week-section" id="w1">
+  <div class="week-header">
+    <div>
+      <div class="week-title">W1 · 评估地基 + 召回启动</div>
+      <div class="week-dates">11/20 – 11/26（本周）</div>
+    </div>
+  </div>
+  <div class="task-list">
+    <div class="task" data-status="done" data-gpu="false">
+      <div class="task-top">
+        <input type="checkbox" class="task-check" checked>
+        <span class="task-id">S0-a</span>
+        <span class="task-name">冻结数据校验</span>
+        <div class="task-badges">
+          <span class="badge badge-line">研究</span>
+          <span class="badge badge-cpu">本机</span>
+          <span class="badge badge-status done">✓ 完成</span>
+        </div>
+      </div>
+      <div class="task-details">
+        <div class="detail-item"><span class="detail-label">时长</span><span class="detail-value">0.5 天</span></div>
+        <div class="detail-item"><span class="detail-label">依赖</span><span class="detail-value">无</span></div>
+      </div>
+      <div class="task-desc">data/ 冻结，CHECKSUMS 生成，tag data-v1。本机完成。</div>
+    </div>
+    <div class="task" data-status="done" data-gpu="false">
+      <div class="task-top">
+        <input type="checkbox" class="task-check" checked>
+        <span class="task-id">S0-b</span>
+        <span class="task-name">数据画像</span>
+        <div class="task-badges">
+          <span class="badge badge-line">研究</span>
+          <span class="badge badge-cpu">本机</span>
+          <span class="badge badge-status done">✓ 完成</span>
+        </div>
+      </div>
+      <div class="task-details">
+        <div class="detail-item"><span class="detail-label">时长</span><span class="detail-value">0.5 天</span></div>
+        <div class="detail-item"><span class="detail-label">依赖</span><span class="detail-value">S0-a</span></div>
+      </div>
+      <div class="task-desc">γ₀=0.0313/天，λ₀=0.000456/天，5 张画像图。本机完成。</div>
+    </div>
+    <div class="task" data-status="done" data-gpu="false">
+      <div class="task-top">
+        <input type="checkbox" class="task-check" checked>
+        <span class="task-id">S1-a</span>
+        <span class="task-name">统一评估入口 eval/</span>
+        <div class="task-badges">
+          <span class="badge badge-line">研究</span>
+          <span class="badge badge-cpu">本机</span>
+          <span class="badge badge-status done">✓ 完成</span>
+        </div>
+      </div>
+      <div class="task-details">
+        <div class="detail-item"><span class="detail-label">时长</span><span class="detail-value">1 天</span></div>
+        <div class="detail-item"><span class="detail-label">依赖</span><span class="detail-value">无</span></div>
+      </div>
+      <div class="task-desc">metrics.py, full_rank.py, 10 个测试通过。本机完成。</div>
+    </div>
+    <div class="task" data-status="done" data-gpu="true">
+      <div class="task-top">
+        <input type="checkbox" class="task-check" checked>
+        <span class="task-id">S1-b</span>
+        <span class="task-name">RecBole 冒烟测试</span>
+        <div class="task-badges">
+          <span class="badge badge-line">研究</span>
+          <span class="badge badge-gpu">GPU</span>
+          <span class="badge badge-status done">✓ 完成</span>
+        </div>
+      </div>
+      <div class="task-details">
+        <div class="detail-item"><span class="detail-label">时长</span><span class="detail-value">1 天</span></div>
+        <div class="detail-item"><span class="detail-label">依赖</span><span class="detail-value">S0-a, S1-a</span></div>
+        <div class="detail-item"><span class="detail-label">SSH</span><span class="detail-value">需要登录 AutoDL</span></div>
+      </div>
+      <div class="task-desc">RecBole 环境搭建，LightGCN smoke 完成。需要 GPU 服务器。</div>
+    </div>
+    <div class="task" data-status="todo" data-gpu="false">
+      <div class="task-top">
+        <input type="checkbox" class="task-check">
+        <span class="task-id">T-profile</span>
+        <span class="task-name">数据画像图绘制</span>
+        <div class="task-badges">
+          <span class="badge badge-line write">写作</span>
+          <span class="badge badge-cpu">本机</span>
+          <span class="badge badge-status todo">⏳ 待执行</span>
+        </div>
+      </div>
+      <div class="task-details">
+        <div class="detail-item"><span class="detail-label">时长</span><span class="detail-value">0.5 天</span></div>
+        <div class="detail-item"><span class="detail-label">依赖</span><span class="detail-value">S0-b</span></div>
+        <div class="detail-item"><span class="detail-label">GPU</span><span class="detail-value">❌ 不需要</span></div>
+      </div>
+      <div class="task-desc">生成图 3-1 ~ 图 3-5（5 张画像图）。matplotlib 绘图，本机完成。</div>
+    </div>
+    <div class="task" data-status="todo" data-gpu="true">
+      <div class="task-top">
+        <input type="checkbox" class="task-check">
+        <span class="task-id">S-recall-base</span>
+        <span class="task-name">召回基线实验</span>
+        <div class="task-badges">
+          <span class="badge badge-line">研究</span>
+          <span class="badge badge-gpu">GPU</span>
+          <span class="badge badge-status todo">⏳ 待执行</span>
+        </div>
+      </div>
+      <div class="task-details">
+        <div class="detail-item"><span class="detail-label">时长</span><span class="detail-value">2 天</span></div>
+        <div class="detail-item"><span class="detail-label">依赖</span><span class="detail-value">S1-a, S1-b</span></div>
+        <div class="detail-item"><span class="detail-label">SSH</span><span class="detail-value">需要登录 AutoDL</span></div>
+        <div class="detail-item"><span class="detail-label">预计耗时</span><span class="detail-value">~20 小时 (RTX 4090)</span></div>
+      </div>
+      <div class="task-desc">5 基线 × 5 seed = 25 runs，产出表 3-6 基线行。需要 GPU 服务器。</div>
+    </div>
+  </div>
+</section>
+
+<!-- W2: 召回主实验 -->
+<section class="week-section" id="w2">
+  <div class="week-header">
+    <div>
+      <div class="week-title">W2 · TI-LightGCN 主实验</div>
+      <div class="week-dates">11/27 – 12/03</div>
+    </div>
+  </div>
+  <div class="task-list">
+    <div class="task" data-status="wait" data-gpu="true">
+      <div class="task-top">
+        <input type="checkbox" class="task-check">
+        <span class="task-id">S-recall-main</span>
+        <span class="task-name">TI-LightGCN 实现与主实验</span>
+        <div class="task-badges">
+          <span class="badge badge-line">研究</span>
+          <span class="badge badge-gpu">GPU</span>
+          <span class="badge badge-status wait">⏸ 等待</span>
+        </div>
+      </div>
+      <div class="task-details">
+        <div class="detail-item"><span class="detail-label">时长</span><span class="detail-value">2 天</span></div>
+        <div class="detail-item"><span class="detail-label">依赖</span><span class="detail-value">S-recall-base</span></div>
+        <div class="detail-item"><span class="detail-label">SSH</span><span class="detail-value">需要登录 AutoDL</span></div>
+        <div class="detail-item"><span class="detail-label">预计耗时</span><span class="detail-value">~4 小时</span></div>
+      </div>
+      <div class="task-desc">实现边权函数 w(u,i)=α_r×exp(-λΔt/T)，5 seed 主实验，产出表 3-6 最后一行。</div>
+    </div>
+    <div class="task" data-status="wait" data-gpu="true">
+      <div class="task-top">
+        <input type="checkbox" class="task-check">
+        <span class="task-id">S-recall-ablation</span>
+        <span class="task-name">消融实验</span>
+        <div class="task-badges">
+          <span class="badge badge-line">研究</span>
+          <span class="badge badge-gpu">GPU</span>
+          <span class="badge badge-status wait">⏸ 等待</span>
+        </div>
+      </div>
+      <div class="task-details">
+        <div class="detail-item"><span class="detail-label">时长</span><span class="detail-value">1 天</span></div>
+        <div class="detail-item"><span class="detail-label">依赖</span><span class="detail-value">S-recall-main</span></div>
+        <div class="detail-item"><span class="detail-label">SSH</span><span class="detail-value">需要登录 AutoDL</span></div>
+        <div class="detail-item"><span class="detail-label">预计耗时</span><span class="detail-value">~6 小时</span></div>
+      </div>
+      <div class="task-desc">3 变体 × 3 seed = 9 runs，产出表 3-8。变体：无时间衰减/无反馈强度/无长尾正则。</div>
+    </div>
+    <div class="task" data-status="wait" data-gpu="true">
+      <div class="task-top">
+        <input type="checkbox" class="task-check">
+        <span class="task-id">S-recall-sens</span>
+        <span class="task-name">超参数敏感性</span>
+        <div class="task-badges">
+          <span class="badge badge-line">研究</span>
+          <span class="badge badge-gpu">GPU</span>
+          <span class="badge badge-status wait">⏸ 等待</span>
+        </div>
+      </div>
+      <div class="task-details">
+        <div class="detail-item"><span class="detail-label">时长</span><span class="detail-value">1 天</span></div>
+        <div class="detail-item"><span class="detail-label">依赖</span><span class="detail-value">S-recall-main</span></div>
+        <div class="detail-item"><span class="detail-label">SSH</span><span class="detail-value">需要登录 AutoDL</span></div>
+        <div class="detail-item"><span class="detail-label">预计耗时</span><span class="detail-value">~12 小时</span></div>
+      </div>
+      <div class="task-desc">扫描 λ、L、d 三个参数（简化），产出表 3-10、图 3-10。</div>
+    </div>
+  </div>
+</section>
+
+<!-- W3: 跨域 + 冷启动 + 排序启动 -->
+<section class="week-section" id="w3">
+  <div class="week-header">
+    <div>
+      <div class="week-title">W3 · 召回收尾 + 排序启动</div>
+      <div class="week-dates">12/04 – 12/10</div>
+    </div>
+  </div>
+  <div class="task-list">
+    <div class="task" data-status="wait" data-gpu="true">
+      <div class="task-top">
+        <input type="checkbox" class="task-check">
+        <span class="task-id">S-recall-cross</span>
+        <span class="task-name">跨域泛化</span>
+        <div class="task-badges">
+          <span class="badge badge-line">研究</span>
+          <span class="badge badge-gpu">GPU</span>
+          <span class="badge badge-status wait">⏸ 等待</span>
+        </div>
+      </div>
+      <div class="task-details">
+        <div class="detail-item"><span class="detail-label">时长</span><span class="detail-value">1 天</span></div>
+        <div class="detail-item"><span class="detail-label">依赖</span><span class="detail-value">S-recall-main</span></div>
+        <div class="detail-item"><span class="detail-label">SSH</span><span class="detail-value">需要登录 AutoDL</span></div>
+        <div class="detail-item"><span class="detail-label">预计耗时</span><span class="detail-value">~8 小时</span></div>
+      </div>
+      <div class="task-desc">TH、OP 数据集，LightGCN + TI-LightGCN，产出表 3-14。</div>
+    </div>
+    <div class="task" data-status="wait" data-gpu="false">
+      <div class="task-top">
+        <input type="checkbox" class="task-check">
+        <span class="task-id">S-recall-cold</span>
+        <span class="task-name">冷启动分层</span>
+        <div class="task-badges">
+          <span class="badge badge-line">研究</span>
+          <span class="badge badge-cpu">本机</span>
+          <span class="badge badge-status wait">⏸ 等待</span>
+        </div>
+      </div>
+      <div class="task-details">
+        <div class="detail-item"><span class="detail-label">时长</span><span class="detail-value">0.5 天</span></div>
+        <div class="detail-item"><span class="detail-label">依赖</span><span class="detail-value">S-recall-main</span></div>
+        <div class="detail-item"><span class="detail-label">GPU</span><span class="detail-value">❌ 不需要（只做评估）</span></div>
+      </div>
+      <div class="task-desc">4 层用户分层（超冷启动/冷启动/普通/重度），产出表 3-12。复用 eval/strata.py。</div>
+    </div>
+    <div class="task" data-status="wait" data-gpu="true">
+      <div class="task-top">
+        <input type="checkbox" class="task-check">
+        <span class="task-id">S-rank-base</span>
+        <span class="task-name">排序基线（DIN）</span>
+        <div class="task-badges">
+          <span class="badge badge-line">研究</span>
+          <span class="badge badge-gpu">GPU</span>
+          <span class="badge badge-status wait">⏸ 等待</span>
+        </div>
+      </div>
+      <div class="task-details">
+        <div class="detail-item"><span class="detail-label">时长</span><span class="detail-value">1 天</span></div>
+        <div class="detail-item"><span class="detail-label">依赖</span><span class="detail-value">S-recall-main</span></div>
+        <div class="detail-item"><span class="detail-label">SSH</span><span class="detail-value">需要登录 AutoDL</span></div>
+        <div class="detail-item"><span class="detail-label">预计耗时</span><span class="detail-value">~5 小时</span></div>
+      </div>
+      <div class="task-desc">RecBole DIN，5 seed，候选集固定 Top-100，产出表 4-2 基线行。</div>
+    </div>
+  </div>
+</section>
+
+<!-- W4: 排序主实验 + 系统 -->
+<section class="week-section" id="w4">
+  <div class="week-header">
+    <div>
+      <div class="week-title">W4 · Temporal-DIN + 系统实现</div>
+      <div class="week-dates">12/11 – 12/17</div>
+    </div>
+  </div>
+  <div class="task-list">
+    <div class="task" data-status="wait" data-gpu="true">
+      <div class="task-top">
+        <input type="checkbox" class="task-check">
+        <span class="task-id">S-rank-main</span>
+        <span class="task-name">Temporal-DIN 实现</span>
+        <div class="task-badges">
+          <span class="badge badge-line">研究</span>
+          <span class="badge badge-gpu">GPU</span>
+          <span class="badge badge-status wait">⏸ 等待</span>
+        </div>
+      </div>
+      <div class="task-details">
+        <div class="detail-item"><span class="detail-label">时长</span><span class="detail-value">3 天</span></div>
+        <div class="detail-item"><span class="detail-label">依赖</span><span class="detail-value">S-rank-base</span></div>
+        <div class="detail-item"><span class="detail-label">SSH</span><span class="detail-value">需要登录 AutoDL</span></div>
+        <div class="detail-item"><span class="detail-label">预计耗时</span><span class="detail-value">~8 小时</span></div>
+      </div>
+      <div class="task-desc">时间偏置注意力 + 双通道（短期 N=5 + 长期 User Memory），产出表 4-2。</div>
+    </div>
+    <div class="task" data-status="wait" data-gpu="false">
+      <div class="task-top">
+        <input type="checkbox" class="task-check">
+        <span class="task-id">S-rank-distill</span>
+        <span class="task-name">LLM 蒸馏（简化版）</span>
+        <div class="task-badges">
+          <span class="badge badge-line">研究</span>
+          <span class="badge badge-cpu">API</span>
+          <span class="badge badge-status wait">⏸ 等待</span>
+        </div>
+      </div>
+      <div class="task-details">
+        <div class="detail-item"><span class="detail-label">时长</span><span class="detail-value">1 天</span></div>
+        <div class="detail-item"><span class="detail-label">依赖</span><span class="detail-value">S-rank-main</span></div>
+        <div class="detail-item"><span class="detail-label">GPU</span><span class="detail-value">⚠️ 可选（调用 Qwen API）</span></div>
+        <div class="detail-item"><span class="detail-label">预计耗时</span><span class="detail-value">~2 小时</span></div>
+      </div>
+      <div class="task-desc">User Memory 生成（256 维），简化蒸馏。需要 Qwen API Key。</div>
+    </div>
+    <div class="task" data-status="wait" data-gpu="false">
+      <div class="task-top">
+        <input type="checkbox" class="task-check">
+        <span class="task-id">E-serve</span>
+        <span class="task-name">原型服务实现</span>
+        <div class="task-badges">
+          <span class="badge badge-line eng">工程</span>
+          <span class="badge badge-cpu">本机</span>
+          <span class="badge badge-status wait">⏸ 等待</span>
+        </div>
+      </div>
+      <div class="task-details">
+        <div class="detail-item"><span class="detail-label">时长</span><span class="detail-value">3 天</span></div>
+        <div class="detail-item"><span class="detail-label">依赖</span><span class="detail-value">S-recall-main</span></div>
+        <div class="detail-item"><span class="detail-label">GPU</span><span class="detail-value">❌ 不需要</span></div>
+      </div>
+      <div class="task-desc">FastAPI 服务，召回+排序+重排管线。本机开发。</div>
+    </div>
+    <div class="task" data-status="wait" data-gpu="false">
+      <div class="task-top">
+        <input type="checkbox" class="task-check">
+        <span class="task-id">S-system-test</span>
+        <span class="task-name">系统评测</span>
+        <div class="task-badges">
+          <span class="badge badge-line">研究</span>
+          <span class="badge badge-cpu">本机</span>
+          <span class="badge badge-status wait">⏸ 等待</span>
+        </div>
+      </div>
+      <div class="task-details">
+        <div class="detail-item"><span class="detail-label">时长</span><span class="detail-value">1 天</span></div>
+        <div class="detail-item"><span class="detail-label">依赖</span><span class="detail-value">S-rank-distill, E-serve</span></div>
+        <div class="detail-item"><span class="detail-label">GPU</span><span class="detail-value">❌ 不需要</span></div>
+      </div>
+      <div class="task-desc">延迟测试 + 一致性校验（抽样 10 用户），产出表 5-9/5-10/5-11。</div>
+    </div>
+  </div>
+</section>
+
+<!-- W5: 数据回填 + 写作 -->
+<section class="week-section" id="w5">
+  <div class="week-header">
+    <div>
+      <div class="week-title">W5 · 论文数据回填</div>
+      <div class="week-dates">12/18 – 12/22</div>
+    </div>
+  </div>
+  <div class="task-list">
+    <div class="task" data-status="wait" data-gpu="false">
+      <div class="task-top">
+        <input type="checkbox" class="task-check">
+        <span class="task-id">T-ch3</span>
+        <span class="task-name">第三章数据回填</span>
+        <div class="task-badges">
+          <span class="badge badge-line write">写作</span>
+          <span class="badge badge-cpu">本机</span>
+          <span class="badge badge-status wait">⏸ 等待</span>
+        </div>
+      </div>
+      <div class="task-details">
+        <div class="detail-item"><span class="detail-label">时长</span><span class="detail-value">1 天</span></div>
+        <div class="detail-item"><span class="detail-label">依赖</span><span class="detail-value">召回实验全部完成</span></div>
+      </div>
+      <div class="task-desc">回填表 3-6/3-7/3-8/3-10/3-12/3-14/3-15，确保数字与结果文件一致。</div>
+    </div>
+    <div class="task" data-status="wait" data-gpu="false">
+      <div class="task-top">
+        <input type="checkbox" class="task-check">
+        <span class="task-id">T-ch4</span>
+        <span class="task-name">第四章数据回填</span>
+        <div class="task-badges">
+          <span class="badge badge-line write">写作</span>
+          <span class="badge badge-cpu">本机</span>
+          <span class="badge badge-status wait">⏸ 等待</span>
+        </div>
+      </div>
+      <div class="task-details">
+        <div class="detail-item"><span class="detail-label">时长</span><span class="detail-value">0.5 天</span></div>
+        <div class="detail-item"><span class="detail-label">依赖</span><span class="detail-value">排序实验完成</span></div>
+      </div>
+      <div class="task-desc">回填表 4-2、4-5。</div>
+    </div>
+    <div class="task" data-status="wait" data-gpu="false">
+      <div class="task-top">
+        <input type="checkbox" class="task-check">
+        <span class="task-id">T-ch5</span>
+        <span class="task-name">第五章数据回填</span>
+        <div class="task-badges">
+          <span class="badge badge-line write">写作</span>
+          <span class="badge badge-cpu">本机</span>
+          <span class="badge badge-status wait">⏸ 等待</span>
+        </div>
+      </div>
+      <div class="task-details">
+        <div class="detail-item"><span class="detail-label">时长</span><span class="detail-value">0.5 天</span></div>
+        <div class="detail-item"><span class="detail-label">依赖</span><span class="detail-value">系统评测完成</span></div>
+      </div>
+      <div class="task-desc">回填表 5-9/5-10/5-11。</div>
+    </div>
+  </div>
+</section>
+
+<!-- 关口 G1 -->
+<section class="gate-section">
+  <div class="gate-title">⬥ G1 关口（11/21）本周必须完成</div>
+  <ul class="gate-checks">
+    <li>☐ RecBole 环境可复现（recbole.yml）</li>
+    <li>☐ eval/ 模块 10 个测试通过</li>
+    <li>☐ 数据画像图 5 张生成（或脚本就绪）</li>
+    <li>☐ 召回基线至少 1 个模型跑通</li>
+  </ul>
+</section>
+
+<!-- 推迟任务 -->
+<section class="deferred-section">
+  <div class="deferred-title">⏭ 推迟到后续整改（非毕业必需）</div>
+  <div class="deferred-list">
+    <div class="deferred-item"><span class="name">S-recall-variants</span><span class="desc">设计变体对比（表 3-9）</span></div>
+    <div class="deferred-item"><span class="name">S-recall-new-baseline</span><span class="desc">近三年强基线（XSimGCL 等）</span></div>
+    <div class="deferred-item"><span class="name">S-rank-dien</span><span class="desc">DIEN 基线（需自研）</span></div>
+    <div class="deferred-item"><span class="name">S-rank-teacher</span><span class="desc">教师质量评估（表 4-6）</span></div>
+    <div class="deferred-item"><span class="name">S-rank-e2e</span><span class="desc">端到端实验（表 4-3/4-4）</span></div>
+    <div class="deferred-item"><span class="name">S-explain</span><span class="desc">解释质量评估（表 5-12/5-13）</span></div>
+    <div class="deferred-item"><span class="name">E-frontend</span><span class="desc">前端界面截图</span></div>
+    <div class="deferred-item"><span class="name">E-rag</span><span class="desc">RAG 解释模块</span></div>
+    <div class="deferred-item"><span class="name">T-abstract</span><span class="desc">摘要撰写</span></div>
+    <div class="deferred-item"><span class="name">T-refs</span><span class="desc">参考文献扩充</span></div>
+  </div>
+</section>
+
+<footer>
+  <p>基于《整改V9_1120》· 简化版执行计划 · 毕业优先</p>
+  <p>最后更新：2026-11-20 · GPU 任务需 SSH 登录 AutoDL 服务器</p>
+</footer>
+</div>
+
+<script>
+function updateStats() {
+  const tasks = document.querySelectorAll('.task');
+  let done = 0, todo = 0, wait = 0, gpu = 0;
+  tasks.forEach(t => {
+    const status = t.dataset.status;
+    if (status === 'done') done++;
+    else if (status === 'todo') todo++;
+    else if (status === 'wait') wait++;
+    if (t.dataset.gpu === 'true') gpu++;
+  });
+  document.getElementById('done-count').textContent = done;
+  document.getElementById('todo-count').textContent = todo;
+  document.getElementById('wait-count').textContent = wait;
+  document.getElementById('gpu-count').textContent = gpu;
+  document.getElementById('total-count').textContent = tasks.length;
+  const total = tasks.length || 1;
+  const pct = (done / total * 100).toFixed(0);
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+document.querySelectorAll('.task-check').forEach(cb => {
+  cb.addEventListener('change', function() {
+    const task = this.closest('.task');
+    const statusEl = task.querySelector('.badge-status');
+    if (this.checked) {
+      task.dataset.status = 'done';
+      statusEl.className = 'badge badge-status done';
+      statusEl.textContent = '✓ 完成';
+    } else {
+      task.dataset.status = 'todo';
+      statusEl.className = 'badge badge-status todo';
+      statusEl.textContent = '⏳ 待执行';
+    }
+    updateStats();
+  });
+});
+
+updateStats();
+</script>
+</body>
+</html>

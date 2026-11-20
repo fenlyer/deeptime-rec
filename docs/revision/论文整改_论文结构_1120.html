@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>论文整改意见 V5：按九篇北邮同类论文对标</title>
+<style>
+:root{
+  color-scheme: light dark;
+  --paper:#EEF2F4;
+  --sheet:#FFFFFF;
+  --ink:#16232B;
+  --ink-2:#4B5B65;
+  --ink-3:#73828B;
+  --rule:#C9D3D9;
+  --rule-soft:#DEE5E9;
+  --accent:#0C6A64;
+  --accent-bg:#E1F0EE;
+  --warn:#9A5A00;
+  --warn-bg:#FBF0DD;
+  --stop:#9B2D2D;
+  --stop-bg:#F8E5E3;
+  --chip-bg:#F4F7F8;
+  --c1:#5E7896; --c2:#8466A6; --c3:#2D7A68; --c4:#B0701A; --c5:#AE4458; --c6:#3B67AA; --c7:#7A7A7A;
+  --serif:"Songti SC","Noto Serif CJK SC","Source Han Serif SC","Noto Serif SC","STSong","SimSun",serif;
+  --sans:"PingFang SC","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei","Heiti SC",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#0F171B;
+    --sheet:#162127;
+    --ink:#E1E8EB;
+    --ink-2:#A7B5BC;
+    --ink-3:#7E8D95;
+    --rule:#2E3D45;
+    --rule-soft:#23313A;
+    --accent:#56B8AE;
+    --accent-bg:#14302E;
+    --warn:#E3A44A;
+    --warn-bg:#33270F;
+    --stop:#E58585;
+    --stop-bg:#3A1C1C;
+    --chip-bg:#1C2930;
+    --c1:#8EA7C4; --c2:#B29AD3; --c3:#5FB49E; --c4:#DDA14B; --c5:#DF7C8E; --c6:#7FA4E0; --c7:#A9A9A9;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--serif);font-size:17px;line-height:1.9;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+a{color:var(--accent);text-underline-offset:3px}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.layout{display:grid;grid-template-columns:15.5rem minmax(0,47rem);gap:3.5rem;max-width:72rem;margin:0 auto;padding:3rem 1.5rem 5rem}
+/* 目录：模仿学位论文目录页的点线引导 */
+.toc{position:sticky;top:1.5rem;align-self:start;font-family:var(--sans);font-size:14px;line-height:1.6}
+.toc h2{font-size:15px;letter-spacing:.5em;margin:0 0 .8rem;font-weight:600;color:var(--ink)}
+.toc ol{list-style:none;margin:0;padding:0}
+.toc li a{display:flex;align-items:baseline;gap:.4rem;padding:.28rem 0;color:var(--ink-2);text-decoration:none}
+.toc li a:hover{color:var(--accent)}
+.toc li a .n{flex:none;width:2.2em;color:var(--ink-3)}
+.toc li a .t{flex:none;max-width:10.5rem}
+.toc li a .lead{flex:1;border-bottom:1px dotted var(--rule);transform:translateY(-.3em)}
+main{min-width:0}
+.cover{border-top:3px solid var(--ink);padding-top:1.4rem;margin-bottom:2.2rem}
+.cover .basis{font-family:var(--sans);font-size:13.5px;color:var(--ink-2);line-height:1.7;margin:0 0 1rem}
+h1{font-family:var(--sans);font-weight:700;font-size:2.05rem;line-height:1.35;margin:0 0 .6rem;letter-spacing:.02em}
+.cover .sub{font-size:1.05rem;color:var(--ink-2);margin:0}
+/* 复核意见：模仿评阅书勾选栏 */
+.verdict{background:var(--sheet);border:1.5px solid var(--ink);margin:2rem 0 2.6rem;padding:1.4rem 1.6rem 1.3rem}
+.verdict .head{display:flex;justify-content:space-between;flex-wrap:wrap;gap:.4rem 1rem;font-family:var(--sans);font-size:14px;color:var(--ink-2);border-bottom:1px solid var(--rule);padding-bottom:.7rem;margin-bottom:.9rem}
+.verdict .head strong{color:var(--ink);font-size:15.5px}
+.opts{display:flex;flex-wrap:wrap;gap:.5rem 1.8rem;font-family:var(--sans);font-size:15px;margin:0 0 1rem;padding:0;list-style:none}
+.opts li{display:flex;align-items:center;gap:.45rem;color:var(--ink-3)}
+.opts li .box{display:inline-grid;place-items:center;width:1.15em;height:1.15em;border:1.5px solid currentColor;font-size:.85em;line-height:1}
+.opts li.on{color:var(--accent);font-weight:600}
+.verdict p{margin:.5rem 0}
+.verdict .fix{margin:.8rem 0 0;padding:.8rem 1rem;background:var(--warn-bg);border-left:3px solid var(--warn);font-size:16px}
+section{margin:0 0 3.4rem;scroll-margin-top:1.2rem}
+h2.sec{font-family:var(--sans);font-size:1.38rem;font-weight:700;margin:0 0 1rem;padding-bottom:.45rem;border-bottom:1px solid var(--rule);display:flex;gap:.15rem;align-items:baseline}
+h2.sec .n{color:var(--accent);font-weight:600}
+h3{font-family:var(--sans);font-size:1.08rem;font-weight:650;margin:1.8rem 0 .6rem}
+p{margin:.7rem 0}
+.muted{color:var(--ink-2)}
+.small{font-size:14.5px}
+/* 表格 */
+.tw{overflow-x:auto;margin:1rem 0 1.2rem;background:var(--sheet);border:1px solid var(--rule)}
+table{border-collapse:collapse;width:100%;font-family:var(--sans);font-size:14.5px;line-height:1.65}
+th,td{text-align:left;vertical-align:top;padding:.65rem .8rem;border-bottom:1px solid var(--rule-soft)}
+thead th{background:var(--chip-bg);color:var(--ink);font-weight:600;border-bottom:1px solid var(--rule);white-space:nowrap}
+tbody tr:last-child td{border-bottom:none}
+td.k{font-weight:600;color:var(--ink);min-width:7.5em}
+tr.pick td{background:var(--accent-bg)}
+.badge{display:inline-block;font-size:12.5px;font-weight:600;padding:.05rem .5rem;border:1px solid currentColor;white-space:nowrap;line-height:1.6}
+.b-yes{color:var(--accent)}
+.b-part{color:var(--warn)}
+.b-no{color:var(--stop)}
+.b-add{color:var(--ink-2)}
+/* 原则框 */
+.rules{background:var(--sheet);border:1px solid var(--rule);padding:1.1rem 1.3rem;margin:1.2rem 0}
+.rules h3{margin-top:0}
+.rule-line{display:grid;grid-template-columns:5.5em 1fr;gap:.8rem;padding:.55rem 0;border-top:1px solid var(--rule-soft)}
+.rule-line:first-of-type{border-top:none}
+.rule-line b{font-family:var(--sans);color:var(--accent);font-size:15px}
+/* 章节迁移图：本页的主视觉 */
+.migrate{display:grid;grid-template-columns:minmax(0,17rem) minmax(0,1fr);gap:1.4rem;margin:1.4rem 0 1rem;align-items:start}
+.migrate > div:first-child{align-self:stretch}
+.colhead{font-family:var(--sans);font-size:13.5px;color:var(--ink-2);margin:0 0 .6rem}
+.old{background:var(--sheet);border:1px solid var(--rule);padding:.9rem 1rem;position:sticky;top:1rem}
+.oldrow{margin:0 0 .75rem;font-family:var(--sans);font-size:13.5px;line-height:1.45}
+.oldrow:last-child{margin-bottom:0}
+.oldrow .lbl{display:flex;justify-content:space-between;gap:.6rem;color:var(--ink)}
+.oldrow .lbl span:last-child{color:var(--ink-3);white-space:nowrap}
+.bar{height:9px;margin-top:.3rem;background:var(--rule-soft)}
+.bar i{display:block;height:100%}
+.oldnote{font-family:var(--sans);font-size:12.5px;color:var(--ink-3);margin-top:.8rem;line-height:1.55}
+.newch{background:var(--sheet);border:1px solid var(--rule);border-left:4px solid var(--ink);padding:.95rem 1.1rem 1rem;margin:0 0 .9rem}
+.newch.algo{border-left-color:var(--accent)}
+.newch .t{display:flex;justify-content:space-between;flex-wrap:wrap;gap:.2rem .8rem;font-family:var(--sans)}
+.newch .t b{font-size:15.5px}
+.newch .t span{font-size:13px;color:var(--ink-3)}
+.newch ul{list-style:none;margin:.55rem 0 0;padding:0}
+.newch li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.6rem;align-items:start;padding:.32rem 0;border-top:1px dashed var(--rule-soft);font-family:var(--sans);font-size:14px;line-height:1.55}
+.newch li:first-child{border-top:none}
+.srcs{display:flex;flex-wrap:wrap;gap:.25rem;justify-content:flex-end;max-width:12.5rem}
+.chip{font-size:12px;line-height:1.5;padding:0 .4rem;background:var(--chip-bg);border-left:3px solid var(--c7);color:var(--ink-2);white-space:nowrap}
+.chip.o1{border-left-color:var(--c1)} .chip.o2{border-left-color:var(--c2)} .chip.o3{border-left-color:var(--c3)} .chip.o4{border-left-color:var(--c4)} .chip.o5{border-left-color:var(--c5)} .chip.o6{border-left-color:var(--c6)} .chip.o7{border-left-color:var(--c7)}
+.chip.nw{border:1px dashed var(--ink-3);border-left-width:1px;background:transparent}
+.newch .cut{margin:.5rem 0 0;font-family:var(--sans);font-size:13px;color:var(--ink-3)}
+/* 提示框 */
+.note{padding:.85rem 1.1rem;margin:1.1rem 0;font-size:16px;border-left:3px solid var(--rule);background:var(--sheet)}
+.note.warn{border-left-color:var(--warn);background:var(--warn-bg)}
+.note.stop{border-left-color:var(--stop);background:var(--stop-bg)}
+.note.ok{border-left-color:var(--accent);background:var(--accent-bg)}
+/* 步骤：这里内容确实是先后顺序 */
+.steps{counter-reset:s;margin:1rem 0;padding:0;list-style:none}
+.steps li{position:relative;padding:.2rem 0 .9rem 2.6rem}
+.steps li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:.25rem;width:1.8rem;height:1.8rem;display:grid;place-items:center;font-family:var(--sans);font-size:14px;font-weight:700;color:var(--accent);border:1.5px solid var(--accent)}
+.steps li b{font-family:var(--sans)}
+/* 可复制文本 */
+.copybox{background:var(--sheet);border:1px solid var(--rule);margin:1rem 0}
+.copybox pre{margin:0;padding:1rem 1.2rem;white-space:pre-wrap;font-family:var(--serif);font-size:15.5px;line-height:1.85;color:var(--ink)}
+.copybar{display:flex;justify-content:space-between;align-items:center;gap:1rem;border-top:1px solid var(--rule-soft);padding:.5rem .8rem;font-family:var(--sans);font-size:13px;color:var(--ink-3)}
+button{font-family:var(--sans);font-size:14px;padding:.4rem .9rem;border:1.5px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer}
+button:hover{background:var(--accent-bg)}
+/* 自查清单 */
+.check{background:var(--sheet);border:1px solid var(--rule);padding:.4rem 1rem}
+.check label{display:grid;grid-template-columns:1.4rem 1fr;gap:.6rem;align-items:start;padding:.55rem 0;border-top:1px solid var(--rule-soft);font-family:var(--sans);font-size:14.5px;line-height:1.6;cursor:pointer}
+.check label:first-of-type{border-top:none}
+.check input{margin-top:.3rem;accent-color:var(--accent);width:1rem;height:1rem}
+.check input:checked + span{color:var(--ink-3);text-decoration:line-through}
+.count{font-family:var(--sans);font-size:14px;color:var(--ink-2);margin:.6rem 0 0}
+.src{font-family:var(--sans);font-size:13.5px;line-height:1.7;padding-left:1.2rem}
+.src li{margin:.35rem 0;color:var(--ink-2)}
+footer{font-family:var(--sans);font-size:13px;color:var(--ink-3);border-top:1px solid var(--rule);padding-top:1rem;margin-top:3rem}
+@media (max-width: 980px){
+  .layout{grid-template-columns:minmax(0,1fr);gap:1.5rem;padding:1.6rem 1.1rem 4rem}
+  .toc{position:static;background:var(--sheet);border:1px solid var(--rule);padding:1rem 1.1rem}
+  .toc li a .t{max-width:none}
+  .migrate{grid-template-columns:minmax(0,1fr)}
+  .old{position:static}
+}
+@media (max-width: 560px){
+  body{font-size:16px}
+  h1{font-size:1.6rem}
+  .verdict{padding:1.1rem 1rem}
+  .newch li{grid-template-columns:minmax(0,1fr)}
+  .srcs{justify-content:flex-start;max-width:none}
+  .rule-line{grid-template-columns:minmax(0,1fr);gap:.2rem}
+}
+@media print{
+  body{background:#fff;color:#000}
+  .toc,button,.copybar{display:none}
+  .layout{display:block;max-width:none;padding:0}
+  .old{position:static}
+  section{break-inside:auto}
+}
+#samples{font-size:13px}
+#samples th,#samples td{padding:.5rem .38rem}
+#samples td.k{white-space:nowrap}
+#samples td:nth-child(2){min-width:7.5em}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<nav class="toc" aria-label="目录">
+  <h2>目录</h2>
+  <ol>
+    <li><a href="#s1"><span class="n">一</span><span class="t">需求与样本说明</span><span class="lead"></span></a></li>
+    <li><a href="#s2"><span class="n">二</span><span class="t">九篇样本一览</span><span class="lead"></span></a></li>
+    <li><a href="#s3"><span class="n">三</span><span class="t">结构对标的发现</span><span class="lead"></span></a></li>
+    <li><a href="#s4"><span class="n">四</span><span class="t">对 V4 的调整</span><span class="lead"></span></a></li>
+    <li><a href="#s5"><span class="n">五</span><span class="t">V5 定稿结构</span><span class="lead"></span></a></li>
+    <li><a href="#s6"><span class="n">六</span><span class="t">深度基准</span><span class="lead"></span></a></li>
+    <li><a href="#s7"><span class="n">七</span><span class="t">同校最接近的三篇</span><span class="lead"></span></a></li>
+    <li><a href="#s8"><span class="n">八</span><span class="t">写法与答辩（沿用并更新）</span><span class="lead"></span></a></li>
+    <li><a href="#s9"><span class="n">九</span><span class="t">排期与导师说明</span><span class="lead"></span></a></li>
+    <li><a href="#s10"><span class="n">十</span><span class="t">送审前自查</span><span class="lead"></span></a></li>
+    <li><a href="#src"><span class="n">附</span><span class="t">方法与局限</span><span class="lead"></span></a></li>
+  </ol>
+</nav>
+
+<main>
+<header class="cover">
+  <p class="basis">依据：你上传的 9 篇北京邮电大学计算机学院推荐系统方向硕士论文（2025–2026 年，CAJ 格式），学位论文题目《基于深度学习与LLM增强的工业品商城推荐系统设计与实现》，《整改V8_1116.docx》，《论文整改路线图_V8_1112.html》，以及第四版合并定稿。<br>整理日期：2026 年 11 月 20 日（第五版，按本校实证对标修订，取代第四版）</p>
+  <h1>论文整改意见 V5：按九篇北邮同类论文对标</h1>
+  <p class="sub">用本院近两年真实通过的论文校准结构和深度，第四版里凡与实证不符的地方以本版为准。</p>
+</header>
+
+<div class="verdict" role="region" aria-label="整改意见">
+  <div class="head"><strong>整改意见（第五版）</strong><span>依据：9 篇样本，其中 6 篇专业学位</span></div>
+  <ul class="opts">
+    <li><span class="box" aria-hidden="true"></span>维持 V4 系统主线</li>
+    <li class="on"><span class="box" aria-hidden="true">✓</span>改为算法在前、系统在后的 6 章结构</li>
+    <li><span class="box" aria-hidden="true"></span>大改内容</li>
+  </ul>
+  <p><b>结论：结构要再调一次，内容不用大改。</b>9 篇样本无一例外都是“绪论 →（相关技术）→ 若干个各自闭环的算法章 → 系统章 → 总结”，没有一篇把需求分析或总体设计放在算法章之前。第二至四版的“系统主线”（第三章需求与总体设计在前）是在没有本校样本时按题目逻辑推出来的，现在有了实证，应当改过来。有两个算法点的 3 篇专硕（秦宗韬、张啸、邓雨俊）全部只用一章写系统，全文 6 章；其中张啸 2026 年的《基于增强召回和图神经网络的智能推荐系统设计与实现》是召回加排序两章、再加一章系统，几乎就是你论文的骨架。</p>
+  <div class="fix"><b>本版改了什么：</b>章节顺序改为算法在前、系统在后；章数从 7 章改为 6 章（系统内容超过约 28 页时可拆成 7 章）；算法章标题改用本校通行的“基于……的……算法”；系统合并为第五章，并以“研究挑战与设计目标”开篇；篇幅比例、参考文献、图表等深度目标改用样本中位数。<b>没变的：</b>题目不改，两个算法章各自闭环，六个硕士水平锚点，去本科化清单，格式向已毕业论文看齐，用词统一为“工业品商城”。</div>
+  <p class="muted small">对标里差距最大的一项是图：6 篇专硕中可统计的 5 篇，图的中位数是 29 张，现稿只有 9 张。路线图“补到 30 张左右”的判断正好落在样本中位数上，应列为必做。</p>
+</div>
+
+<section id="s1">
+  <h2 class="sec"><span class="n">一、</span>需求与样本说明</h2>
+  <p>你要的是：用找到的北邮推荐系统“设计与实现”类硕士论文做实证对标，据此给出新的整改意见。这一版只回答两类问题：结构该不该再动，动成什么样；深度指标的目标值是多少。其余已经定下的内容（锚点、去本科化、答辩准备）沿用第四版，只做与样本相关的更新。</p>
+  <p>9 篇样本全部来自北京邮电大学计算机学院（国家示范性软件学院），能读到培养方式的 8 篇均为全日制，答辩时间在 2025 年 6 月至 2026 年 5 月之间。其中 6 篇是专业学位（计算机技术 5 篇、软件工程 1 篇），3 篇是学术学位（计算机科学与技术）。学术学位的 3 篇也以“设计与实现”为题，结构规律与专硕一致，所以一起统计结构；深度指标的中位数只用 6 篇专硕计算。样本里没有非全日制论文，但学位标准相同，不影响对标。</p>
+</section>
+
+<section id="s2">
+  <h2 class="sec"><span class="n">二、</span>九篇样本一览</h2>
+  <div class="tw"><table id="samples">
+    <thead><tr><th>作者</th><th>题目简称</th><th>答辩</th><th>学位</th><th>正文页</th><th>章数</th><th>算法章</th><th>系统章</th><th>相关技术章</th><th>参考文献</th><th>近三年占比</th><th>图 / 表</th></tr></thead>
+    <tbody>
+      <tr class="pick"><td class="k">张啸</td><td>增强召回与图神经网络</td><td>2026.05</td><td>专硕</td><td>70</td><td>6</td><td>2（召回、排序）</td><td>1</td><td>有</td><td>60</td><td>38%</td><td>26 / 16</td></tr>
+      <tr><td class="k">秦宗韬</td><td>图神经网络会话推荐</td><td>2026.05</td><td>专硕</td><td>78</td><td>6</td><td>2</td><td>1</td><td>有</td><td>87</td><td>38%</td><td>29 / 13</td></tr>
+      <tr><td class="k">邓雨俊</td><td>深度神经网络股票推荐</td><td>2025.07</td><td>专硕</td><td>90</td><td>6</td><td>2</td><td>1</td><td>有，含技术栈</td><td>53</td><td>30%</td><td>—</td></tr>
+      <tr><td class="k">唐良爽</td><td>意图解耦技术博客推荐</td><td>2026.03</td><td>专硕</td><td>79</td><td>7</td><td>3</td><td>2</td><td>无</td><td>71</td><td>39%</td><td>32 / 39</td></tr>
+      <tr><td class="k">贺健翔</td><td>多层次图与语义嵌入会话推荐</td><td>2026.05</td><td>专硕*</td><td>78</td><td>7</td><td>1</td><td>3</td><td>有，含技术栈</td><td>54</td><td>37%</td><td>29 / 13</td></tr>
+      <tr><td class="k">闵斐藩</td><td>图像美学评估与推荐</td><td>2026.05</td><td>专硕</td><td>74</td><td>7</td><td>1</td><td>3</td><td>有，含技术栈</td><td>52</td><td>29%</td><td>41 / 23</td></tr>
+      <tr><td class="k">张欣蕊</td><td>主动学习与图增强医生推荐</td><td>2025.06</td><td>学硕</td><td>64</td><td>7</td><td>3</td><td>2</td><td>无</td><td>72</td><td>28%</td><td>—</td></tr>
+      <tr><td class="k">刘泽亿</td><td>知识增强新闻推荐</td><td>2026.05</td><td>学硕</td><td>67</td><td>7</td><td>3</td><td>1</td><td>有</td><td>78</td><td>21%</td><td>—</td></tr>
+      <tr><td class="k">段博涵</td><td>多模态偏好闲置交易推荐</td><td>2026.05</td><td>学硕</td><td>82</td><td>7</td><td>4</td><td>1</td><td>无</td><td>74</td><td>28%</td><td>—</td></tr>
+    </tbody>
+  </table></div>
+  <p class="muted small">* 贺健翔为软件工程专业学位，其余专硕为计算机技术。正文页按书签页码从第一章起算到参考文献前，含插图和表格。“近三年”以答辩年份往前三年计（2026 年答辩按 2023 年及以后）。图、表按正文中出现的不同编号统计；三篇 HN 格式论文和中文字形缺映射的段博涵一篇无法可靠计数，标为“—”。详见文末方法与局限。</p>
+</section>
+
+<section id="s3">
+  <h2 class="sec"><span class="n">三、</span>结构对标的发现</h2>
+  <div class="tw"><table>
+    <thead><tr><th>发现</th><th>证据</th><th>对你意味着什么</th></tr></thead>
+    <tbody>
+      <tr><td class="k">系统章一律放在算法章之后</td><td>9/9；没有一篇把需求分析或总体设计放在算法章之前</td><td>第四版“第三章需求与总体设计在前”与本校惯例不符，需要调整</td></tr>
+      <tr><td class="k">每个算法章自带实验，章内闭环</td><td>9/9；章内一般是引言或研究动机、问题描述、模型、实验、小结</td><td>“方法与实验同章闭环”得到确认，保持不变</td></tr>
+      <tr><td class="k">算法越薄，系统拆得越细</td><td>只有一个算法章的贺健翔、闵斐藩，把系统拆成需求分析、概要设计、详细设计三章；有两个及以上算法章的 7 篇，系统都只占一到两章；两个算法章的 3 篇专硕全部是一章系统（6 章）</td><td>你有两个算法章，本校最常见的写法是一章系统、全文 6 章。三章系统的写法恰好是两篇算法最薄的论文，也最接近本科毕设的样子</td></tr>
+      <tr><td class="k">算法章标题用“基于……的……算法 / 模型”</td><td>9/9，如张啸的“基于多粒度兴趣单元的图神经网络召回算法”</td><td>改掉第四版“召回模块：……的设计与验证”的写法</td></tr>
+      <tr><td class="k">多数有“相关技术”章</td><td>6 篇专硕中 5 篇有；其中 3 篇含 1–2 页系统开发技术介绍</td><td>保留第二章；技术栈可以写，但控制在 1–2 页</td></tr>
+      <tr><td class="k">绪论有“现状总结与不足”，结论有“创新点总结”</td><td>秦宗韬、张欣蕊、段博涵设“研究现状总结”小节；秦宗韬、张啸在结论章设“创新点总结”</td><td>1.2 末尾写现状总结与待解决问题；第六章加创新点总结</td></tr>
+      <tr><td class="k">系统章以工程问题开篇</td><td>张啸第五章第一节就是“研究挑战”，讲毫秒级召回、时序图模型的推理效率、反馈闭环、效果与延迟的平衡</td><td>与第四版“系统写成工程问题”一致；第五章以“研究挑战与设计目标”开篇</td></tr>
+      <tr><td class="k">系统测试有两种写法</td><td>逐模块功能测试（邓雨俊、唐良爽、闵斐藩）；或“系统评测与展示”，即离线评测、接口响应、平台展示（秦宗韬、张啸）</td><td>建议走第二种为主、辅以少量代表性功能用例，更偏研究型</td></tr>
+      <tr><td class="k">消融普遍，显著性检验少见</td><td>消融 9/9；超参数分析多数有；显著性检验只在 6 篇专硕中的 2 篇出现（张啸、闵斐藩）</td><td>按路线图做以用户为单位的显著性检验，就高于本校常规水平</td></tr>
+      <tr><td class="k">公开代理数据被接受</td><td>张啸用 Tmall 等公开电商数据集，系统场景以电商平台呈现</td><td>用 Amazon 工业与科学用品类目做代理数据，在本院有先例；如实说明差异即可</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="s4">
+  <h2 class="sec"><span class="n">四、</span>对第四版的调整</h2>
+  <div class="tw"><table>
+    <thead><tr><th>项目</th><th>第四版</th><th>第五版</th><th>依据</th></tr></thead>
+    <tbody>
+      <tr><td class="k">章节顺序</td><td>系统主线：第三章需求与总体设计在前，第六章实现与测试在后</td><td>算法在前、系统在后</td><td>9/9</td></tr>
+      <tr><td class="k">章数</td><td>7 章</td><td>默认 6 章；系统内容超过约 28 页时拆为 7 章（需求分析与设计 / 实现与测试）</td><td>两算法章专硕 3/3 为 6 章；唐良爽、张欣蕊为 7 章</td></tr>
+      <tr><td class="k">算法章标题</td><td>“召回模块：……的设计与验证”</td><td>“基于时间感知反馈加权图协同过滤的召回算法”“融合大模型偏好蒸馏的时间感知排序算法”</td><td>9/9 用“基于……的……算法 / 模型”</td></tr>
+      <tr><td class="k">系统章</td><td>拆在第三、六章</td><td>合并为第五章“工业品商城推荐系统的设计与实现”，以研究挑战与设计目标开篇</td><td>张啸、秦宗韬、邓雨俊</td></tr>
+      <tr><td class="k">系统测试</td><td>8–10 条代表性功能用例为主</td><td>以“系统评测”为主（离线评测、延迟分解、一致性校验、解释质量），辅以 6–8 条代表性功能用例</td><td>秦宗韬、张啸的写法更偏研究型</td></tr>
+      <tr><td class="k">技术栈</td><td>不设小节，压成一张表放系统章</td><td>两种都可以：第二章末 1–2 页，或系统章一张表</td><td>3/6 专硕有短小节</td></tr>
+      <tr><td class="k">实验设置</td><td>只在召回章写一次，排序章引用</td><td>两章各有“实验设置”小节；共享部分可简写并引用前文</td><td>9/9 每章自带</td></tr>
+      <tr><td class="k">结论章</td><td>工作总结、展望</td><td>工作总结、创新点总结、不足与展望</td><td>秦宗韬、张啸</td></tr>
+      <tr><td class="k">篇幅比例</td><td>算法 ≥45%、系统 ≤30%、第二章 ≤15%</td><td>算法 40–50%、系统 25–33%、第二章 ≤15%</td><td>专硕中位数：算法 35%、系统 33%、第二章 13%</td></tr>
+      <tr><td class="k">中文文献</td><td>路线图 8–15 篇</td><td>3–8 篇即可</td><td>样本可统计的中文文献 0–7 篇</td></tr>
+    </tbody>
+  </table></div>
+  <p>需要坦白的一点：第二版时我判断“6 章版把系统压成一章会显得题文不符”，所以没有采纳路线图的 6 章结构。本院的实证说明，这个担心不成立：以“推荐系统设计与实现”为题、两个算法章加一章系统的论文，2025 和 2026 年都在正常通过。按实证，路线图最初提出的 6 章骨架其实是对的；本版在它的基础上，叠加了第三、四版的写法补强。</p>
+</section>
+
+<section id="s5">
+  <h2 class="sec"><span class="n">五、</span>V5 定稿结构：6 章</h2>
+  <p>左侧是现稿各章体量，右侧每个小节后的色块标明内容来源，虚线框表示新增。章名和小节写法尽量贴近张啸、秦宗韬两篇的格局。</p>
+
+  <div class="migrate" role="figure" aria-label="新旧章节迁移图">
+    <div>
+      <p class="colhead">现稿 V8（7 章）</p>
+      <div class="old">
+        <div class="oldrow"><div class="lbl"><span>第一章 绪论</span><span>0.83 万</span></div><div class="bar"><i style="width:46%;background:var(--c1)"></i></div></div>
+        <div class="oldrow"><div class="lbl"><span>第二章 相关理论</span><span>1.20 万</span></div><div class="bar"><i style="width:66%;background:var(--c2)"></i></div></div>
+        <div class="oldrow"><div class="lbl"><span>第三章 整体架构设计</span><span>1.16 万</span></div><div class="bar"><i style="width:64%;background:var(--c3)"></i></div></div>
+        <div class="oldrow"><div class="lbl"><span>第四章 改进算法设计</span><span>1.82 万</span></div><div class="bar"><i style="width:100%;background:var(--c4)"></i></div></div>
+        <div class="oldrow"><div class="lbl"><span>第五章 实验与分析</span><span>1.68 万</span></div><div class="bar"><i style="width:92%;background:var(--c5)"></i></div></div>
+        <div class="oldrow"><div class="lbl"><span>第六章 实现与部署</span><span>1.07 万</span></div><div class="bar"><i style="width:59%;background:var(--c6)"></i></div></div>
+        <div class="oldrow"><div class="lbl"><span>第七章 总结与展望</span><span>0.28 万</span></div><div class="bar"><i style="width:16%;background:var(--c7)"></i></div></div>
+        <p class="oldnote">现稿比例约为算法 43%、系统 28%、第二章 15%，与本版目标基本吻合；主要工作是重排和补强，而不是增减篇幅。</p>
+      </div>
+    </div>
+
+    <div>
+      <p class="colhead">定稿 V9（6 章）</p>
+
+      <div class="newch">
+        <div class="t"><b>第一章 绪论</b><span>8–10 页</span></div>
+        <ul>
+          <li><span>1.1 研究背景及意义（全文统一为“工业品商城”；说明 Amazon IS 是工业品类目的公开代理数据）</span><span class="srcs"><span class="chip o1">旧1.1</span><span class="chip o5">旧5.1.1</span></span></li>
+          <li><span>1.2 国内外研究现状：图协同过滤召回、时间感知与序列排序、大模型增强与可解释推荐</span><span class="srcs"><span class="chip o1">旧1.2.1–1.2.3</span></span></li>
+          <li><span>1.2.4 现有研究的总结与不足（含与最接近工作的对照表）</span><span class="srcs"><span class="chip nw">新增</span><span class="chip o4">旧4.6 精简</span></span></li>
+          <li><span>1.3 研究内容与创新点（三项研究内容：召回算法、排序算法、系统设计与实现）</span><span class="srcs"><span class="chip o1">旧1.3.1–1.3.3</span></span></li>
+          <li><span>1.4 论文组织结构</span><span class="srcs"><span class="chip o1">旧1.4</span></span></li>
+        </ul>
+      </div>
+
+      <div class="newch">
+        <div class="t"><b>第二章 相关理论与技术</b><span>10–13 页</span></div>
+        <ul>
+          <li><span>2.1 推荐问题定义与多阶段推荐架构</span><span class="srcs"><span class="chip o1">旧1.1 末段</span><span class="chip nw">新增，短</span></span></li>
+          <li><span>2.2 图协同过滤：二部图、LightGCN、BPR</span><span class="srcs"><span class="chip o2">旧2.1.1–2.1.3</span></span></li>
+          <li><span>2.3 深度兴趣网络与时间感知建模</span><span class="srcs"><span class="chip o2">旧2.2.1–2.2.2</span></span></li>
+          <li><span>2.4 大语言模型、检索增强生成与知识蒸馏</span><span class="srcs"><span class="chip o2">旧2.3.1–2.3.2</span><span class="chip o2">旧2.4.1–2.4.2</span></span></li>
+          <li><span>2.5 评价指标与离线评估协议</span><span class="srcs"><span class="chip o5">旧5.3</span></span></li>
+          <li><span>2.6 系统开发相关技术（可选，不超过 1–2 页）</span><span class="srcs"><span class="chip o3">旧3.4.1</span></span></li>
+        </ul>
+        <p class="cut">删去：旧 2.1.4 与表 2-1、2.2.3、2.3.3、2.4.3、2.4.4 与表 2-2。</p>
+      </div>
+
+      <div class="newch algo">
+        <div class="t"><b>第三章 基于时间感知反馈加权图协同过滤的召回算法</b><span>18–22 页</span></div>
+        <ul>
+          <li><span>3.1 研究动机（数据画像证据：稀疏度、用户内相邻间隔、5 分占比）</span><span class="srcs"><span class="chip o4">旧4.1.1</span><span class="chip nw">数据画像</span></span></li>
+          <li><span>3.2 问题描述</span><span class="srcs"><span class="chip o1">旧1.1 末段</span></span></li>
+          <li><span>3.3 TI-LightGCN 模型（边权、归一化、命题 1/2、长尾正则、复杂度、训练）</span><span class="srcs"><span class="chip o4">旧4.1.2–4.1.6</span><span class="chip nw">命题</span></span></li>
+          <li><span>3.4 多路召回与倒数排名融合</span><span class="srcs"><span class="chip o4">旧4.4</span></span></li>
+          <li><span>3.5 实验与分析（实验设置、主结果与显著性、消融、变体对比、超参数、召回模型冷启动分层、跨域、效率、各召回路贡献）</span><span class="srcs"><span class="chip o5">旧5.1–5.2</span><span class="chip o5">旧5.4</span><span class="chip o5">旧5.6</span><span class="chip o5">旧5.7.1</span><span class="chip o5">旧5.8.1</span></span></li>
+          <li><span>3.6 结果讨论（增益来源、适用边界、失败案例）</span><span class="srcs"><span class="chip nw">新写</span></span></li>
+          <li><span>3.7 本章小结</span><span class="srcs"><span class="chip nw">新写</span></span></li>
+        </ul>
+      </div>
+
+      <div class="newch algo">
+        <div class="t"><b>第四章 融合大模型偏好蒸馏的时间感知排序算法</b><span>18–22 页</span></div>
+        <ul>
+          <li><span>4.1 研究动机（数据证据）</span><span class="srcs"><span class="chip o4">旧4.2.1</span><span class="chip o4">旧4.3.1</span></span></li>
+          <li><span>4.2 问题描述</span><span class="srcs"><span class="chip nw">新写，短</span></span></li>
+          <li><span>4.3 Temporal-DIN（时间偏置注意力、最近 N 条短期通道、门控融合）</span><span class="srcs"><span class="chip o4">旧4.2.2–4.2.3</span></span></li>
+          <li><span>4.4 User Memory 与大模型偏好蒸馏（是/否概率作教师信号、统一损失与梯度分析、防泄漏）</span><span class="srcs"><span class="chip o4">旧4.3.2–4.3.5</span></span></li>
+          <li><span>4.5 实验与分析（实验设置、阶段隔离、端到端、全链路冷启动、消融、教师质量、超参数、真实用户案例）</span><span class="srcs"><span class="chip o5">旧5.5</span><span class="chip o5">旧5.7.2</span><span class="chip o5">旧5.8.2</span><span class="chip o5">旧5.10</span></span></li>
+          <li><span>4.6 结果讨论</span><span class="srcs"><span class="chip nw">新写</span></span></li>
+          <li><span>4.7 本章小结</span><span class="srcs"><span class="chip nw">新写</span></span></li>
+        </ul>
+      </div>
+
+      <div class="newch">
+        <div class="t"><b>第五章 工业品商城推荐系统的设计与实现</b><span>22–28 页</span></div>
+        <ul>
+          <li><span>5.1 研究挑战与设计目标（延迟预算、模型更新、大模型调用成本、冷启动覆盖）</span><span class="srcs"><span class="chip nw">新增</span><span class="chip o3">旧3.6</span></span></li>
+          <li><span>5.2 需求分析（角色与业务场景、功能需求、非功能需求；一张用例图）</span><span class="srcs"><span class="chip nw">新增</span><span class="chip o3">旧3.6</span></span></li>
+          <li><span>5.3 系统设计（总体架构与“目标架构 / 原型实现”对照表、在线与离线流程、功能模块、数据与接口）</span><span class="srcs"><span class="chip o3">旧3.1–3.4</span></span></li>
+          <li><span>5.4 核心模块实现（召回服务、精排服务、离线调度与热更新、大模型增强推荐解释模块）</span><span class="srcs"><span class="chip o6">旧6.1–6.5</span><span class="chip o4">旧4.5</span></span></li>
+          <li><span>5.5 系统评测（离线评测、延迟分解与压测、离线与在线一致性、解释质量评估、6–8 条代表性功能用例）</span><span class="srcs"><span class="chip o6">旧6.7</span><span class="chip o5">旧5.9 重做</span><span class="chip nw">新增</span></span></li>
+          <li><span>5.6 平台展示（不超过 6 张截图，标注召回来源与解释文本）</span><span class="srcs"><span class="chip o6">旧6.6</span></span></li>
+          <li><span>5.7 本章小结</span><span class="srcs"><span class="chip o6">旧6.9</span></span></li>
+        </ul>
+        <p class="cut">压缩：旧 3.4.4–3.4.5、6.3、6.8 并入相应小节。系统实测数字只在本章出现一次。若本章超过约 28 页，拆为“第五章 需求分析与设计”“第六章 实现与评测”，全文变为 7 章。</p>
+      </div>
+
+      <div class="newch">
+        <div class="t"><b>第六章 总结与展望</b><span>3–4 页</span></div>
+        <ul>
+          <li><span>6.1 工作总结；6.2 创新点总结；6.3 不足与展望</span><span class="srcs"><span class="chip o7">旧7</span><span class="chip nw">6.2 新增</span></span></li>
+        </ul>
+      </div>
+
+      <div class="newch">
+        <div class="t"><b>附录</b><span>新增</span></div>
+        <ul>
+          <li><span>Prompt 模板、超参数表、完整功能测试用例、复现命令</span><span class="srcs"><span class="chip nw">新增</span></span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="rules">
+    <h3>执行原则（沿用第四版，按样本微调）</h3>
+    <div class="rule-line"><b>题文一致</b><span>第五章章名与题目对应；全文只用“工业品商城 / 工业品”（现稿“工业资产”28 处需全部替换）。</span></div>
+    <div class="rule-line"><b>章内闭环</b><span>两个算法章各自走完“研究动机—问题描述—模型—实验—讨论—小结”。</span></div>
+    <div class="rule-line"><b>数字单一出处</b><span>系统实测数字只在第五章出现一次；技术路线、架构图、摘要不放实测数字。</span></div>
+    <div class="rule-line"><b>工程写成问题</b><span>第五章从“研究挑战与设计目标”开始，测试以评测为主，不写“界面友好、操作简便”。</span></div>
+    <div class="rule-line"><b>主张与证据等量</b><span>1.3 和 6.2 只把两项算法列为创新点；推荐解释与语义重排作为系统功能，在 5.5 附专项评估。</span></div>
+  </div>
+</section>
+
+<section id="s6">
+  <h2 class="sec"><span class="n">六、</span>深度基准：用样本中位数代替估计</h2>
+  <p>中位数只用 6 篇专硕计算，图表只统计文字层可靠的 5 篇。目标值取“不低于中位数、向上浮一点”，以在同类论文里处在偏研究型的一侧。</p>
+  <div class="tw"><table>
+    <thead><tr><th>指标</th><th>专硕中位数</th><th>范围</th><th>现稿</th><th>目标</th></tr></thead>
+    <tbody>
+      <tr><td class="k">正文页数</td><td>78</td><td>70–90</td><td>按约 8 万字符估算 80 页上下，以实际排版为准</td><td>75–90</td></tr>
+      <tr><td class="k">全文总页数（含前后置）</td><td>93</td><td>83–105</td><td>—</td><td>参考</td></tr>
+      <tr><td class="k">参考文献</td><td>57</td><td>52–87</td><td>43</td><td>60–70</td></tr>
+      <tr><td class="k">近三年文献占比</td><td>37.5%</td><td>29–39%</td><td>待核</td><td>不低于 40%</td></tr>
+      <tr><td class="k">中文文献</td><td>约 3 篇</td><td>0–7</td><td>—</td><td>3–8 篇</td></tr>
+      <tr><td class="k">图</td><td>29</td><td>26–41</td><td>9</td><td><b>不少于 30（最大差距）</b></td></tr>
+      <tr><td class="k">表</td><td>16</td><td>13–39</td><td>约 27</td><td>保持，删掉重复与凑数的表</td></tr>
+      <tr><td class="k">中文摘要字数</td><td>约 935</td><td>875–1560</td><td>缺失</td><td>900–1200</td></tr>
+      <tr><td class="k">算法章占正文比例</td><td>35%</td><td>16–48%</td><td>约 43%</td><td>40–50%</td></tr>
+      <tr><td class="k">系统章占正文比例</td><td>33%</td><td>26–62%</td><td>约 28%</td><td>25–33%</td></tr>
+      <tr><td class="k">第二章占正文比例</td><td>13%</td><td>0–23%</td><td>约 15%</td><td>不超过 15%</td></tr>
+      <tr><td class="k">消融实验</td><td colspan="2">6/6 篇都有</td><td>需重跑</td><td>必做</td></tr>
+      <tr><td class="k">显著性检验</td><td colspan="2">2/6 篇有</td><td>需重做</td><td>做，以用户为单位</td></tr>
+    </tbody>
+  </table></div>
+  <p>补图的方向，第四版已经列过，这里按样本再确认一次：数据画像 4–5 张（评分分布、用户交互数、用户内相邻间隔、边权重分布）；两个算法章的模型结构图、训练曲线、敏感性折线、分组增益、注意力热力图、教师校准曲线 12–15 张；系统章的架构、流程、用例、部署、延迟分布和 4–6 张界面截图 10 张左右。合计 30 张上下，每一张都应来自真实数据或真实实现。</p>
+</section>
+
+<section id="s7">
+  <h2 class="sec"><span class="n">七、</span>同校最接近的三篇：要准备好“区别在哪”</h2>
+  <p>这三篇都是 2026 年本院通过的，评委里很可能有人看过。论文和答辩都要能一句话说清你和它们的区别；是否把它们作为学位论文类参考文献写进 1.2.4 的对照表，请和导师商量。</p>
+  <div class="tw"><table>
+    <thead><tr><th>论文</th><th>与你相近的地方</th><th>你的区别（据现稿方法）</th></tr></thead>
+    <tbody>
+      <tr><td class="k">张啸《基于增强召回和图神经网络的智能推荐系统设计与实现》</td><td>召回加排序两段式；召回用图神经网络；排序建模长短期兴趣；公开电商数据；6 章结构</td><td>召回侧把评分强度和时间衰减写进图的边权，并有尺度不变、传播稳定两条性质；排序侧用大模型离线生成用户画像和软标签，再蒸馏到轻量模型；场景是工业品，强调稀疏和可解释</td></tr>
+      <tr><td class="k">刘泽亿《基于知识增强的个性化新闻推荐系统的设计与实现》</td><td>用大模型生成用户画像，编码后融合进推荐模型</td><td>不只把画像当特征，还用大模型的是/否概率做教师信号做蒸馏，线上不调用大模型；并报告教师质量</td></tr>
+      <tr><td class="k">贺健翔《基于多层次图结构学习与语义嵌入的会话推荐系统的设计与实现》</td><td>大模型语义嵌入与图结构学习结合</td><td>大模型用于离线偏好推断与蒸馏，而不是只做商品语义嵌入；任务是召回加排序的全链路，而非单一会话推荐模型</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note warn">同校论文都在查重比对库里。可以借鉴它们的章节格局和格式，但不要复用任何句子、图表或表格版式里的内容；张啸那篇与你的选题最接近，尤其要注意。</div>
+</section>
+
+<section id="s8">
+  <h2 class="sec"><span class="n">八、</span>写法与答辩：沿用第四版，按样本更新</h2>
+  <h3>六个硕士水平锚点（位置按新章号）</h3>
+  <div class="tw"><table>
+    <thead><tr><th>锚点</th><th>写在哪</th><th>要点</th><th>样本情况</th></tr></thead>
+    <tbody>
+      <tr><td class="k">1 问题由数据证明</td><td>3.1、4.1</td><td>章首用数据画像图证明问题存在，说明现有方法为何失效</td><td>样本普遍有“研究动机 / 问题描述”，但多为文字论证；你用数据图会更扎实</td></tr>
+      <tr><td class="k">2 机理与理论</td><td>3.3、4.4</td><td>命题 1、2，复杂度对比，蒸馏损失梯度分析</td><td>只有段博涵在目录中单列复杂度分析；有命题会明显高于常规</td></tr>
+      <tr><td class="k">3 设计空间</td><td>3.5</td><td>至少一组变体对比（负反馈三种处理，或全局与相对时钟）</td><td>样本以消融为主，变体对比少见</td></tr>
+      <tr><td class="k">4 严谨实验</td><td>3.5、4.5</td><td>近三年强基线至少两个、5 个种子、以用户为单位的显著性、至少一个跨域数据集、效率</td><td>消融 6/6、显著性 2/6</td></tr>
+      <tr><td class="k">5 结果讨论</td><td>3.6、4.6</td><td>增益来源、适用边界、失败案例</td><td>样本多在实验分析中顺带讨论；单列小节更清楚</td></tr>
+      <tr><td class="k">6 定位</td><td>1.2.4</td><td>与 KAR、DLLM2Rec、RLMRec、孙浩然 2025、TiSASRec 等的对照表；可酌情加入第七节的三篇</td><td>秦宗韬、张欣蕊、段博涵设有现状总结小节</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>去本科化：样本给出的两条新证据</h3>
+  <p>第一，三章系统（需求分析、概要设计、详细设计）的两篇样本，正是算法只有一章的两篇，系统篇幅分别占到 41% 和 62%；你的两章算法加一章系统，天然避开了这种格局。第二，只有一半专硕写了系统开发技术介绍，且都在 1–2 页以内；写的话要短，不写也完全正常。第四版去本科化清单的其余各条不变：不放大段代码、截图带标注、不写“界面友好操作简便”、删每节末尾的升华段、图表矢量化、杜绝“首次”“填补空白”。</p>
+
+  <h3>答辩：在第四版十个追问之外补一个</h3>
+  <p>第四版的 PPT 结构和十个追问继续使用，章号随新结构调整：召回对应第三章，排序对应第四章，系统对应第五章。另外补一个追问，<b>“你的工作和本院近期的同类论文有什么区别？”</b>，用第七节的对照表回答。样本里能看到答辩委员会名单的 7 篇中，有 3 篇的委员会包括企业或科研院所专家，所以系统部分的延迟、成本、可部署性要能讲清楚。</p>
+</section>
+
+<section id="s9">
+  <h2 class="sec"><span class="n">九、</span>排期调整与给导师的说明</h2>
+  <div class="tw"><table>
+    <thead><tr><th>周次</th><th>动作</th><th>验收</th></tr></thead>
+    <tbody>
+      <tr><td class="k">W1（本周）</td><td>把本版结构和对标结论发给导师确认；全文“工业资产”替换为“工业品”；从张啸、秦宗韬两篇提取格式规格（封面、标题层级、页眉、题注、参考文献格式）</td><td>导师确认；全文搜索“工业资产”为 0</td></tr>
+      <tr><td class="k">W2</td><td>按 6 章建新文档骨架，样式来自格式规格；结果文件改按 ch3_recall / ch4_rank / ch5_system 归档</td><td>骨架和样式就位</td></tr>
+      <tr><td class="k">W2–W7</td><td>按路线图重跑实验，锚点随实验产出；W7 做系统评测（延迟分解、一致性、代表性用例）</td><td>每张表能指到一个结果文件和一条命令</td></tr>
+      <tr><td class="k">W8</td><td>写第三、四章</td><td>两章各有实验设置与结果讨论</td></tr>
+      <tr><td class="k">W9</td><td>合并写第五章；重写第一、二、六章与摘要；补图到 30 张左右</td><td>系统数字只在第五章；篇幅比例达标</td></tr>
+      <tr><td class="k">W10</td><td>按第六节逐项对照样本中位数；第十节自查；模拟盲审</td><td>深度基准各项不低于中位数</td></tr>
+      <tr><td class="k">送审后</td><td>答辩 PPT、十一个追问的证据页、演示录屏、两次模拟答辩</td><td>非本方向老师能复述两项贡献</td></tr>
+    </tbody>
+  </table></div>
+  <div class="copybox">
+<pre id="advisorMsg">老师您好！我对照了学院 2025–2026 年 9 篇推荐系统“设计与实现”类硕士论文（其中 6 篇专硕），整改稿 V9 的结构想这样调整，请您把关：
+
+1. 题目不变。全文改为 6 章：绪论、相关理论与技术、召回算法、排序算法、系统设计与实现、总结与展望。9 篇样本都是算法章在前、系统章在后；有两个算法点的 3 篇专硕都是这种 6 章结构。
+2. 第三、四章分别写召回算法（TI-LightGCN）和排序算法（Temporal-DIN + 大模型偏好蒸馏），每章内方法与实验放在一起，并增加结果讨论。
+3. 原第三章架构设计和原第六章实现合并为第五章，补充需求分析和系统评测；推荐解释（RAG）模块及其评估放在第五章，不再单列为第三个创新点。
+4. 按样本中位数补齐：参考文献 60–70 篇，图补到 30 张左右，正文统一用“工业品商城”。
+
+附件是新旧章节对照和样本统计表。谢谢老师！</pre>
+    <div class="copybar"><span id="copyStatus">复制后可粘贴到微信或邮件</span><button type="button" id="copyBtn">复制文字</button></div>
+  </div>
+</section>
+
+<section id="s10">
+  <h2 class="sec"><span class="n">十、</span>送审前自查</h2>
+  <p class="muted small">勾选只在当前页面有效，刷新后清空。</p>
+  <div class="check" id="checklist">
+    <label><input type="checkbox"><span>题目一字未改；全文“工业资产”已统一为“工业品商城 / 工业品”</span></label>
+    <label><input type="checkbox"><span>导师已确认 6 章结构（或因系统篇幅改为 7 章）</span></label>
+    <label><input type="checkbox"><span>算法章在前、系统章在后；算法章标题为“基于……的……算法”</span></label>
+    <label><input type="checkbox"><span>第三、四章各有研究动机（含数据图）、问题描述、模型、实验设置与结果、结果讨论、小结</span></label>
+    <label><input type="checkbox"><span>第三、四章各有命题或推导与复杂度分析；至少一组变体对比</span></label>
+    <label><input type="checkbox"><span>至少两个近三年强基线、5 个种子、以用户为单位的显著性、消融、超参数、至少一个跨域数据集</span></label>
+    <label><input type="checkbox"><span>第五章以研究挑战与设计目标开篇；测试以系统评测为主，代表性功能用例 6–8 条，完整用例进附录</span></label>
+    <label><input type="checkbox"><span>系统实测数字只在第五章出现一次；推荐解释评估在 5.5；截图不超过 6 张且带标注</span></label>
+    <label><input type="checkbox"><span>1.2.4 有现有研究总结与最接近工作对照表；第六章有创新点总结</span></label>
+    <label><input type="checkbox"><span>图不少于 30 张，参考文献 60–70 篇，近三年不低于 40%，摘要 900–1200 字</span></label>
+    <label><input type="checkbox"><span>算法章占正文 40–50%，系统章 25–33%，第二章不超过 15%</span></label>
+    <label><input type="checkbox"><span>格式（封面、标题层级、页眉、题注、参考文献）与张啸、秦宗韬两篇一致，全文统一</span></label>
+    <label><input type="checkbox"><span>没有复用任何样本论文的句子、图表；查重与 AIGC 自检通过</span></label>
+    <label><input type="checkbox"><span>答辩准备了十一个追问的证据页，含“与本院同类论文的区别”</span></label>
+  </div>
+  <p class="count" id="checkCount" aria-live="polite">已勾选 0 / 14</p>
+</section>
+
+<section id="src">
+  <h2 class="sec"><span class="n">附</span>方法与局限</h2>
+  <p class="small">样本文件为知网 CAJ 格式，分两种内部格式。6 篇（张啸、秦宗韬、贺健翔、唐良爽、闵斐藩、段博涵）内嵌 PDF，提取后修复，文字层完整；其中段博涵一篇的中文字形没有编码映射，只能读到英文封面和英文参考文献，学位类型据英文封面的学科名判断为学术学位。另 3 篇（张欣蕊、邓雨俊、刘泽亿）是图文混排格式，只解析出近似文字，用于读取封面信息和参考文献条数，图表数不计。所有论文的章节结构来自文件自带的书签目录，可靠。</p>
+  <p class="small">页数按书签页码计，包含插图和表格；比例按章起止页计算，是近似值。“近三年文献占比”按每条文献中出现的最晚年份统计，个别条目可能有误差。图、表按正文中出现的不同编号去重计数，可能把“如图 3-1 所示”之类的引用与图题合并计算，但不会重复计数同一编号。能读到培养方式的 8 篇均为全日制；北邮的学位标准对全日制和非全日制相同。</p>
+  <p class="small">本版取代《论文整改意见V4_合并定稿版_1120.html》中的结构方案与深度目标；第四版中的格式提取方法、去本科化清单、答辩 PPT 结构仍然适用。涉及北邮的具体流程与格式，以研究生院和学院的正式通知为准。</p>
+</section>
+
+<footer>本页依据你上传的 9 篇北邮硕士学位论文、题目、《整改V8_1116.docx》与《论文整改路线图_V8_1112.html》整理。样本论文仅用于结构与量级对标。</footer>
+</main>
+</div>
+
+<script>
+(function(){
+  var btn=document.getElementById('copyBtn');
+  var status=document.getElementById('copyStatus');
+  var msg=document.getElementById('advisorMsg');
+  function fallback(){
+    var r=document.createRange();r.selectNodeContents(msg);
+    var s=window.getSelection();s.removeAllRanges();s.addRange(r);
+    try{document.execCommand('copy');status.textContent='已复制';}catch(e){status.textContent='已选中文字，请按 Ctrl+C 复制';}
+  }
+  btn.addEventListener('click',function(){
+    var text=msg.innerText;
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){status.textContent='已复制';},fallback);
+    }else{fallback();}
+  });
+  var boxes=document.querySelectorAll('#checklist input');
+  var out=document.getElementById('checkCount');
+  function upd(){var n=0;boxes.forEach(function(b){if(b.checked)n++;});out.textContent='已勾选 '+n+' / '+boxes.length;}
+  boxes.forEach(function(b){b.addEventListener('change',upd);});
+  upd();
+})();
+</script>
+</body>
+</html>

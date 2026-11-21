@@ -16,8 +16,8 @@ help:
 	@echo "make test                  全部测试                      (S1-a,S1-c,S1-d)"
 	@echo "make gate W=3              第 N 周关口检查               (.claude/commands/gate.md)"
 	@echo "make tables                results/ → thesis/generated/ (S1-d)"
-	@echo "make thesis [AUDIT=1]      生成 build/thesis_V9.docx    (T-a,T-l)"
-	@echo "make smoke                 pandoc 冒烟文档               (T-a)"
+	@echo "make thesis [AUDIT=1]      生成 build/thesis_V9.docx    (T-build)"
+	@echo "make smoke                 pandoc 冒烟文档               (T-build)"
 	@echo "make artifacts V=v1 ...    导出原型产物                  (E1,E2,E3)"
 
 check-env:
@@ -40,12 +40,12 @@ tables:
 	$(PY) scripts/make_tables.py
 
 thesis:
-	@test -f scripts/build_thesis.py || { echo "scripts/build_thesis.py 尚未实现，见 docs/plan/cards/S1-d.md 与 T-a.md"; exit 1; }
+	@test -f scripts/build_thesis.py || { echo "scripts/build_thesis.py 尚未实现，见 docs/plan/cards/T-build.md"; exit 1; }
 	$(PY) scripts/build_thesis.py $(if $(AUDIT),--audit,)
 
 smoke:
-	@test -f thesis/smoke.md || { echo "thesis/smoke.md 尚未创建，见 docs/plan/cards/T-a.md"; exit 1; }
-	@test -f thesis/reference.docx || { echo "thesis/reference.docx 尚未创建，见 docs/plan/cards/T-a.md（需 W0-b 的学校模板）"; exit 1; }
+	@test -f thesis/smoke.md || { echo "thesis/smoke.md 尚未创建，见 docs/plan/cards/T-build.md"; exit 1; }
+	@test -f thesis/reference.docx || { echo "thesis/reference.docx 尚未创建，见 docs/plan/cards/T-build.md（需 W0-b 的学校模板）"; exit 1; }
 	pandoc thesis/smoke.md -o build/smoke.docx --reference-doc=thesis/reference.docx
 
 artifacts:

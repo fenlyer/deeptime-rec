@@ -16,11 +16,11 @@
 - 优先级：中（整改意见要求）
 - 依赖：代码可得性
 
-### S-rank-dien DIEN 基线
+### S-rank-dien DIEN 基线（推迟到送审前）
 
-- RecBole 无内置，需自研
-- 优先级：低
-- 依赖：S-rank-base
+- RecBole 1.2.1 内置（`recbole.model.sequential_recommender.dien`），可直接通过 `recbole_baselines.yaml` 训练
+- 推迟原因：表 4-1/4-2 的 DIEN 行若留空，答辩时显突兀；但并非核心指标瓶颈
+- 依赖：S-rank-base（需与 DIN 共享候选集与候选生成逻辑）
 
 ### S-rank-teacher 教师质量评估（表 4-6）
 

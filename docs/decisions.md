@@ -34,4 +34,7 @@
   - **保留 3.5.6 节表 3-13**：表 3-13（多路召回 vs LightGCN 分层）归并到 S-system-test 卡，因它依赖四路召回产物。若 5.5.6 保留，表 3-13 的数字来自多路召回命中统计；否则整段改写为"多路召回整体相对单路增益"的定性描述。
   - **补 5.6 节图注**：若截图基于 mock 数据，图注须写明"演示数据，非 IS 真实实验"（prototype_inventory.md 已记录）。
   - **3.5.7 跨域泛化保留 AJ 列**：AJ 数据已冻结（420K 用户/30.9M 交互），S-recall-cross 卡片扩到 AJ 即可（~14 小时，3 seed × 2 模型）。删除 AJ 列的代价（改 3.5.1 + 表 3-14 + 6.3 节）大于补跑。
+- 2026-11-21｜新增 T-build 卡片，修复 Makefile 引用已删除 T-a/T-l 的问题｜V9 计划切换（02af8b9）时删除 T-a~T-q（19 张），但 Makefile 第 19-20、43、47-48 行仍引用 T-a，导致 `make thesis`/`make smoke`/`make help` 报错指向不存在文件。T-build 覆盖论文构建与冒烟测试，是 T-ch3/4/5 回填后生成最终 .docx 的唯一出口｜docs/plan/cards/T-build.md（新增）、Makefile（5 处引用改为 T-build）｜否
+- 2026-11-21｜修正 README-deferred.md 中 DIEN 描述（原写"RecBole 无内置"为错误）｜decisions.md 2026-11-20 已记录"DIEN 在 RecBole 内置（sequential_recommender.dien 存在）"，README-deferred.md 第 21 行与之冲突。改为正确表述：RecBole 1.2.1 内置，推迟到送审前｜docs/plan/cards/README-deferred.md（第 19-23 行）｜否
+- 2026-11-21｜修正 S1-d.md 周次（原写 11/20–11/26，应为 11/16–11/22）｜gates.md:12 写"G1·11/21（W1 收口）"，STATUS 顶部写"W1（11/16–11/22）"，decisions.md 2026-11-15 锚定 W1=11/16–11/22。S1-d.md:3 的 11/20–11/26 与锚点冲突｜docs/plan/cards/S1-d.md:3｜否
   - **4.3.3 节 MLP 维度统一为代码口径**：正文 4.3.3 写 256→128→64→1，5.4.3 节写 1024→512→1，S-rank-main 实现时须以代码为准并在 T-ch4 回填时统一两节表述。

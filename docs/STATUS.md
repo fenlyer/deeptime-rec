@@ -1,10 +1,14 @@
 # STATUS
+
 当前周：W1（11/16–11/22） 本周关口：G1（11/21）
+最后更新：2026-11-20
 
 ## 进行中
-- S1-c 运行记录、配对检验、分层守恒：代码与测试已完成（54 passed, 4 skipped），待提交
+
+（无）
 
 ## 已完成（卡片 ID｜commit｜日期）
+
 - W0-a｜仓库骨架与规则（CLAUDE.md、6 个命令、58 张卡片、目录与 README、Makefile 骨架）｜2026-11-16
 - W0-b｜三样外部信息已确认（送审截止 2027-06、CNKI TMLC2 ≤10%/15%、AIGC ≤10%、模板已放入 thesis/template/）｜2026-11-17
 - W0-c｜数据盘确认（RTX 4090 / 数据盘 50G）；experiments/queue.sh 已完成；backup 简化为 git 追踪（删除 backup.sh 与 Makefile backup 目标）｜2026-11-17
@@ -14,12 +18,28 @@
 - S0-b 补｜TH、OP 画像 JSON 补跑完成（TH γ₀=0.026254/λ₀=0.000413；OP γ₀=0.030499/λ₀=0.000356）；规模断言均与 stats.json 一致｜914c491｜2026-11-18
 - S1-a｜统一评估入口 eval/（metrics.py Recall/NDCG + full_rank.py 全排序/屏蔽/悲观并列 + eval.yaml + 10 个测试）｜b67994e｜2026-11-17
 - S1-b｜RecBole 冒烟与冻结切分对接：environment/recbole.yml（Python 3.10 / torch 2.5.1+cu121 / recbole 1.2.1 / scipy 1.11.4 / numpy 1.26.4）、scripts/export_recbole.py、eval/crosscheck_recbole.py、configs/recbole_baselines.yaml、tests/test_verify_recbole_adapter.py（对账 1✅ 对账 2✅ 对账 3 skip 口径差异 对账 4 skip 已推迟）；LightGCN smoke 10 epochs 完成（checkpoint 已保存）；对账 4（PyG LightGCN 对比）推迟到后期（2026-11-19 决策）｜2026-11-19
+- S1-c｜运行记录、配对检验、分层守恒：代码与测试已完成；eval/paired_test.py、eval/strata.py（四层口径：0-4/5-9/10-29/≥30，与论文表 3-11 对齐）｜23990e2 + 4c12842｜2026-11-18 / 2026-11-20
+- S1-d｜数字管线：scripts/make_tables.py → thesis/generated/numbers.json（84 个 key，source 指向真实文件）｜4c12842｜2026-11-20
+- G1 基础设施｜docs/plan/gates.md（V9 版 G1–G5 关口条件）、gates/w1.py（182 行，覆盖 G1 七条）｜4c12842｜2026-11-20
+- E0-a / G1-7｜docs/prototype_inventory.md（G1 条件 7 产物；列出 backend/ 现状与论文第五章差距）｜4c12842｜2026-11-20
+- V9 复核与论文待手动修改清单｜docs/revision/、decisions.md 末条：3.5.4/3.5.9/5.5.5 节须删、3.6 节改写、5.5 节总览改写、5.2.2 引用改写、1.3.3 创新点改写、5.6 截图图注标注「演示数据」｜4c12842｜2026-11-20
 
 ## 阻塞与待决定
-- AutoDL 余额待释放（不阻塞本机工作，S1-b 之外的可先做）
 
-## 接下来（G1 剩余）
-- S1-d 表格与数字管线骨架（依赖 S1-c）
-- E0-a 原型现状表 → docs/prototype_inventory.md（G1 条件 6）
-- T-a 论文源迁移与 smoke.docx（G1 条件 7；本机缺 pandoc，需先装）
-- gates/w1.py 尚未实现，/gate 1 时补
+- **AutoDL 余额待释放 → 阻塞 G1-6（唯一未过条件）**。G1 其余 6 条已可机械验证通过（checksums / pytest / recbole 环境 / numbers.json / 画像图 6 张 / prototype_inventory）。余额释放后需先跑 `S-recall-base` 至少一个基线 × 一个 seed，产物落 `results/ch3_recall/baselines/*/seed0/metrics.json`，G1 才能过。
+
+## 接下来（G1 收口）
+
+以 `gates.md` 的 G1 七条为唯一真相，可机械验证：
+
+| # | 条件 | 当前 |
+|---|------|------|
+| 1 | 冻结数据可校验（`sha256sum -c data/CHECKSUMS.sha256`） | ✅ |
+| 2 | 统一评估可复现（`make test`） | ✅ |
+| 3 | RecBole 环境可复现（`recbole.yml` + `results/_smoke/`） | ✅ |
+| 4 | 数字管线可运行（`make tables` 产 `numbers.json`） | ✅ |
+| 5 | 数据画像图就绪（`figures/profile/IS_*.svg` ≥5） | ✅ 6 张 |
+| 6 | 召回基线至少 1 个（`results/ch3_recall/baselines/*/seed0/metrics.json`） | ❌ **目录不存在** |
+| 7 | 原型现状可查（`docs/prototype_inventory.md`） | ✅ |
+
+下一步行动：AutoDL 余额到位 → `experiments/queue.txt` 挂 S-recall-base → G1 过。

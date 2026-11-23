@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(/opt/anaconda3/bin/python3 -m pytest tests/test_make_tables.py -q)",
+      "Bash(/opt/anaconda3/bin/python3 scripts/make_tables.py --output /tmp/numbers_new.json)",
+      "Bash(/opt/anaconda3/bin/python3 -c ' *)",
+      "Bash(/opt/anaconda3/bin/python3 -m pytest -q)"
+    ]
+  }
+}

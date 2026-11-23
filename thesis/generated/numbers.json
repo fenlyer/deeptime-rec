@@ -1,5 +1,5 @@
 {
-  "profile.IS.gamma0.value": {
+  "profile.IS.gamma0": {
     "source": "profile/IS.json",
     "value": 0.031345427956854584
   },
@@ -31,7 +31,7 @@
     "source": "profile/IS.json",
     "value": 1692892488
   },
-  "profile.IS.lambda0.value": {
+  "profile.IS.lambda0": {
     "source": "profile/IS.json",
     "value": 0.0004558554022360502
   },
@@ -79,13 +79,13 @@
     "source": "profile/IS.json",
     "value": 50985
   },
+  "profile.IS.test_item_in_train_ratio": {
+    "source": "profile/IS.json",
+    "value": 0.9934882808669216
+  },
   "profile.IS.test_item_in_train_ratio.n_test": {
     "source": "profile/IS.json",
     "value": 50985
-  },
-  "profile.IS.test_item_in_train_ratio.value": {
-    "source": "profile/IS.json",
-    "value": 0.9934882808669216
   },
   "profile.IS.train_pairs_per_user.max": {
     "source": "profile/IS.json",
@@ -107,11 +107,11 @@
     "source": "profile/IS.json",
     "value": 50985
   },
-  "profile.IS.user_all_same_rating_ratio.value": {
+  "profile.IS.user_all_same_rating_ratio": {
     "source": "profile/IS.json",
     "value": 0.3781504364028636
   },
-  "profile.OP.gamma0.value": {
+  "profile.OP.gamma0": {
     "source": "profile/OP.json",
     "value": 0.030499133935212305
   },
@@ -143,7 +143,7 @@
     "source": "profile/OP.json",
     "value": 1693576800
   },
-  "profile.OP.lambda0.value": {
+  "profile.OP.lambda0": {
     "source": "profile/OP.json",
     "value": 0.00035562909768238875
   },
@@ -191,13 +191,13 @@
     "source": "profile/OP.json",
     "value": 223308
   },
+  "profile.OP.test_item_in_train_ratio": {
+    "source": "profile/OP.json",
+    "value": 0.9943530907983592
+  },
   "profile.OP.test_item_in_train_ratio.n_test": {
     "source": "profile/OP.json",
     "value": 223308
-  },
-  "profile.OP.test_item_in_train_ratio.value": {
-    "source": "profile/OP.json",
-    "value": 0.9943530907983592
   },
   "profile.OP.train_pairs_per_user.max": {
     "source": "profile/OP.json",
@@ -219,11 +219,11 @@
     "source": "profile/OP.json",
     "value": 223308
   },
-  "profile.OP.user_all_same_rating_ratio.value": {
+  "profile.OP.user_all_same_rating_ratio": {
     "source": "profile/OP.json",
     "value": 0.3849615777312053
   },
-  "profile.TH.gamma0.value": {
+  "profile.TH.gamma0": {
     "source": "profile/TH.json",
     "value": 0.026254067198712927
   },
@@ -255,7 +255,7 @@
     "source": "profile/TH.json",
     "value": 1694326715
   },
-  "profile.TH.lambda0.value": {
+  "profile.TH.lambda0": {
     "source": "profile/TH.json",
     "value": 0.00041274341703554914
   },
@@ -303,13 +303,13 @@
     "source": "profile/TH.json",
     "value": 842050
   },
+  "profile.TH.test_item_in_train_ratio": {
+    "source": "profile/TH.json",
+    "value": 0.9973635769847397
+  },
   "profile.TH.test_item_in_train_ratio.n_test": {
     "source": "profile/TH.json",
     "value": 842050
-  },
-  "profile.TH.test_item_in_train_ratio.value": {
-    "source": "profile/TH.json",
-    "value": 0.9973635769847397
   },
   "profile.TH.train_pairs_per_user.max": {
     "source": "profile/TH.json",
@@ -331,7 +331,7 @@
     "source": "profile/TH.json",
     "value": 842050
   },
-  "profile.TH.user_all_same_rating_ratio.value": {
+  "profile.TH.user_all_same_rating_ratio": {
     "source": "profile/TH.json",
     "value": 0.30684044890445933
   }

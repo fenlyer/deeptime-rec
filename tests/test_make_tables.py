@@ -137,3 +137,166 @@ def test_write_outputs_expected_files(tmp_path):
     data = json.loads(out.read_text(encoding="utf8"))
     assert "recall.m.Recall@10.mean" in data
     assert data["recall.m.Recall@10.mean"]["value"] == 0.5
+
+
+# --------------------------------------------------------------------------- 嵌套目录
+def _write_nested_seed(root: Path, rel: str, seed: int, metrics: dict) -> None:
+    d = root / rel / f"seed{seed}"
+    d.mkdir(parents=True, exist_ok=True)
+    (d / "metrics.json").write_text(json.dumps(metrics), encoding="utf8")
+
+
+def test_nested_model_dir_aggregates(tmp_path):
+    """results/ch3_recall/baselines/{model}/seed{n}/（G1-6 的实际路径）。"""
+    for s, v in enumerate([0.10, 0.12, 0.14]):
+        _write_nested_seed(tmp_path, "ch3_recall/baselines/lightgcn", s, {"Recall@10": v})
+
+    nums = mt.collect(tmp_path)
+
+    assert nums["recall.baselines.lightgcn.Recall@10.mean"]["value"] == pytest.approx(0.12)
+    assert nums["recall.baselines.lightgcn.Recall@10.seeds"]["value"] == [0.10, 0.12, 0.14]
+    assert nums["recall.baselines.lightgcn.Recall@10.mean"]["n_seeds"] == 3
+
+
+def test_two_level_nested_model(tmp_path):
+    """results/ch3_recall/cross/{dataset}/{model}/seed{n}/。"""
+    for s, v in enumerate([0.2, 0.3]):
+        _write_nested_seed(tmp_path, "ch3_recall/cross/TH/lightgcn", s, {"Recall@10": v})
+
+    nums = mt.collect(tmp_path)
+    assert nums["recall.cross.TH.lightgcn.Recall@10.mean"]["value"] == pytest.approx(0.25)
+
+
+def test_top_level_model_key_unchanged(tmp_path):
+    """已有的一层结构 key 不能变，否则正文引用全部失效。"""
+    _write_seed(tmp_path, "ch3_recall", "ti_lightgcn", 0, {"Recall@10": 0.5})
+    nums = mt.collect(tmp_path)
+    assert nums["recall.ti_lightgcn.Recall@10.mean"]["value"] == 0.5
+
+
+def test_nested_seed_order_numeric(tmp_path):
+    for s in (0, 2, 10):
+        _write_nested_seed(tmp_path, "ch3_recall/baselines/m", s, {"Recall@10": s / 100})
+    nums = mt.collect(tmp_path)
+    assert nums["recall.baselines.m.Recall@10.seeds"]["value"] == [0.0, 0.02, 0.10]
+
+
+def test_nested_dirty_manifest_skipped(tmp_path):
+    _write_nested_seed(tmp_path, "ch3_recall/baselines/m", 0, {"Recall@10": 0.5})
+    mf = tmp_path / "ch3_recall/baselines/m/seed0/manifest.json"
+    mf.write_text(json.dumps({"git_dirty": True}), encoding="utf8")
+    assert mt.collect(tmp_path) == {}
+
+
+def test_underscore_subdir_skipped_in_aggregation(tmp_path):
+    _write_nested_seed(tmp_path, "ch3_recall/_scratch/m", 0, {"Recall@10": 0.99})
+    _write_nested_seed(tmp_path, "ch3_recall/baselines/m", 0, {"Recall@10": 0.10})
+    nums = mt.collect(tmp_path)
+    assert nums["recall.baselines.m.Recall@10.mean"]["value"] == pytest.approx(0.10)
+    assert not any("_scratch" in k for k in nums)
+
+
+# --------------------------------------------------------------------------- 嵌套 JSON
+def _write_json(root: Path, rel: str, data: dict) -> None:
+    p = root / rel
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(json.dumps(data), encoding="utf8")
+
+
+def test_collects_json_in_subdir(tmp_path):
+    """results/ch5_system/latency/latency.json → sys.latency.P99。"""
+    _write_json(tmp_path, "ch5_system/latency/latency.json", {"P99": 83.2})
+
+    nums = mt.collect(tmp_path)
+    assert nums["sys.latency.P99"]["value"] == pytest.approx(83.2)
+
+
+def test_flat_and_nested_json_produce_same_key(tmp_path):
+    """平铺 latency.json 与 latency/latency.json 的 key 必须一致。"""
+    _write_json(tmp_path, "ch5_system/latency.json", {"P99": 83.2})
+    flat = mt.collect(tmp_path)
+
+    other = tmp_path / "nested"
+    _write_json(other, "ch5_system/latency/latency.json", {"P99": 83.2})
+    nested = mt.collect(other)
+
+    assert set(flat) == set(nested) == {"sys.latency.P99"}
+
+
+def test_json_subdir_name_is_not_duplicated(tmp_path):
+    """文件名与目录同名时不重复出现：loadtest/loadtest.json → sys.loadtest.*。"""
+    _write_json(tmp_path, "ch5_system/loadtest/loadtest.json", {"P50": 20.0})
+    assert "sys.loadtest.P50" in mt.collect(tmp_path)
+
+
+def test_deeper_json_path_joined_by_dots(tmp_path):
+    _write_json(tmp_path, "ch5_system/latency/per_step/recall.json", {"P99": 12.0})
+    assert "sys.latency.per_step.recall.P99" in mt.collect(tmp_path)
+
+
+def test_nested_json_source_points_to_real_file(tmp_path):
+    _write_json(tmp_path, "ch5_system/consistency/consistency.json", {"recall_match": 1.0})
+    nums = mt.collect(tmp_path)
+    for key, rec in nums.items():
+        assert (tmp_path / rec["source"]).exists(), f"{key} 的 source 不存在"
+
+
+def test_json_inside_seed_dir_not_double_counted(tmp_path):
+    """seed 目录里的 metrics.json 只走聚合，不额外走展平。"""
+    _write_nested_seed(tmp_path, "ch3_recall/baselines/m", 0, {"Recall@10": 0.5})
+    nums = mt.collect(tmp_path)
+    assert set(nums) == {
+        "recall.baselines.m.Recall@10.mean",
+        "recall.baselines.m.Recall@10.std",
+        "recall.baselines.m.Recall@10.seeds",
+    }
+
+
+def test_json_underscore_subdir_skipped(tmp_path):
+    _write_json(tmp_path, "ch5_system/_draft/x.json", {"P99": 1.0})
+    assert mt.collect(tmp_path) == {}
+
+
+def test_json_in_exp_prefix_dir_is_collected(tmp_path):
+    """ch3_recall/cold_start/ti_lightgcn.json 这类非 seed JSON 也要采到。"""
+    _write_json(tmp_path, "ch3_recall/cold_start/ti_lightgcn.json", {"Recall@10": 0.07})
+    assert "recall.cold_start.ti_lightgcn.Recall@10" in mt.collect(tmp_path)
+
+
+# --------------------------------------------------------------------------- key 口径（以 S1-d 卡片为准）
+def test_value_wrapper_collapses_to_bare_key(tmp_path):
+    _write_json(
+        tmp_path,
+        "profile/IS.json",
+        {"gamma0": {"value": 0.0313, "formula": "ln2 / 中位数"}},
+    )
+    nums = mt.collect(tmp_path)
+    assert nums["profile.IS.gamma0"]["value"] == pytest.approx(0.0313)
+    assert "profile.IS.gamma0.value" not in nums
+
+
+def test_value_wrapper_keeps_sibling_numbers(tmp_path):
+    _write_json(
+        tmp_path,
+        "profile/IS.json",
+        {"test_ratio": {"value": 0.99, "n_test": 50985}},
+    )
+    nums = mt.collect(tmp_path)
+    assert nums["profile.IS.test_ratio"]["value"] == pytest.approx(0.99)
+    assert nums["profile.IS.test_ratio.n_test"]["value"] == 50985
+
+
+def test_plain_nested_dict_without_value_key(tmp_path):
+    _write_json(
+        tmp_path,
+        "profile/IS.json",
+        {"inter_gap_days": {"mean": 165.5, "median": 22.1}},
+    )
+    nums = mt.collect(tmp_path)
+    assert nums["profile.IS.inter_gap_days.mean"]["value"] == pytest.approx(165.5)
+    assert nums["profile.IS.inter_gap_days.median"]["value"] == pytest.approx(22.1)
+
+
+def test_boolean_and_string_not_collected(tmp_path):
+    _write_json(tmp_path, "profile/IS.json", {"has_rating": True, "dataset": "IS"})
+    assert mt.collect(tmp_path) == {}

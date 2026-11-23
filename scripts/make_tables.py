@@ -30,6 +30,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import re
 import statistics
 from pathlib import Path
 from typing import Any
@@ -91,15 +92,30 @@ def _load_metrics(seed_dir: Path) -> dict:
 
 
 # --------------------------------------------------------------------------- 聚合
+_SEED_RE = re.compile(r"^seed\d+$")
+
+
+def _model_dirs(exp_dir: Path) -> list[tuple[str, Path]]:
+    """返回 [(model 名, 目录)]。model 目录 = 直接含 seed{n}/ 的目录，可多层嵌套。
+
+    model 名取相对 exp_dir 的路径，用 "." 连接：baselines/lightgcn → baselines.lightgcn。
+    跳过 "_" 开头的目录。
+    """
+    out: list[tuple[str, Path]] = []
+    for d in sorted(p for p in exp_dir.rglob("*") if p.is_dir()):
+        rel = d.relative_to(exp_dir)
+        if any(part.startswith("_") for part in rel.parts):
+            continue
+        if _seed_dirs(d):
+            out.append((".".join(rel.parts), d))
+    return out
+
+
 def _aggregate_experiment(
     exp_dir: Path, prefix: str, root: Path, nums: dict[str, dict]
 ) -> None:
-    """遍历 {exp}/{model}/seed{n}/metrics.json，写入 mean/std/seeds。"""
-    for model_dir in sorted(p for p in exp_dir.iterdir() if p.is_dir()):
-        model = model_dir.name
-        if model.startswith("_"):
-            continue
-
+    """遍历 {exp}/**/{model}/seed{n}/metrics.json，写入 mean/std/seeds。"""
+    for model, model_dir in _model_dirs(exp_dir):
         per_metric: dict[str, list[tuple[float, str]]] = {}
         for seed, seed_dir in _seed_dirs(model_dir):
             if _is_dirty(seed_dir):
@@ -135,28 +151,62 @@ def _aggregate_experiment(
             }
 
 
+def _json_entries(path: Path) -> list[tuple[str, Path]]:
+    """递归收集 path 下的 JSON，返回 [(相对键前缀, 文件)]。
+
+    平铺 latency.json 与 latency/latency.json 得到同一前缀 "latency"；
+    更深的 per_step/recall.json 得到 "per_step.recall"。
+    seed{n}/ 下的文件不在此处采集（由 _aggregate_experiment 处理）。
+    跳过 "_" 开头的目录。
+    """
+    out: list[tuple[str, Path]] = []
+    for f in sorted(path.rglob("*.json")):
+        rel = f.relative_to(path)
+        if any(part.startswith("_") for part in rel.parts):
+            continue
+        if any(_SEED_RE.match(part) for part in rel.parts):
+            continue
+        parts = list(rel.with_suffix("").parts)
+        if len(parts) > 1 and parts[-1] == parts[-2]:
+            parts.pop()
+        out.append((".".join(parts), f))
+    return out
+
+
 def _collect_json_dir(
     path: Path, prefix: str, root: Path, nums: dict[str, dict]
 ) -> None:
-    """把 results/<dir>/*.json 的标量字段展平成 {prefix}.{stem}.{field}。"""
+    """把 results/<dir>/**/*.json 的标量字段展平成 {prefix}.{key}.{field}。"""
     if not path.is_dir():
         return
-    for f in sorted(path.glob("*.json")):
+    for key, f in _json_entries(path):
         try:
             data = json.loads(f.read_text(encoding="utf8"))
         except (json.JSONDecodeError, OSError):
             continue
         if not isinstance(data, dict):
             continue
-        _flatten(data, f"{prefix}.{f.stem}", _rel(f, root), nums)
+        _flatten(data, f"{prefix}.{key}", _rel(f, root), nums)
 
 
 def _flatten(data: dict, prefix: str, src: str, nums: dict[str, dict]) -> None:
-    """递归展平嵌套 dict；只收标量（数值或 None）。"""
+    """递归展平嵌套 dict；只收标量（数值或 None）。
+
+    含 "value" 键的子 dict 收为 {prefix}.{k} 本身（S1-d 卡片口径，
+    例：profile.IS.gamma0），同层其他数值键仍保留为子键。
+    """
     for k, v in sorted(data.items()):
         key = f"{prefix}.{k}"
         if isinstance(v, dict):
-            _flatten(v, key, src, nums)
+            if "value" in v:
+                inner = v["value"]
+                if _is_number(inner) or inner is None:
+                    nums[key] = {"value": inner, "source": src}
+                rest = {kk: vv for kk, vv in v.items() if kk != "value"}
+                if rest:
+                    _flatten(rest, key, src, nums)
+            else:
+                _flatten(v, key, src, nums)
         elif _is_number(v) or v is None:
             nums[key] = {"value": v, "source": src}
 
@@ -176,6 +226,7 @@ def collect(results_dir: Path) -> dict[str, dict]:
 
         if name in EXP_PREFIX:
             _aggregate_experiment(exp_dir, EXP_PREFIX[name], results_dir, nums)
+            _collect_json_dir(exp_dir, EXP_PREFIX[name], results_dir, nums)
         elif name == "strata":
             _collect_json_dir(exp_dir, "strata", results_dir, nums)
         elif name == "profile":

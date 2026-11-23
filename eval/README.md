@@ -11,7 +11,7 @@
 | `metrics.py` | Recall@K / NDCG@K | LOO 下 IDCG=1；rank>K 记 0 |
 | `full_rank.py` | 全排序 + 屏蔽训练/验证物品 | 并列取悲观排名；支持 `target=all/pos` |
 | `paired_test.py` | 两模型多 seed 配对检验 | **样本单位是用户，不是 seed**；先按用户跨 seed 平均 rank，再配对；`d_z = t/√n`（n=用户数） |
-| `strata.py` | 冷启动分层（1-2 / 3-4 / 5-9 / 10-29 / ≥30） | 分层只数**训练集**行数；按人数加权守恒校验，容差 1e-9 |
+| `strata.py` | 冷启动分层（0-4 / 5-9 / 10-29 / ≥30） | 分层只数**训练集**行数；按人数加权守恒校验，容差 1e-9 |
 
 ## paired_test 的口径说明
 

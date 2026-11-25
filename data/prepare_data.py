@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """
-Amazon Review 2023 / Alibaba IJCAI15 数据预处理脚本
-====================================================
-对齐《整改V8_1112》5.1.1「数据集选取与说明」与 4.1.2 式(4-1) 的预处理口径。
+数据预处理脚本
+数据源：Amazon Review 2023 / Alibaba IJCAI15 
 
 处理链路（每个数据集统一走这一条）:
   1. 文件探测  —— 字节数、gzip 完整性、行数
@@ -20,6 +19,42 @@ Amazon Review 2023 / Alibaba IJCAI15 数据预处理脚本
   python prepare_data.py --categories AJ       # 只处理 AJ（需 ~2GB 内存、耗时较长）
   python prepare_data.py --categories IS --with-triples   # 额外产出 BPR 三元组
   python prepare_data.py --stats-only          # 只统计不落盘
+
+输出目录：data/processed/{IS,TH,OP,AJ}/
+
+  产出文件清单（默认 --output-format both，CSV + Parquet 各一份）：
+
+    文件                                    │ 内容
+    ────────────────────────────────────────┼─────────────────────────────────────────────
+    ① train.csv / .parquet                  │ 训练集划分
+    ② val.csv   / .parquet                  │ 验证集划分
+    ③ test.csv  / .parquet                  │ 测试集划分
+      列: user_id, item_id, behavior, timestamp, n_records, alpha,
+          is_positive, is_hard_negative, rating(AJ 无), user_idx, item_idx
+
+
+    ④ edges.csv / .parquet                  │ 【第3章】TI-LightGCN式(3-1) 边权重（仅训练集构建,基于论文计算出）
+      列: user_idx, item_idx, weight        │ w = Σ α_b·exp(-λ·(T_now-t)/T)
+
+    ⑤ triples.csv / .parquet                │ 【第3章】BPR 三元组（需 --with-triples）
+      列: user_idx, pos_item_idx, neg_item_idx │ 仅训练集正样本+硬负/软负
+
+    ⑥ item_meta.csv / .parquet              │ 商品元数据（仅交互涉及的商品）
+      Amazon 列: item_id, title, brand, category, price, description, features, details
+      AJ 列:     item_id, category, brand（从行为日志抽取，无 title/price 等）
+
+    ⑦ id_maps/user2idx.json                 │ user_id(原始) → user_idx(连续整数)
+       id_maps/item2idx.json                │ item_id(原始) → item_idx(连续整数)
+
+    ⑧ stats.json                            │ 全量统计
+      规模/稀疏度/长尾/行为分布/时间跨度/边权重摘要/split_check/official_loo_check
+
+  划分规则（时序留一法 LOO，以 (user, item) 对为单位）：
+    - 每用户按该对的最后时间戳排序
+    - 最后 1 对 → test，倒数第 2 对 → val，其余 → train
+    - 交互 <3 对的用户仅拆 test（无 val）
+    - 时间戳并列时按 item_id 字典序 tie-break（保证可复现）
+    - 与 Amazon 官方 benchmark/5core/last_out 测试集重合率 99.998%
 """
 
 import argparse

@@ -4,7 +4,18 @@
       "Bash(/opt/anaconda3/bin/python3 -m pytest tests/test_make_tables.py -q)",
       "Bash(/opt/anaconda3/bin/python3 scripts/make_tables.py --output /tmp/numbers_new.json)",
       "Bash(/opt/anaconda3/bin/python3 -c ' *)",
-      "Bash(/opt/anaconda3/bin/python3 -m pytest -q)"
+      "Bash(/opt/anaconda3/bin/python3 -m pytest -q)",
+      "Bash(/opt/anaconda3/bin/python3 *)",
+      "Bash(python3 -c ' *)",
+      "Bash(python3 *)",
+      "Bash(pip3 install *)",
+      "Bash(/usr/bin/python3 -c ' *)",
+      "Bash(/usr/bin/python3 *)",
+      "Bash(unzip -p \"docs/revision/整改V9_1123.docx\" word/document.xml)",
+      "Bash(git add *)",
+      "Bash(git rm *)",
+      "Bash(git commit *)",
+      "Bash(git push *)"
     ]
   }
 }

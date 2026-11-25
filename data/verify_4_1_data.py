@@ -41,21 +41,26 @@ TAIL_DEG = 10
 # =====================================================================
 
 
-def load_pairs(name: str) -> pd.DataFrame:
+def load_pairs(name: str, scope: str = "all") -> pd.DataFrame:
     """
-    读取 train/val/test 并去重到 (user_id, item_id) 对。
+    读取划分文件并去重到 (user_id, item_id) 对。
 
     必须以「对」为单位统计：AJ 同一对有多条行为记录，按行计数会把
     行为记录数误当成交互对数，导致稀疏度与人均交互偏高。
     AJ 无 rating 字段（原生 action_type 已在预处理折算为 alpha），
     因此 rating 按存在与否动态取列，其余口径不受影响。
+
+    scope：
+      all   （默认）train∪val∪test —— 数据集口径，对应表3-3
+      train 只读 train.csv       —— 训练图口径，对应正文 3.1 / 图3-1~3-5 / 3.3.4 / 3.5.4
     """
     base = ["user_id", "item_id", "timestamp"]
     probe = pd.read_csv(PROCESSED_DIR / name / "train.csv", nrows=0)
     usecols = base + (["rating"] if "rating" in probe.columns else [])
 
+    splits = ("train",) if scope == "train" else ("train", "val", "test")
     frames = [pd.read_csv(PROCESSED_DIR / name / f"{s}.csv", usecols=usecols)
-              for s in ("train", "val", "test")]
+              for s in splits]
     df = pd.concat(frames, ignore_index=True)
     return df.drop_duplicates(["user_id", "item_id"])
 
@@ -177,10 +182,11 @@ def check_time_span(pairs: pd.DataFrame) -> dict:
 # =====================================================================
 
 
-def run(name: str, sections: list[str]) -> None:
+def run(name: str, sections: list[str], scope: str = "all") -> None:
     """对单个数据集执行选定小节的核验并打印。"""
-    pairs = load_pairs(name)
-    print(f"\n{'=' * 74}\n{name}\n{'=' * 74}")
+    pairs = load_pairs(name, scope=scope)
+    title_scope = "训练图（训练集对）" if scope == "train" else "全量对（train∪val∪test）"
+    print(f"\n{'=' * 74}\n{name}  ·  {title_scope}\n{'=' * 74}")
 
     checks = {
         "scale": ("4.1.3 / 表5-1 规模与稀疏度", lambda: check_scale(name, pairs)),
@@ -210,9 +216,11 @@ def main() -> None:
     ap.add_argument("--section", nargs="*",
                     choices=["scale", "rating", "tail", "span", "lambda"],
                     help="只跑指定小节，缺省全跑")
+    ap.add_argument("--scope", choices=["all", "train"], default="all",
+                    help="all=数据集口径（表3-3，默认）；train=训练图口径（正文 3.1/图3-1~3-5）")
     args = ap.parse_args()
     for name in args.datasets:
-        run(name, args.section or [])
+        run(name, args.section or [], scope=args.scope)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>V9 执行计划（对齐版 · 基于整改V9_1123）</title>
+<style>
+:root {
+  --paper:#f5f7fa; --surface:#fff; --ink:#1a1f2e; --muted:#6b7280; --rule:#e5e7eb;
+  --research:#2563eb; --eng:#059669; --write:#9333ea; --gate:#d97706;
+  --done:#10b981; --todo:#ef4443; --wait:#f59e0b; --new:#dc2626;
+  --gpu:#dc2626; --cpu:#0891b2;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--paper); color: var(--ink); line-height: 1.6; padding: 20px;
+}
+.container { max-width: 1400px; margin: 0 auto; }
+header {
+  background: var(--surface); border-radius: 12px; padding: 24px; margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+h1 { font-size: 24px; margin-bottom: 8px; }
+h2 { font-size: 18px; margin: 20px 0 12px; }
+h3 { font-size: 16px; margin: 16px 0 10px; }
+.subtitle { color: var(--muted); font-size: 14px; }
+.summary {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px; margin-top: 16px;
+}
+.stat {
+  background: var(--paper); border-radius: 8px; padding: 12px; text-align: center;
+}
+.stat-num { font-size: 28px; font-weight: 700; }
+.stat-label { font-size: 12px; color: var(--muted); }
+
+.phase-section {
+  background: var(--surface); border-radius: 12px; padding: 20px; margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.phase-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--rule);
+}
+.phase-title { font-size: 18px; font-weight: 600; }
+.phase-meta { color: var(--muted); font-size: 13px; }
+
+.task-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 12px;
+}
+.task-card {
+  background: var(--paper); border-radius: 10px; padding: 16px;
+  border-left: 4px solid var(--rule);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.task-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.task-card.recall { border-left-color: var(--research); }
+.task-card.rank { border-left-color: var(--eng); }
+.task-card.data { border-left-color: var(--gate); }
+.task-card.infra { border-left-color: var(--write); }
+.task-card.new { border-left-color: var(--new); }
+
+.task-id { font-family: monospace; font-weight: 700; font-size: 13px; color: var(--research); }
+.task-name { font-size: 15px; font-weight: 600; margin: 4px 0; }
+.task-desc { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+.task-meta { display: flex; flex-wrap: wrap; gap: 6px; font-size: 11px; }
+.chip {
+  display: inline-block; padding: 2px 8px; border-radius: 10px;
+  background: var(--surface); color: var(--muted); white-space: nowrap;
+}
+.chip.gpu { background: rgba(220,38,38,.12); color: var(--gpu); }
+.chip.cpu { background: rgba(8,145,194,.12); color: var(--cpu); }
+.chip.done { background: rgba(16,185,129,.14); color: var(--done); }
+.chip.todo { background: rgba(239,68,68,.12); color: var(--todo); }
+.chip.new { background: rgba(220,38,38,.12); color: var(--new); }
+.chip.wait { background: rgba(245,158,11,.14); color: var(--wait); }
+.chip.api { background: rgba(147,51,234,.12); color: var(--write); }
+
+.paper-landing {
+  margin-top: 10px; padding: 10px 12px; border-radius: 6px;
+  background: rgba(37,99,235,0.06); border-left: 3px solid var(--research);
+  font-size: 12.5px;
+}
+.paper-landing .l-label {
+  font-size: 10.5px; text-transform: uppercase; letter-spacing: .4px;
+  color: var(--research); font-weight: 700; display: block; margin-bottom: 3px;
+}
+.paper-landing .l-row { color: var(--muted); margin-bottom: 2px; }
+.paper-landing .l-row code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11.5px; color: var(--ink); background: var(--paper);
+  padding: 1px 5px; border-radius: 4px;
+}
+
+.align-section {
+  background: linear-gradient(135deg, rgba(37,99,235,0.06), rgba(37,99,235,0.02));
+  border: 1px solid var(--research); border-radius: 12px; padding: 20px; margin-bottom: 16px;
+}
+.align-section h2 { color: var(--research); margin-bottom: 12px; }
+
+.diff-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; }
+.diff-table th, .diff-table td {
+  padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--rule); vertical-align: top;
+}
+.diff-table th { font-size: 11.5px; color: var(--muted); font-weight: 600; text-transform: uppercase; }
+.diff-table .old { color: #dc2626; text-decoration: line-through; }
+.diff-table .new { color: #059669; font-weight: 600; }
+
+.adjustment-box {
+  background: var(--surface); border-radius: 12px; padding: 20px; margin-bottom: 16px;
+  border-left: 4px solid var(--new);
+}
+.adjustment-box h3 { color: var(--new); margin-bottom: 10px; }
+.adjustment-box ul { padding-left: 20px; }
+.adjustment-box li { margin-bottom: 8px; font-size: 13.5px; }
+.adjustment-box li b { font-weight: 600; }
+
+table.data-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 10px 0; }
+table.data-table th, table.data-table td {
+  padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--rule);
+}
+table.data-table th { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+
+.dependency-flow {
+  background: var(--paper); border-radius: 8px; padding: 16px; font-size: 13px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  line-height: 1.8; white-space: pre-wrap;
+}
+
+footer {
+  text-align: center; padding: 24px; color: var(--muted); font-size: 12px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>📋 V9 执行计划（对齐版 · 基于整改V9_1123）</h1>
+  <p class="subtitle">
+    对齐对象：<code>V9执行计划_简化版.html</code>（2026-11-20）+ <code>整改V9_1123.docx</code> 第三/四章实验清单<br>
+    生成时间：2026-11-26 · 本文件为对齐分析产物，不修改原简化版计划
+  </p>
+  <div class="summary">
+    <div class="stat"><div class="stat-num" style="color:var(--research)">18</div><div class="stat-label">数据/基础设施</div></div>
+    <div class="stat"><div class="stat-num" style="color:var(--research)">10</div><div class="stat-label">召回实验</div></div>
+    <div class="stat"><div class="stat-num" style="color:var(--eng)">8</div><div class="stat-label">排序实验</div></div>
+    <div class="stat"><div class="stat-num" style="color:var(--new)">6</div><div class="stat-label">1123 新增项</div></div>
+  </div>
+</header>
+
+<!-- ======== 对齐结论 ======== -->
+<section class="align-section">
+  <h2>🔗 对齐结论（简化版 vs 整改V9_1123 差异）</h2>
+  <p style="font-size:13.5px;margin-bottom:12px">
+    以下列出 <code>整改V9_1123.docx</code> 第三/四章中明确要求的实验要件，以及 <code>V9执行计划_简化版.html</code> 的覆盖情况。
+    <b>简化版主线条覆盖对得上</b>，但 1123 版新增了若干实验要求与口径调整，须在后续执行中补充。
+  </p>
+
+  <h3>差异一览</h3>
+  <table class="diff-table">
+    <thead><tr><th>差异点</th><th>简化版（1120）</th><th>整改V9_1123 新要求</th><th>对齐操作</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><b>近三年强基线</b></td>
+        <td class="old">deferred（S-recall-new-baseline）</td>
+        <td class="new">整改意见要求至少两个2023年及以后强基线；候选：XSimGCL(TKDE 2023)、LightGCL(ICLR 2023)、RLMRec(WWW 2024)</td>
+        <td>从 deferred 拉入主计划，新增卡片 <code>S-recall-newbase</code></td>
+      </tr>
+      <tr>
+        <td><b>排序侧近三年基线</b></td>
+        <td class="old">未规划</td>
+        <td class="new">候选 KAR、DLLM2Rec(RecSys 2024)、TiSASRec</td>
+        <td>新增卡片 <code>S-rank-newbase</code></td>
+      </tr>
+      <tr>
+        <td><b>教师信号形式</b></td>
+        <td class="old">"简化蒸馏"，不做教师信号</td>
+        <td class="new">改为"是/否概率"软标签（读 logprobs），r_T = exp(ℓ_yes)/(exp(ℓ_yes)+exp(ℓ_no))</td>
+        <td><code>S-rank-distill</code> 需升级：确认模型 logprobs 支持，保留联合训练 α=0.7/β=0.3</td>
+      </tr>
+      <tr>
+        <td><b>短期通道口径</b></td>
+        <td class="old">"近7天最多50条"</td>
+        <td class="new">改为"最近 N 条"，N∈{3,5,10}做敏感性分析</td>
+        <td><code>S-rank-main</code> 修改短期通道逻辑 + 增加 N 的敏感性实验</td>
+      </tr>
+      <tr>
+        <td><b>γ 取值复核</b></td>
+        <td class="old">γ=0.3/天</td>
+        <td class="new">需依据图3-3交互间隔分布重新确定</td>
+        <td>依赖 <code>S0-b</code> 画像数据，在 <code>S-rank-main</code> 之前确认 γ 值</td>
+      </tr>
+      <tr>
+        <td><b>表 4-6 教师质量</b></td>
+        <td class="old">deferred</td>
+        <td class="new">4.5.6节要求教师信号AUC/校准曲线/Brier分数</td>
+        <td>从 deferred 拉入，归 <code>S-rank-distill</code> 扩展产出</td>
+      </tr>
+      <tr>
+        <td><b>表 4-7 蒸馏敏感性</b></td>
+        <td class="old">deferred</td>
+        <td class="new">α/β 敏感性 + γ/N 敏感性</td>
+        <td>保留降级（仅留"本文设定值"一行），但 γ/N 敏感性并入 <code>S-rank-main</code></td>
+      </tr>
+      <tr>
+        <td><b>表 3-10 敏感性补 μ 行</b></td>
+        <td class="old">仅扫 λ/L/d（3/5行）</td>
+        <td class="new">论文5行含 μ 与 α_5</td>
+        <td><code>S-recall-sens</code> 补 μ∈{0,0.001,0.01,0.1} 一行</td>
+      </tr>
+      <tr>
+        <td><b>图 3-4/3-5 缺脚本</b></td>
+        <td class="old">3/5画像图有脚本</td>
+        <td class="new">商品长尾分布 + 边权重分布仍缺</td>
+        <td><code>T-profile</code> 补两张图脚本</td>
+      </tr>
+      <tr>
+        <td><b>案例用户 4.5.8</b></td>
+        <td class="old">无卡</td>
+        <td class="new">须用 IS 真实用户替换虚构案例，γ 数值复核</td>
+        <td>新增卡片 <code>T-case</code>（可选）</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ======== 后续调整方案 ======== -->
+<section class="adjustment-box">
+  <h3>🔧 后续如何调整计划（6 项关键操作）</h3>
+  <ul>
+    <li><b>操作1：拉入近三年基线（召回侧）。</b>从 deferred 的 <code>S-recall-new-baseline</code> 正式建卡 <code>S-recall-newbase</code>。候选模型由你选定2个（建议 XSimGCL + RLMRec，前者是 SimGCL 的直接继承、后者回应表1-1大模型增强路线）。置于 W2 与 <code>S-recall-main</code> 并行（不阻塞主路），产出填入表3-6新增行。</li>
+    <li><b>操作2：升级蒸馏方案。</b><code>S-rank-distill</code> 从"简化蒸馏"升级为"最小可行蒸馏"：保留是/否概率软标签 + logprobs 读取 + 联合训练 α=0.7/β=0.3；砍掉 τ 与 β 的敏感性扫描。前置确认项：所选模型服务能否返回词元级 logprobs（若 Qwen-7B-Chat API 不支持，改用本地部署开源模型或 DashScope logprobs 接口）。</li>
+    <li><b>操作3：短期通道口径 + γ 定值。</b>在 <code>S-rank-main</code> 之前，先由 <code>S0-b</code> 的图3-3交互间隔分布确定 γ 取值（现 γ=0.3/天，与IS中位间隔22.1天相比偏大，需复核）。短期通道改为"最近 N 条"，N∈{3,5,10}做敏感性。此两项调整均影响 <code>S-rank-main</code> 与 <code>S-rank-sens</code> 的卡片内容。</li>
+    <li><b>操作4：表 4-6 教师质量评估。</b>从 deferred 拉入，归 <code>S-rank-distill</code> 扩展产出。验证集上计算教师 AUC/Brier + 校准曲线，成本约半天。</li>
+    <li><b>操作5：补 μ 行敏感性。</b><code>S-recall-sens</code> 补充 μ∈{0,0.001,0.01,0.1}（2个新 run × 3 seed ≈ 2小时），使表3-10从3/5行扩为4/5行。</li>
+    <li><b>操作6：补图3-4/3-5脚本。</b><code>T-profile</code> 卡片补两项开发：① 商品长尾曲线（按交互次数降序累计占比）② 边权重分布（λ=0.001 vs 0.1），合计半天。</li>
+  </ul>
+</section>
+
+<!-- ======== Phase 0: 数据准备 ======== -->
+<section class="phase-section">
+  <div class="phase-header">
+    <div>
+      <div class="phase-title">Phase 0 · 数据准备与基础设施</div>
+      <div class="phase-meta">W1（11/20 – 11/26）· 本机 · 已完成 / 收尾中</div>
+    </div>
+  </div>
+
+  <h3>数据状态</h3>
+  <table class="data-table">
+    <thead><tr><th>数据集</th><th>用户数</th><th>交互数</th><th>状态</th><th>用途</th></tr></thead>
+    <tbody>
+      <tr><td>Amazon IS（主）</td><td>50,985</td><td>412,947</td><td><span class="chip done">已冻结</span></td><td>第三章召回全部实验 + 第四章排序实验</td></tr>
+      <tr><td>TH（辅助）</td><td>—</td><td>—</td><td><span class="chip done">已冻结</span></td><td>表3-14 跨域泛化</td></tr>
+      <tr><td>OP（辅助）</td><td>—</td><td>—</td><td><span class="chip done">已冻结</span></td><td>表3-14 跨域泛化</td></tr>
+      <tr><td>AJ（辅助）</td><td>420K</td><td>30.9M</td><td><span class="chip done">已冻结</span></td><td>表3-14 跨域泛化（多行为验证）</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:12.5px;color:var(--muted);margin-top:6px">
+    数据口径：5-core 过滤 + LOO 按时间划分（test=最后一条 / val=倒数第二条 / train=其余）。
+    冻结位置 <code>data/processed/{IS,TH,OP,AJ}/</code>，校验文件 <code>data/CHECKSUMS.sha256</code>（tag data-v1）。
+  </p>
+
+  <h3>Phase 0 任务清单</h3>
+  <div class="task-grid">
+    <div class="task-card infra">
+      <span class="task-id">S0-a</span>
+      <div class="task-name">冻结数据校验</div>
+      <div class="task-desc">CHECKSUMS + tag data-v1</div>
+      <div class="task-meta"><span class="chip done">✓ 完成</span><span class="chip cpu">本机</span></div>
+    </div>
+    <div class="task-card infra">
+      <span class="task-id">S0-b</span>
+      <div class="task-name">数据画像</div>
+      <div class="task-desc">γ₀=0.0313/天、λ₀=0.000456/天、5张画像图（IS/TH/OP/AJ）</div>
+      <div class="task-meta"><span class="chip done">✓ 完成</span><span class="chip cpu">本机</span></div>
+      <div class="paper-landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row">3.1 节研究动机（γ₀/λ₀ 取值依据）</div>
+        <div class="l-row">3.3.1 节 λ=0.001 取值依据（半衰期 693天 ≈ 1.9年）</div>
+        <div class="l-row">4.3.1 节 γ 取值 + 4.3.2 节 N 取值（图3-3交互间隔分布）</div>
+      </div>
+    </div>
+    <div class="task-card infra">
+      <span class="task-id">S1-a</span>
+      <div class="task-name">统一评估入口 eval/</div>
+      <div class="task-desc">metrics.py + full_rank.py + 10 个测试</div>
+      <div class="task-meta"><span class="chip done">✓ 完成</span><span class="chip cpu">本机</span></div>
+    </div>
+    <div class="task-card infra">
+      <span class="task-id">S1-b</span>
+      <div class="task-name">RecBole 冒烟测试</div>
+      <div class="task-desc">环境搭建 + LightGCN smoke 完成</div>
+      <div class="task-meta"><span class="chip done">✓ 完成</span><span class="chip gpu">GPU</span></div>
+    </div>
+    <div class="task-card infra">
+      <span class="task-id">S1-c</span>
+      <div class="task-name">配对检验 + 分层守恒</div>
+      <div class="task-desc">eval/paired_test.py + eval/strata.py（四层口径）</div>
+      <div class="task-meta"><span class="chip done">✓ 完成</span><span class="chip cpu">本机</span></div>
+    </div>
+    <div class="task-card infra">
+      <span class="task-id">S1-d</span>
+      <div class="task-name">数字管线 results/ → numbers.json</div>
+      <div class="task-desc">scripts/make_tables.py → thesis/generated/numbers.json（84 key）</div>
+      <div class="task-meta"><span class="chip done">✓ 完成</span><span class="chip cpu">本机</span></div>
+    </div>
+    <div class="task-card data new">
+      <span class="task-id">T-profile</span>
+      <div class="task-name">数据画像图补全</div>
+      <div class="task-desc">补 图3-4（商品长尾分布）+ 图3-5（边权重 w(u,i) 分布）脚本</div>
+      <div class="task-meta"><span class="chip todo">待执行</span><span class="chip cpu">本机</span><span class="chip">0.5天</span></div>
+      <div class="paper-landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row"><b>图3-4</b> 3.1节 商品交互长尾（前20%商品覆盖57.2%交互）</div>
+        <div class="l-row"><b>图3-5</b> 3.1节 边权重分布（λ=0.001 vs 0.1；λ=0.1时99.39%边权&lt;1e-6）</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== Phase 1: 召回实验 ======== -->
+<section class="phase-section">
+  <div class="phase-header">
+    <div>
+      <div class="phase-title">Phase 1 · 第三章召回实验</div>
+      <div class="phase-meta">W1–W3（11/20 – 12/10）· 需 GPU · AutoDL RTX 4090</div>
+    </div>
+  </div>
+
+  <h3>执行依赖链</h3>
+  <div class="dependency-flow">
+S-recall-base (5基线×5seed=25runs, ~20h)
+    ↓
+S-recall-main (TI-LightGCN 5seed, ~4h)  ──→  S-recall-ablation (3变体×3seed=9runs, ~6h)
+    ↓                                           ↓
+S-recall-sens (λ/L/d/μ, ~12h)              S-recall-cold (分层评估, CPU 0.5天)
+    ↓
+S-recall-cross (TH/OP/AJ, ~14h)
+    ↓
+S-recall-newbase (XSimGCL+RLMRec, ~8h)  ← 与 S-recall-main 并行
+  </div>
+
+  <h3>Phase 1 任务清单</h3>
+  <div class="task-grid">
+    <div class="task-card recall">
+      <span class="task-id">S-recall-base</span>
+      <div class="task-name">召回基线实验</div>
+      <div class="task-desc">BPR-MF / NGCF / LightGCN / SGL / SimGCL，5基线×5seed=25 runs</div>
+      <div class="task-meta"><span class="chip todo">待执行</span><span class="chip gpu">GPU ~20h</span><span class="chip">2天</span></div>
+      <div class="paper-landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row"><b>表3-6</b> 3.5.2 召回主结果 → 前5行基线</div>
+        <div class="l-row"><b>表3-15</b> 3.5.8 训练效率 → LightGCN/SGL/SimGCL行</div>
+        <div class="l-row"><b>图3-8/3-9</b> 数据提供（绘制归T-ch3）</div>
+        <div class="l-row">目录：<code>results/ch3_recall/baselines/{model}/seed{0-4}/</code></div>
+      </div>
+    </div>
+    <div class="task-card recall">
+      <span class="task-id">S-recall-main</span>
+      <div class="task-name">TI-LightGCN 主实验</div>
+      <div class="task-desc">实现边权函数 w(u,i)=α_r×exp(-λΔt/T)，5seed主实验</div>
+      <div class="task-meta"><span class="chip wait">等待</span><span class="chip gpu">GPU ~4h</span><span class="chip">2天</span></div>
+      <div class="paper-landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row"><b>表3-6</b> 最后一行 TI-LightGCN + 相对提升行</div>
+        <div class="l-row"><b>表3-1/3-2</b> α_r权重 / 复杂度对比</div>
+        <div class="l-row"><b>表3-15</b> TI-LightGCN行（参数量4.9M）</div>
+        <div class="l-row">目录：<code>results/ch3_recall/ti_lightgcn/seed{0-4}/</code>（含per_user.parquet）</div>
+      </div>
+    </div>
+    <div class="task-card recall">
+      <span class="task-id">S-recall-ablation</span>
+      <div class="task-name">消融实验</div>
+      <div class="task-desc">3变体×3seed=9runs：移除反馈强度/移除时间衰减/移除长尾正则(μ=0)</div>
+      <div class="task-meta"><span class="chip wait">等待</span><span class="chip gpu">GPU ~6h</span><span class="chip">1天</span></div>
+      <div class="paper-landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row"><b>表3-8</b> 3.5.3 组件消融（5行）</div>
+        <div class="l-row">目录：<code>results/ch3_recall/ablation/{variant}/seed{0-2}/</code></div>
+      </div>
+    </div>
+    <div class="task-card recall">
+      <span class="task-id">S-recall-sens</span>
+      <div class="task-name">超参数敏感性</div>
+      <div class="task-desc">扫描 λ/L/d/μ（对齐1123补充μ行），产出表3-10 + 图3-10</div>
+      <div class="task-meta"><span class="chip wait">等待</span><span class="chip gpu">GPU ~14h</span><span class="chip">1.5天</span></div>
+      <div class="paper-landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row"><b>表3-10</b> 3.5.5 超参敏感性（λ/L/d/μ 四行，α_5留"本文设定"一行）</div>
+        <div class="l-row"><b>图3-10</b> 敏感性折线图（4子图）</div>
+      </div>
+    </div>
+    <div class="task-card recall">
+      <span class="task-id">S-recall-cross</span>
+      <div class="task-name">跨域泛化</div>
+      <div class="task-desc">TH/OP/AJ 三数据集，LightGCN+SimGCL+TI-LightGCN，3seed</div>
+      <div class="task-meta"><span class="chip wait">等待</span><span class="chip gpu">GPU ~14h</span><span class="chip">1.5天</span></div>
+      <div class="paper-landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row"><b>表3-14</b> 3.5.7 跨域泛化（含AJ列，4数据集）</div>
+        <div class="l-row">AJ多行为验证：原生四类行为折算为统一边权重</div>
+      </div>
+    </div>
+    <div class="task-card recall">
+      <span class="task-id">S-recall-cold</span>
+      <div class="task-name">冷启动分层</div>
+      <div class="task-desc">四层分层（0-4/5-9/10-29/≥30），复用eval/strata.py</div>
+      <div class="task-meta"><span class="chip wait">等待</span><span class="chip cpu">CPU 0.5天</span></div>
+      <div class="paper-landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row"><b>表3-11</b> 分层定义 <b>表3-12</b> 模型分层 <b>图3-11</b> 分层增益柱图</div>
+        <div class="l-row">守恒校验：Σ(nᵢ·metricᵢ)/Σnᵢ = 全体用户值</div>
+      </div>
+    </div>
+    <div class="task-card recall new">
+      <span class="task-id">S-recall-newbase</span>
+      <div class="task-name">近三年强基线 🆕</div>
+      <div class="task-desc">从 deferred 拉入。建议 XSimGCL(TKDE 2023) + RLMRec(WWW 2024)，各3seed</div>
+      <div class="task-meta"><span class="chip todo">待执行</span><span class="chip gpu">GPU ~8h</span><span class="chip">1天</span><span class="chip new">1123新增要求</span></div>
+      <div class="paper-landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row"><b>表3-5</b> 基线汇总新增行 <b>表3-6</b> 新增2行</div>
+        <div class="l-row">回应整改意见"至少两个近三年强基线"</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== Phase 2: 排序实验 ======== -->
+<section class="phase-section">
+  <div class="phase-header">
+    <div>
+      <div class="phase-title">Phase 2 · 第四章排序实验</div>
+      <div class="phase-meta">W3–W4（12/04 – 12/17）· GPU + API</div>
+    </div>
+  </div>
+
+  <h3>执行依赖链</h3>
+  <div class="dependency-flow">
+S-recall-main (产出 TI-LightGCN 嵌入 + Top-100候选集)
+    ↓
+S-rank-base (DIN 5seed, ~5h, 候选集固定Top-100)
+    ↓
+S-rank-main (Temporal-DIN 实现, ~8h)
+  ├── 时间偏置注意力（γ 由图3-3确定）
+  ├── 短期通道 = 最近N条（N∈{3,5,10}敏感性）
+  ├── 长期通道 = User Memory（256维 or 384维→投影）
+  └── 门控融合（sigmoid gate）
+    ↓
+S-rank-distill (LLM蒸馏, 升级版)
+  ├── User Memory 生成（Qwen API, ~2h）
+  ├── 教师信号生成（是/否 logprobs, ~4h）
+  ├── 联合训练（α=0.7, β=0.3, ~3h）
+  └── 表4-6 教师质量评估（AUC/Brier/校准曲线）
+  </div>
+
+  <h3>Phase 2 任务清单</h3>
+  <div class="task-grid">
+    <div class="task-card rank">
+      <span class="task-id">S-rank-base</span>
+      <div class="task-name">排序基线（DIN）</div>
+      <div class="task-desc">RecBole DIN，5seed，候选集固定 TI-LightGCN Top-100</div>
+      <div class="task-meta"><span class="chip wait">等待</span><span class="chip gpu">GPU ~5h</span><span class="chip">1天</span></div>
+      <div class="paper-landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row"><b>表4-2</b> 4.5.2 DIN行 <b>表4-1</b> 基线汇总</div>
+        <div class="l-row"><b>图4-3</b> DIN训练曲线</div>
+      </div>
+    </div>
+    <div class="task-card rank">
+      <span class="task-id">S-rank-main</span>
+      <div class="task-name">Temporal-DIN 实现</div>
+      <div class="task-desc">时间偏置注意力 + 双通道(最近N条 + User Memory) + 门控融合</div>
+      <div class="task-meta"><span class="chip wait">等待</span><span class="chip gpu">GPU ~8h</span><span class="chip">3天</span></div>
+      <div class="paper-landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row"><b>表4-2</b> Temporal-DIN(无蒸馏)行 + 相对提升行</div>
+        <div class="l-row"><b>表4-5</b> 消融3行：移除时间衰减/移除User Memory/移除门控</div>
+        <div class="l-row"><b>图4-1</b> 模型结构 <b>图4-5</b> 门控值分布</div>
+        <div class="l-row" style="color:#b45309">⚠ 短期通道改为"最近N条"，N敏感性∈{3,5,10}（1123新要求）</div>
+        <div class="l-row" style="color:#b45309">⚠ γ 取值需依据图3-3交互间隔复核（现0.3/天可能偏大）</div>
+      </div>
+    </div>
+    <div class="task-card rank new">
+      <span class="task-id">S-rank-distill</span>
+      <div class="task-name">LLM 蒸馏（升级版）</div>
+      <div class="task-desc">User Memory 生成 + 是/否概率教师信号(logprobs) + 联合训练(α=0.7,β=0.3) + 教师质量评估</div>
+      <div class="task-meta"><span class="chip wait">等待</span><span class="chip api">API + GPU</span><span class="chip">2天</span><span class="chip new">升级</span></div>
+      <div class="paper-landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row"><b>表4-2</b> Temporal-DIN+蒸馏(完整版)行 ← 主结果</div>
+        <div class="l-row"><b>表4-5</b> 消融2行：移除蒸馏/移除蒸馏+User Memory</div>
+        <div class="l-row"><b>表4-6</b> 教师质量（AUC/Brier/校准曲线）← 从deferred拉入</div>
+        <div class="l-row"><b>4.4.2节</b> 教师信号生成（是/否概率，须logprobs支持）</div>
+        <div class="l-row"><b>附录A</b> Prompt原文（User Memory + 教师信号）</div>
+        <div class="l-row" style="color:#dc2626">⚠ 升级项：从"简化蒸馏"→保留软标签+联合训练，砍τ/β敏感性</div>
+        <div class="l-row" style="color:#b45309">⚠ 前置确认：模型服务能否返回词元级logprobs</div>
+      </div>
+    </div>
+    <div class="task-card rank new">
+      <span class="task-id">S-rank-newbase</span>
+      <div class="task-name">排序近三年基线 🆕</div>
+      <div class="task-desc">候选：TiSASRec(时间感知) + KAR/DLLM2Rec(大模型增强)。按代码可得性选1-2个</div>
+      <div class="task-meta"><span class="chip todo">待评估</span><span class="chip gpu">GPU</span><span class="chip new">1123新增要求</span></div>
+      <div class="paper-landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row"><b>表4-1</b> 基线汇总新增行 <b>表4-2</b> 新增行</div>
+        <div class="l-row">回应整改意见"排序侧也缺近三年基线"</div>
+      </div>
+    </div>
+    <div class="task-card rank">
+      <span class="task-id">S-rank-signif</span>
+      <div class="task-name">排序显著性检验</div>
+      <div class="task-desc">复用 eval/paired_test.py，5seed配对t检验 + Wilcoxon + Cohen's d</div>
+      <div class="task-meta"><span class="chip wait">等待</span><span class="chip cpu">CPU 0.5h</span></div>
+      <div class="paper-landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row">4.5.2节 Temporal-DIN vs DIN 显著性</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== Phase 3: 系统+回填 ======== -->
+<section class="phase-section">
+  <div class="phase-header">
+    <div>
+      <div class="phase-title">Phase 3 · 系统实现 + 论文回填</div>
+      <div class="phase-meta">W4–W5（12/11 – 12/22）</div>
+    </div>
+  </div>
+
+  <div class="task-grid">
+    <div class="task-card infra">
+      <span class="task-id">E-serve</span>
+      <div class="task-name">原型服务实现</div>
+      <div class="task-desc">FastAPI 服务，召回+排序+重排管线（改造 backend/ 或新建 serving/，择一）</div>
+      <div class="task-meta"><span class="chip wait">等待</span><span class="chip cpu">本机 3天</span></div>
+    </div>
+    <div class="task-card infra">
+      <span class="task-id">S-system-test</span>
+      <div class="task-name">系统评测</div>
+      <div class="task-desc">延迟测试(50并发60s轻量压测) + 一致性校验 + 功能用例TC-01~TC-08</div>
+      <div class="task-meta"><span class="chip wait">等待</span><span class="chip cpu">本机 1天</span></div>
+    </div>
+    <div class="task-card infra">
+      <span class="task-id">T-ch3</span>
+      <div class="task-name">第三章数据回填</div>
+      <div class="task-desc">回填表3-6/3-7/3-8/3-10/3-12/3-14/3-15 + 图3-8/3-9/3-10/3-11重绘</div>
+      <div class="task-meta"><span class="chip wait">等待</span><span class="chip cpu">写作 1天</span></div>
+    </div>
+    <div class="task-card infra">
+      <span class="task-id">T-ch4</span>
+      <div class="task-name">第四章数据回填</div>
+      <div class="task-desc">回填表4-1/4-2/4-5/4-6 + 图4-3/4-5/4-6</div>
+      <div class="task-meta"><span class="chip wait">等待</span><span class="chip cpu">写作 0.5天</span></div>
+    </div>
+    <div class="task-card infra">
+      <span class="task-id">T-ch5</span>
+      <div class="task-name">第五章数据回填</div>
+      <div class="task-desc">回填表5-9/5-10/5-11 + 图5-6</div>
+      <div class="task-meta"><span class="chip wait">等待</span><span class="chip cpu">写作 0.5天</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== 数据准备详细方案 ======== -->
+<section class="phase-section">
+  <div class="phase-header">
+    <div>
+      <div class="phase-title">📦 数据准备详细方案</div>
+      <div class="phase-meta">基于当前 data/processed/ 冻结数据</div>
+    </div>
+  </div>
+
+  <h3>已完成的数据准备</h3>
+  <table class="data-table">
+    <thead><tr><th>数据产物</th><th>路径</th><th>状态</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>冻结数据（4数据集）</td><td><code>data/processed/{IS,TH,OP,AJ}/</code></td><td><span class="chip done">完成</span></td><td>5-core + LOO 划分，CHECKSUMS.sha256 校验</td></tr>
+      <tr><td>RecBole 适配格式</td><td><code>scripts/export_recbole.py</code></td><td><span class="chip done">完成</span></td><td>冻结切分 → RecBole atom/ml 格式</td></tr>
+      <tr><td>数据画像 JSON</td><td><code>results/profile/{IS,TH,OP}.json</code></td><td><span class="chip done">完成</span></td><td>γ₀/λ₀/交互间隔/交互年龄等统计</td></tr>
+      <tr><td>画像图（3/5）</td><td><code>figures/profile/IS_*.svg</code></td><td><span class="chip done">3张完成</span></td><td>评分分布/用户交互数/交互间隔；长尾+边权缺</td></tr>
+    </tbody>
+  </table>
+
+  <h3>待完成的数据准备</h3>
+  <table class="data-table">
+    <thead><tr><th>任务</th><th>具体操作</th><th>预估</th><th>阻塞</th></tr></thead>
+    <tbody>
+      <tr><td><b>图3-4 商品长尾分布</b></td><td>新写脚本：按交互次数降序的累计占比曲线（训练集口径），标出前20%商品覆盖57.2%交互、交互次数&lt;10的商品占65.8%</td><td>0.25天</td><td>无</td></tr>
+      <tr><td><b>图3-5 边权重分布</b></td><td>新写脚本：按式(3-1)计算 w(u,i)=α_r×exp(-λΔt/T)，对比 λ=0.001 vs 0.1，含 α_r 映射</td><td>0.25天</td><td>无</td></tr>
+      <tr><td><b>短期通道 N 值确定</b></td><td>由图3-3交互间隔分布，确定 N∈{3,5,10} 的候选范围</td><td>0.1天</td><td>S0-b已完成</td></tr>
+      <tr><td><b>γ 值复核</b></td><td>依据图3-3中位间隔22.1天，复核 γ=0.3/天 是否合理（现意味着相隔10天权重差 e^(-3)≈0.05）</td><td>0.1天</td><td>S0-b已完成</td></tr>
+      <tr><td><b>Top-100候选集导出</b></td><td>S-recall-main 完成后，导出 TI-LightGCN 召回 Top-100 → <code>results/ch4_rank/candidates/</code></td><td>0.1天</td><td>S-recall-main</td></tr>
+      <tr><td><b>logprobs 接口确认</b></td><td>确认 Qwen-7B-Chat 或替代模型能否返回"是/否"两词元的对数概率</td><td>0.5天</td><td>API Key</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ======== 实验开展方案 ======== -->
+<section class="phase-section">
+  <div class="phase-header">
+    <div>
+      <div class="phase-title">🧪 实验开展详细方案</div>
+      <div class="phase-meta">按执行顺序排列</div>
+    </div>
+  </div>
+
+  <h3>Step 1：召回基线（S-recall-base）</h3>
+  <table class="data-table">
+    <thead><tr><th>项</th><th>内容</th></tr></thead>
+    <tbody>
+      <tr><td>模型</td><td>BPR-MF / NGCF / LightGCN / SGL / SimGCL（RecBole 实现）</td></tr>
+      <tr><td>种子</td><td>5 seed（0-4），共 25 runs</td></tr>
+      <tr><td>评估</td><td>全排序 LOO，Recall@{5,10,20}、NDCG@{5,10,20}</td></tr>
+      <tr><td>预计耗时</td><td>~20 小时（RTX 4090）</td></tr>
+      <tr><td>产出路径</td><td><code>results/ch3_recall/baselines/{model}/seed{n}/{metrics.json,per_user.parquet,train_log.csv}</code></td></tr>
+      <tr><td>执行方式</td><td><code>experiments/queue.txt</code> 追加 → <code>queue.sh</code> tmux 后台</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Step 2：TI-LightGCN 主实验（S-recall-main）</h3>
+  <table class="data-table">
+    <thead><tr><th>项</th><th>内容</th></tr></thead>
+    <tbody>
+      <tr><td>核心实现</td><td>边权函数 w(u,i)=α_r×exp(-λ(T_now-t)/T)，α_r∈{0.1,1.0,1.5,3.0}，λ=0.001，T=86400</td></tr>
+      <tr><td>训练</td><td>BPR损失 + 长尾正则(μ=0.01)，d=64，L=3，lr=0.001，B=2048，早停5轮</td></tr>
+      <tr><td>种子</td><td>5 seed（0-4），共 5 runs</td></tr>
+      <tr><td>预计耗时</td><td>~4 小时</td></tr>
+      <tr><td>产出路径</td><td><code>results/ch3_recall/ti_lightgcn/seed{n}/</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Step 3：消融 + 敏感性（可并行）</h3>
+  <table class="data-table">
+    <thead><tr><th>实验</th><th>变量</th><th>runs</th><th>耗时</th></tr></thead>
+    <tbody>
+      <tr><td>消融</td><td>完整/无反馈强度/无时间衰减/无长尾正则(μ=0)/两者均移除(=LightGCN)</td><td>4变体×3seed=12</td><td>~6h</td></tr>
+      <tr><td>λ敏感性</td><td>0.0001/0.0005/0.001/0.005/0.01</td><td>5值×3seed=15</td><td rowspan="4">~14h（合计）</td></tr>
+      <tr><td>L敏感性</td><td>1/2/3/4</td><td>4值×3seed=12</td></tr>
+      <tr><td>d敏感性</td><td>32/64/128/256</td><td>4值×3seed=12</td></tr>
+      <tr><td>μ敏感性 🆕</td><td>0/0.001/0.01/0.1</td><td>4值×3seed=12</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Step 4：跨域 + 冷启动 + 新基线（可并行）</h3>
+  <table class="data-table">
+    <thead><tr><th>实验</th><th>数据集</th><th>模型</th><th>耗时</th></tr></thead>
+    <tbody>
+      <tr><td>跨域</td><td>TH/OP/AJ</td><td>LightGCN+SimGCL+TI-LightGCN, 3seed</td><td>~14h</td></tr>
+      <tr><td>冷启动</td><td>IS</td><td>评估侧（CPU），四层分层</td><td>0.5天</td></tr>
+      <tr><td>新基线 🆕</td><td>IS</td><td>XSimGCL + RLMRec, 3seed</td><td>~8h</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Step 5：排序实验</h3>
+  <table class="data-table">
+    <thead><tr><th>实验</th><th>核心设置</th><th>耗时</th></tr></thead>
+    <tbody>
+      <tr><td>DIN 基线</td><td>RecBole DIN，候选集固定 Top-100，5seed</td><td>~5h</td></tr>
+      <tr><td>Temporal-DIN</td><td>时间偏置注意力(γ待定) + 最近N条(敏感性{3,5,10}) + User Memory + 门控</td><td>~8h</td></tr>
+      <tr><td>LLM蒸馏（升级版）</td><td>User Memory生成 + 是/否logprobs教师信号 + 联合训练(α=0.7,β=0.3) + 教师质量</td><td>~10h（含API）</td></tr>
+      <tr><td>排序消融</td><td>6行消融（由 S-rank-main 3行 + S-rank-distill 2行 + DIN基准行组成）</td><td>含在上述时间中</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ======== GPU 时间估算 ======== -->
+<section class="phase-section">
+  <div class="phase-header">
+    <div>
+      <div class="phase-title">⏱ GPU 时间总估算</div>
+      <div class="phase-meta">RTX 4090 24GB · AutoDL</div>
+    </div>
+  </div>
+
+  <table class="data-table">
+    <thead><tr><th>阶段</th><th>实验</th><th>GPU小时</th><th>日历天</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="5">Phase 1 召回</td><td>S-recall-base (25 runs)</td><td>~20h</td><td>2天</td></tr>
+      <tr><td>S-recall-main (5 runs)</td><td>~4h</td><td>0.5天</td></tr>
+      <tr><td>S-recall-ablation (12 runs)</td><td>~6h</td><td>1天</td></tr>
+      <tr><td>S-recall-sens (~51 runs)</td><td>~14h</td><td>1.5天</td></tr>
+      <tr><td>S-recall-cross + newbase (~40 runs)</td><td>~22h</td><td>2.5天</td></tr>
+      <tr><td rowspan="3">Phase 2 排序</td><td>S-rank-base (5 runs)</td><td>~5h</td><td>1天</td></tr>
+      <tr><td>S-rank-main (5 runs + 消融)</td><td>~12h</td><td>2天</td></tr>
+      <tr><td>S-rank-distill (含API)</td><td>~10h</td><td>2天</td></tr>
+      <tr style="font-weight:700;background:rgba(37,99,235,0.05)"><td colspan="2">合计</td><td>~93h GPU</td><td>~12.5天（串行）/ ~8天（部分并行）</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:12.5px;color:var(--muted);margin-top:6px">
+    注：AJ 数据集 30.9M 交互，跨域实验中耗时最长（估计 ~8h/模型），若 AutoDL 余额紧张可最后跑或降级为3seed→1seed。
+  </p>
+</section>
+
+<!-- ======== 推迟任务（保持） ======== -->
+<section class="phase-section" style="opacity:0.85;border:1px dashed var(--rule)">
+  <div class="phase-header">
+    <div>
+      <div class="phase-title">⏭ 仍保持推迟的任务</div>
+      <div class="phase-meta">非毕业必需，论文对应小节已降级</div>
+    </div>
+  </div>
+  <div class="task-grid">
+    <div class="task-card infra">
+      <div class="task-name">S-recall-variants</div>
+      <div class="task-desc">表3-9 边权变体 → 3.5.4整节已删除</div>
+    </div>
+    <div class="task-card infra">
+      <div class="task-name">S-rank-dien</div>
+      <div class="task-desc">DIEN 基线 → 表4-1/4-2 删行</div>
+    </div>
+    <div class="task-card infra">
+      <div class="task-name">S-rank-e2e</div>
+      <div class="task-desc">端到端实验（表4-3/4-4）→ 已显式降级</div>
+    </div>
+    <div class="task-card infra">
+      <div class="task-name">表4-7 α/β敏感性</div>
+      <div class="task-desc">仅留"本文设定值"一行，不扫</div>
+    </div>
+    <div class="task-card infra">
+      <div class="task-name">S-explain</div>
+      <div class="task-desc">解释质量评估（表5-12/5-13）→ 5.5.5已删除</div>
+    </div>
+    <div class="task-card infra">
+      <div class="task-name">E-frontend</div>
+      <div class="task-desc">前端截图（图5-7~5-10）→ 已降级</div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== 风险项 ======== -->
+<section class="adjustment-box">
+  <h3>⚠️ 关键风险与前置确认</h3>
+  <ul>
+    <li><b>风险1：logprobs 接口不可用。</b>若 Qwen-7B-Chat API 不支持词元级 logprobs，备选方案：① 改用 DashScope 的 logprobs 参数 ② 本地部署 Qwen-7B（AutoDL 24GB可跑）③ 退回 V8 的"直接生成浮点分数"方案（论文4.5.6节作为对照保留）。</li>
+    <li><b>风险2：γ 值需大幅调整。</b>现 γ=0.3/天在 IS 中位间隔22.1天的数据上意味着相隔10天权重差约20倍（e^(-3)），可能导致短期通道几乎只有最近1条行为有效。若复核后发现需改为 γ=0.03（半衰期23天），需重跑 S-rank-main 全部实验。</li>
+    <li><b>风险3：近三年基线代码不可得。</b>XSimGCL/LightGCL/RLMRec 若有官方仓库可直接跑；若无可复现代码，退回到"在表3-6脚注说明基线选取理由"并在正文标注。</li>
+    <li><b>风险4：AJ 跨域超时。</b>AJ 30.9M 交互在 RTX 4090 上单 run 可能超8小时。降级方案：只跑 LightGCN + TI-LightGCN（2模型×3seed），删 SimGCL 行。</li>
+  </ul>
+</section>
+
+<footer>
+  <p>基于《整改V9_1123.docx》第三/四章实验清单 × 《V9执行计划_简化版.html》对齐产出</p>
+  <p>生成时间：2026-11-26 · 本文件为对齐分析产物，不修改原简化版计划与 cards/plan</p>
+</footer>
+
+</div>
+</body>
+</html>

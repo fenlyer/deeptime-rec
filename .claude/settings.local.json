@@ -16,7 +16,11 @@
       "Bash(git rm *)",
       "Bash(git commit *)",
       "Bash(git push *)",
-      "Bash(pip install *)"
+      "Bash(pip install *)",
+      "Bash(source:*)",
+      "Bash(conda activate:*)",
+      "Bash(pip install:*)",
+      "Bash(python:*)"
     ]
   }
 }

@@ -5,7 +5,7 @@
 
 ## 进行中
 
-- S-recall-base（正式 25 run）：代码与冒烟已完成，等 AutoDL GPU 执行 `bash experiments/queue.sh`
+- （无）G1 已收口，等待进入 W2
 
 ## 已完成（卡片 ID｜commit｜日期）
 
@@ -24,18 +24,11 @@
 - E0-a / G1-7｜docs/prototype_inventory.md（G1 条件 7 产物；列出 backend/ 现状与论文第五章差距）｜4c12842｜2026-11-20
 - V9 复核与论文待手动修改清单｜docs/revision/、decisions.md 末条：3.5.4/3.5.9/5.5.5 节须删、3.6 节改写、5.5 节总览改写、5.2.2 引用改写、1.3.3 创新点改写、5.6 截图图注标注「演示数据」｜4c12842｜2026-11-20
 - S-recall-base（代码部分）｜runner 与配置完成、CPU 冒烟通过：experiments/run_recall_baseline.py、configs/recall/{bprmf,ngcf,lightgcn,sgl,simgcl}.yaml、experiments/make_baseline_summary.py、tests/test_recall_baseline_runner.py（29 个测试）；queue.txt 已挂 25 run + summary；autodl/S-recall-base.md 操作步骤；修复 common/run.py 的 manifest extra 覆盖 bug（+测试）。冒烟 BPR/seed0/2epoch 跑通，50985 用户全覆盖，604s→78s（按批算 + eval_batch_size 调整）｜2026-11-27
-- S-recall-base（正式 25 run）｜**未完成，阻塞于 AutoDL**：需在 GPU 环境执行 `bash experiments/queue.sh`｜—｜—
+- S-recall-base（正式 25 run）｜25 个 run 全部完成（5 模型 × 5 seed），summary.csv 已生成；G1-6 解除｜c9026d6｜2026-11-27
 
 ## 阻塞与待决定
 
-- **AutoDL 余额待释放 → 阻塞 G1-6（唯一未过条件）**。G1 其余 6 条已可机械验证通过（checksums / pytest / recbole 环境 / numbers.json / 画像图 6 张 / prototype_inventory）。
-- **S-recall-base 代码已就绪，等 GPU 执行**（2026-11-27 复核）：runner、5 个配置、summary 脚本、29 个测试、AutoDL 操作步骤全部完成；本机 CPU 冒烟（BPR/seed0/2 epoch）跑通并修掉 4 个 bug。剩下的纯算力工作：
-  ```bash
-  # AutoDL rec 环境
-  git pull && conda activate rec
-  bash experiments/queue.sh        # 25 run + summary，约 20 小时
-  ```
-  完成后 `results/ch3_recall/baselines/*/seed0/metrics.json` 存在，G1-6 即过。详见 autodl/S-recall-base.md。
+- （无）AutoDL 侧 S-recall-base 已完成，G1 七条全部可验证。
 
 ## 接下来（G1 收口）
 
@@ -48,7 +41,7 @@
 | 3 | RecBole 环境可复现（`recbole.yml` + `results/_smoke/`） | ✅ |
 | 4 | 数字管线可运行（`make tables` 产 `numbers.json`） | ✅ |
 | 5 | 数据画像图就绪（`figures/profile/IS_*.svg` ≥5） | ✅ 6 张 |
-| 6 | 召回基线至少 1 个（`results/ch3_recall/baselines/*/seed0/metrics.json`） | ❌ **目录不存在** |
+| 6 | 召回基线至少 1 个（`results/ch3_recall/baselines/*/seed0/metrics.json`） | ✅ 25 个 run |
 | 7 | 原型现状可查（`docs/prototype_inventory.md`） | ✅ |
 
-下一步行动：AutoDL 余额到位 → `experiments/queue.txt` 挂 S-recall-base → G1 过。
+下一步行动：G1 七条全部通过（`make gate W=1` 验证），进入 W2。

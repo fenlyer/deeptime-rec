@@ -742,5 +742,845 @@
   "profile.TH.user_all_same_rating_ratio": {
     "source": "profile/TH.json",
     "value": 0.30684044890445933
+  },
+  "recall.baselines.bprmf.NDCG@10.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/bprmf/seed0/metrics.json",
+    "value": 0.0012724649675321235
+  },
+  "recall.baselines.bprmf.NDCG@10.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/bprmf/seed0/metrics.json",
+    "value": [
+      0.0016124372291174726,
+      0.001361764551312727,
+      0.0012863361704256338,
+      0.0010097802639353521,
+      0.0010920066228694322
+    ]
+  },
+  "recall.baselines.bprmf.NDCG@10.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/bprmf/seed0/metrics.json",
+    "value": 0.00023733754035270172
+  },
+  "recall.baselines.bprmf.NDCG@20.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/bprmf/seed0/metrics.json",
+    "value": 0.0016010681646354355
+  },
+  "recall.baselines.bprmf.NDCG@20.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/bprmf/seed0/metrics.json",
+    "value": [
+      0.001975218498328597,
+      0.0016899958698767307,
+      0.0015724348823002868,
+      0.001327220533233779,
+      0.001440471039437784
+    ]
+  },
+  "recall.baselines.bprmf.NDCG@20.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/bprmf/seed0/metrics.json",
+    "value": 0.00024975009292566784
+  },
+  "recall.baselines.bprmf.Recall@10.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/bprmf/seed0/metrics.json",
+    "value": 0.002432087868981073
+  },
+  "recall.baselines.bprmf.Recall@10.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/bprmf/seed0/metrics.json",
+    "value": [
+      0.002961655388839855,
+      0.0025497695400608024,
+      0.0024909287045209376,
+      0.002059429243895263,
+      0.0020986564675885065
+    ]
+  },
+  "recall.baselines.bprmf.Recall@10.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/bprmf/seed0/metrics.json",
+    "value": 0.00037006888818501933
+  },
+  "recall.baselines.bprmf.Recall@20.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/bprmf/seed0/metrics.json",
+    "value": 0.0037422771403353926
+  },
+  "recall.baselines.bprmf.Recall@20.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/bprmf/seed0/metrics.json",
+    "value": [
+      0.00441306266548985,
+      0.0038638815337844463,
+      0.003628518191624988,
+      0.0033343140139256646,
+      0.0034716092968520153
+    ]
+  },
+  "recall.baselines.bprmf.Recall@20.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/bprmf/seed0/metrics.json",
+    "value": 0.0004234905375803842
+  },
+  "recall.baselines.bprmf.recbole_ndcg@10.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/bprmf/seed0/metrics.json",
+    "value": 0.00128
+  },
+  "recall.baselines.bprmf.recbole_ndcg@10.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/bprmf/seed0/metrics.json",
+    "value": [
+      0.0016,
+      0.0014,
+      0.0013,
+      0.001,
+      0.0011
+    ]
+  },
+  "recall.baselines.bprmf.recbole_ndcg@10.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/bprmf/seed0/metrics.json",
+    "value": 0.00023874672772626645
+  },
+  "recall.baselines.bprmf.recbole_ndcg@20.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/bprmf/seed0/metrics.json",
+    "value": 0.0016
+  },
+  "recall.baselines.bprmf.recbole_ndcg@20.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/bprmf/seed0/metrics.json",
+    "value": [
+      0.002,
+      0.0017,
+      0.0016,
+      0.0013,
+      0.0014
+    ]
+  },
+  "recall.baselines.bprmf.recbole_ndcg@20.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/bprmf/seed0/metrics.json",
+    "value": 0.0002738612787525831
+  },
+  "recall.baselines.bprmf.recbole_recall@10.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/bprmf/seed0/metrics.json",
+    "value": 0.00244
+  },
+  "recall.baselines.bprmf.recbole_recall@10.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/bprmf/seed0/metrics.json",
+    "value": [
+      0.003,
+      0.0025,
+      0.0025,
+      0.0021,
+      0.0021
+    ]
+  },
+  "recall.baselines.bprmf.recbole_recall@10.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/bprmf/seed0/metrics.json",
+    "value": 0.0003714835124201343
+  },
+  "recall.baselines.bprmf.recbole_recall@20.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/bprmf/seed0/metrics.json",
+    "value": 0.0037400000000000003
+  },
+  "recall.baselines.bprmf.recbole_recall@20.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/bprmf/seed0/metrics.json",
+    "value": [
+      0.0044,
+      0.0039,
+      0.0036,
+      0.0033,
+      0.0035
+    ]
+  },
+  "recall.baselines.bprmf.recbole_recall@20.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/bprmf/seed0/metrics.json",
+    "value": 0.0004277849927241488
+  },
+  "recall.baselines.lightgcn.NDCG@10.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
+    "value": 0.003275083823617945
+  },
+  "recall.baselines.lightgcn.NDCG@10.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
+    "value": [
+      0.0029078803786206768,
+      0.003843274723279684,
+      0.0031664180660264897,
+      0.003347510771182043,
+      0.003110335178980832
+    ]
+  },
+  "recall.baselines.lightgcn.NDCG@10.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
+    "value": 0.0003542157866302761
+  },
+  "recall.baselines.lightgcn.NDCG@20.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
+    "value": 0.0038967316322457805
+  },
+  "recall.baselines.lightgcn.NDCG@20.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
+    "value": [
+      0.003671459763922408,
+      0.004416518471106345,
+      0.003793250194126955,
+      0.003963035546045631,
+      0.003639394186027563
+    ]
+  },
+  "recall.baselines.lightgcn.NDCG@20.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
+    "value": 0.00031711707252881933
+  },
+  "recall.baselines.lightgcn.Recall@10.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
+    "value": 0.00586054721977052
+  },
+  "recall.baselines.lightgcn.Recall@10.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
+    "value": [
+      0.00592331077767971,
+      0.006374423850152006,
+      0.005727174659213494,
+      0.006001765225066196,
+      0.0052760615867411985
+    ]
+  },
+  "recall.baselines.lightgcn.Recall@10.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
+    "value": 0.00040229425660844454
+  },
+  "recall.baselines.lightgcn.Recall@20.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
+    "value": 0.008324016867706188
+  },
+  "recall.baselines.lightgcn.Recall@20.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
+    "value": [
+      0.008943807002059429,
+      0.008649602824360106,
+      0.008237716975581053,
+      0.008414239482200648,
+      0.0073747180543297045
+    ]
+  },
+  "recall.baselines.lightgcn.Recall@20.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
+    "value": 0.0005930645104954605
+  },
+  "recall.baselines.lightgcn.recbole_ndcg@10.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
+    "value": 0.00326
+  },
+  "recall.baselines.lightgcn.recbole_ndcg@10.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
+    "value": [
+      0.0029,
+      0.0038,
+      0.0032,
+      0.0033,
+      0.0031
+    ]
+  },
+  "recall.baselines.lightgcn.recbole_ndcg@10.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
+    "value": 0.0003361547262794323
+  },
+  "recall.baselines.lightgcn.recbole_ndcg@20.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
+    "value": 0.0039
+  },
+  "recall.baselines.lightgcn.recbole_ndcg@20.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
+    "value": [
+      0.0037,
+      0.0044,
+      0.0038,
+      0.004,
+      0.0036
+    ]
+  },
+  "recall.baselines.lightgcn.recbole_ndcg@20.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
+    "value": 0.00031622776601683805
+  },
+  "recall.baselines.lightgcn.recbole_recall@10.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
+    "value": 0.00586
+  },
+  "recall.baselines.lightgcn.recbole_recall@10.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
+    "value": [
+      0.0059,
+      0.0064,
+      0.0057,
+      0.006,
+      0.0053
+    ]
+  },
+  "recall.baselines.lightgcn.recbole_recall@10.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
+    "value": 0.0004037325847637271
+  },
+  "recall.baselines.lightgcn.recbole_recall@20.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
+    "value": 0.0083
+  },
+  "recall.baselines.lightgcn.recbole_recall@20.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
+    "value": [
+      0.0089,
+      0.0086,
+      0.0082,
+      0.0084,
+      0.0074
+    ]
+  },
+  "recall.baselines.lightgcn.recbole_recall@20.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
+    "value": 0.0005656854249492378
+  },
+  "recall.baselines.ngcf.NDCG@10.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
+    "value": 0.0035293638276052753
+  },
+  "recall.baselines.ngcf.NDCG@10.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
+    "value": [
+      0.003630688232355964,
+      0.003608532164179901,
+      0.003307878749697468,
+      0.00349998398526465,
+      0.0035997360065283947
+    ]
+  },
+  "recall.baselines.ngcf.NDCG@10.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
+    "value": 0.00013360886848582466
+  },
+  "recall.baselines.ngcf.NDCG@20.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
+    "value": 0.005081585858815638
+  },
+  "recall.baselines.ngcf.NDCG@20.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
+    "value": [
+      0.005085942074745768,
+      0.005161408175339845,
+      0.004824820996641416,
+      0.005061908358606173,
+      0.005273849688744989
+    ]
+  },
+  "recall.baselines.ngcf.NDCG@20.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
+    "value": 0.0001655833306778371
+  },
+  "recall.baselines.ngcf.Recall@10.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
+    "value": 0.007508090614886731
+  },
+  "recall.baselines.ngcf.Recall@10.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
+    "value": [
+      0.007708149455722272,
+      0.0073551044424830835,
+      0.007217809159556733,
+      0.007668922232029028,
+      0.007590467784642542
+    ]
+  },
+  "recall.baselines.ngcf.Recall@10.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
+    "value": 0.0002123349001113951
+  },
+  "recall.baselines.ngcf.Recall@20.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
+    "value": 0.013717760125527115
+  },
+  "recall.baselines.ngcf.Recall@20.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
+    "value": [
+      0.013533392174168874,
+      0.013553005786015494,
+      0.013317642443856036,
+      0.013886437187408061,
+      0.014298323036187114
+    ]
+  },
+  "recall.baselines.ngcf.Recall@20.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
+    "value": 0.00038299312575442606
+  },
+  "recall.baselines.ngcf.recbole_ndcg@10.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
+    "value": 0.00352
+  },
+  "recall.baselines.ngcf.recbole_ndcg@10.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
+    "value": [
+      0.0036,
+      0.0036,
+      0.0033,
+      0.0035,
+      0.0036
+    ]
+  },
+  "recall.baselines.ngcf.recbole_ndcg@10.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
+    "value": 0.00013038404810405293
+  },
+  "recall.baselines.ngcf.recbole_ndcg@20.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
+    "value": 0.0051
+  },
+  "recall.baselines.ngcf.recbole_ndcg@20.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
+    "value": [
+      0.0051,
+      0.0052,
+      0.0048,
+      0.0051,
+      0.0053
+    ]
+  },
+  "recall.baselines.ngcf.recbole_ndcg@20.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
+    "value": 0.0001870828693386972
+  },
+  "recall.baselines.ngcf.recbole_recall@10.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
+    "value": 0.007520000000000001
+  },
+  "recall.baselines.ngcf.recbole_recall@10.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
+    "value": [
+      0.0077,
+      0.0074,
+      0.0072,
+      0.0077,
+      0.0076
+    ]
+  },
+  "recall.baselines.ngcf.recbole_recall@10.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
+    "value": 0.00021679483388678812
+  },
+  "recall.baselines.ngcf.recbole_recall@20.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
+    "value": 0.01372
+  },
+  "recall.baselines.ngcf.recbole_recall@20.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
+    "value": [
+      0.0135,
+      0.0136,
+      0.0133,
+      0.0139,
+      0.0143
+    ]
+  },
+  "recall.baselines.ngcf.recbole_recall@20.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
+    "value": 0.0003898717737923588
+  },
+  "recall.baselines.sgl.NDCG@10.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/sgl/seed0/metrics.json",
+    "value": 0.017683173436944304
+  },
+  "recall.baselines.sgl.NDCG@10.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/sgl/seed0/metrics.json",
+    "value": [
+      0.017504027599500715,
+      0.017620611200639402,
+      0.01775409517778849,
+      0.01755920355275892,
+      0.017977929654033987
+    ]
+  },
+  "recall.baselines.sgl.NDCG@10.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/sgl/seed0/metrics.json",
+    "value": 0.00018926629223607318
+  },
+  "recall.baselines.sgl.NDCG@20.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/sgl/seed0/metrics.json",
+    "value": 0.021767085470281316
+  },
+  "recall.baselines.sgl.NDCG@20.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/sgl/seed0/metrics.json",
+    "value": [
+      0.021600685516615523,
+      0.02180914681136785,
+      0.02170822063563276,
+      0.02161816653608003,
+      0.022099207851710424
+    ]
+  },
+  "recall.baselines.sgl.NDCG@20.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/sgl/seed0/metrics.json",
+    "value": 0.0002033502489314722
+  },
+  "recall.baselines.sgl.Recall@10.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/sgl/seed0/metrics.json",
+    "value": 0.03267627733647151
+  },
+  "recall.baselines.sgl.Recall@10.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/sgl/seed0/metrics.json",
+    "value": [
+      0.032499754829851915,
+      0.03244091399431205,
+      0.03324507208002354,
+      0.03253898205354516,
+      0.03265666372462489
+    ]
+  },
+  "recall.baselines.sgl.Recall@10.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/sgl/seed0/metrics.json",
+    "value": 0.0003276119071980013
+  },
+  "recall.baselines.sgl.Recall@20.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/sgl/seed0/metrics.json",
+    "value": 0.048912425223104836
+  },
+  "recall.baselines.sgl.Recall@20.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/sgl/seed0/metrics.json",
+    "value": [
+      0.04877905266254781,
+      0.04905364322840051,
+      0.048955575169167403,
+      0.04872021182700794,
+      0.04905364322840051
+    ]
+  },
+  "recall.baselines.sgl.Recall@20.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/sgl/seed0/metrics.json",
+    "value": 0.00015530711303190397
+  },
+  "recall.baselines.sgl.recbole_ndcg@10.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/sgl/seed0/metrics.json",
+    "value": 0.0177
+  },
+  "recall.baselines.sgl.recbole_ndcg@10.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/sgl/seed0/metrics.json",
+    "value": [
+      0.0175,
+      0.0176,
+      0.0178,
+      0.0176,
+      0.018
+    ]
+  },
+  "recall.baselines.sgl.recbole_ndcg@10.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/sgl/seed0/metrics.json",
+    "value": 0.0001999999999999988
+  },
+  "recall.baselines.sgl.recbole_ndcg@20.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/sgl/seed0/metrics.json",
+    "value": 0.02176
+  },
+  "recall.baselines.sgl.recbole_ndcg@20.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/sgl/seed0/metrics.json",
+    "value": [
+      0.0216,
+      0.0218,
+      0.0217,
+      0.0216,
+      0.0221
+    ]
+  },
+  "recall.baselines.sgl.recbole_ndcg@20.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/sgl/seed0/metrics.json",
+    "value": 0.00020736441353327737
+  },
+  "recall.baselines.sgl.recbole_recall@10.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/sgl/seed0/metrics.json",
+    "value": 0.03266
+  },
+  "recall.baselines.sgl.recbole_recall@10.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/sgl/seed0/metrics.json",
+    "value": [
+      0.0325,
+      0.0324,
+      0.0332,
+      0.0325,
+      0.0327
+    ]
+  },
+  "recall.baselines.sgl.recbole_recall@10.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/sgl/seed0/metrics.json",
+    "value": 0.00032093613071762446
+  },
+  "recall.baselines.sgl.recbole_recall@20.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/sgl/seed0/metrics.json",
+    "value": 0.04894
+  },
+  "recall.baselines.sgl.recbole_recall@20.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/sgl/seed0/metrics.json",
+    "value": [
+      0.0488,
+      0.0491,
+      0.049,
+      0.0487,
+      0.0491
+    ]
+  },
+  "recall.baselines.sgl.recbole_recall@20.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/sgl/seed0/metrics.json",
+    "value": 0.00018165902124584802
+  },
+  "recall.baselines.simgcl.NDCG@10.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
+    "value": 0.010305624071213326
+  },
+  "recall.baselines.simgcl.NDCG@10.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
+    "value": [
+      0.01005831068538988,
+      0.0102377448265587,
+      0.010531001957244185,
+      0.01039431708387694,
+      0.010306745802996923
+    ]
+  },
+  "recall.baselines.simgcl.NDCG@10.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
+    "value": 0.00017637630435493647
+  },
+  "recall.baselines.simgcl.NDCG@20.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
+    "value": 0.012160895752862125
+  },
+  "recall.baselines.simgcl.NDCG@20.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
+    "value": [
+      0.011936138456732602,
+      0.012018368282784705,
+      0.012472235833326809,
+      0.01214658675715796,
+      0.01223114943430855
+    ]
+  },
+  "recall.baselines.simgcl.NDCG@20.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
+    "value": 0.00020790796924884634
+  },
+  "recall.baselines.simgcl.Recall@10.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
+    "value": 0.017711091497499266
+  },
+  "recall.baselines.simgcl.Recall@10.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
+    "value": [
+      0.01751495537903305,
+      0.01800529567519859,
+      0.01776993233303913,
+      0.017828773168578994,
+      0.017436500931646563
+    ]
+  },
+  "recall.baselines.simgcl.Recall@10.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
+    "value": 0.00023331131221673683
+  },
+  "recall.baselines.simgcl.Recall@20.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
+    "value": 0.025089732274198296
+  },
+  "recall.baselines.simgcl.Recall@20.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
+    "value": [
+      0.025007355104442484,
+      0.02506619593998235,
+      0.025497695400608023,
+      0.024791605374129645,
+      0.02508580955182897
+    ]
+  },
+  "recall.baselines.simgcl.Recall@20.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
+    "value": 0.00025625617355033215
+  },
+  "recall.baselines.simgcl.recbole_ndcg@10.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
+    "value": 0.0103
+  },
+  "recall.baselines.simgcl.recbole_ndcg@10.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
+    "value": [
+      0.0101,
+      0.0102,
+      0.0105,
+      0.0104,
+      0.0103
+    ]
+  },
+  "recall.baselines.simgcl.recbole_ndcg@10.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
+    "value": 0.0001581138830084191
+  },
+  "recall.baselines.simgcl.recbole_ndcg@20.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
+    "value": 0.012140000000000001
+  },
+  "recall.baselines.simgcl.recbole_ndcg@20.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
+    "value": [
+      0.0119,
+      0.012,
+      0.0125,
+      0.0121,
+      0.0122
+    ]
+  },
+  "recall.baselines.simgcl.recbole_ndcg@20.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
+    "value": 0.00023021728866442684
+  },
+  "recall.baselines.simgcl.recbole_recall@10.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
+    "value": 0.0177
+  },
+  "recall.baselines.simgcl.recbole_recall@10.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
+    "value": [
+      0.0175,
+      0.018,
+      0.0178,
+      0.0178,
+      0.0174
+    ]
+  },
+  "recall.baselines.simgcl.recbole_recall@10.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
+    "value": 0.0002449489742783174
+  },
+  "recall.baselines.simgcl.recbole_recall@20.mean": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
+    "value": 0.0251
+  },
+  "recall.baselines.simgcl.recbole_recall@20.seeds": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
+    "value": [
+      0.025,
+      0.0251,
+      0.0255,
+      0.0248,
+      0.0251
+    ]
+  },
+  "recall.baselines.simgcl.recbole_recall@20.std": {
+    "n_seeds": 5,
+    "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
+    "value": 0.00025495097567963874
   }
 }

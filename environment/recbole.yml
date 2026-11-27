@@ -40,6 +40,7 @@ dependencies:
       - torchvision==0.20.1+cu121
       - recbole==1.2.1
       - torch-geometric==2.8.1
-      # RecBole-GNN 无 PyPI 包，源码安装：
+      # RecBole-GNN 无 PyPI 包，源码安装（AutoDL rec 环境 S-recall-base 前必装）：
       #   git clone https://github.com/RUCAIBox/RecBole-GNN.git
-      #   cp -r RecBole-GNN/recbole_gnn $SITE_PACKAGES/
+      #   cp -r RecBole-GNN/recbole_gnn $(python -c 'import site;print(site.getsitepackages()[0])')/
+      # 验证：python -c "import recbole_gnn, recbole; from recbole.utils import get_model; get_model('SimGCL')"

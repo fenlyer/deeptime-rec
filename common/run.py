@@ -145,6 +145,7 @@ class RunHandle:
     stop_reason: str = "completed"
     data_scope: str = "train"
     error: Optional[str] = None
+    extra: dict = field(default_factory=dict)  # write_manifest(extra=...) 的持久化字段
     _log_path: Path = field(default=None, repr=False)  # type: ignore[assignment]
     _log_header_written: bool = field(default=False, repr=False)
 
@@ -200,7 +201,7 @@ class RunHandle:
 
     # ---------------- manifest
     def _manifest(self) -> dict:
-        return {
+        manifest = {
             "exp": self.exp,
             "model": self.model,
             "seed": self.seed,
@@ -218,14 +219,17 @@ class RunHandle:
             "data_scope": self.data_scope,
             "error": self.error,
         }
+        # 调用方经 write_manifest(extra=...) 追加的字段要保留到退出时的最后一次写盘，
+        # 否则「先写 extra → contextmanager 退出再写一次」会把 extra 抹掉。
+        manifest.update(self.extra)
+        return manifest
 
     def write_manifest(self, extra: Optional[dict] = None) -> Path:
-        manifest = self._manifest()
         if extra:
-            manifest.update(extra)
+            self.extra.update(extra)
         path = self.dir / "manifest.json"
         with open(path, "w", encoding="utf-8") as f:
-            json.dump(manifest, f, ensure_ascii=False, indent=2)
+            json.dump(self._manifest(), f, ensure_ascii=False, indent=2)
         return path
 
 

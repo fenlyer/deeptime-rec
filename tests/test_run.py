@@ -199,6 +199,24 @@ def test_manifest_timestamps_are_iso_with_timezone(tmp_path, monkeypatch):
     assert manifest["ended_at"] >= manifest["started_at"]
 
 
+# --------------------------------------------------------------------------- manifest extra
+def test_write_manifest_extra_survives_context_exit(tmp_path, monkeypatch):
+    """write_manifest(extra=...) 的字段在 contextmanager 退出时不能被抹掉。
+
+    历史 bug：退出时 start_run 再写一次 manifest，把 extra 覆盖成只剩固定字段。
+    """
+    monkeypatch.setattr(run_mod, "_is_git_dirty", lambda: (False, []))
+    monkeypatch.setattr(run_mod, "RESULTS_DIR", tmp_path)
+
+    with run_mod.start_run("smoke", "m", 0, {}) as h:
+        h.write_manifest(extra={"elapsed_s": 12.3, "recbole_metrics": {"x": 1}})
+
+    manifest = json.loads((h.dir / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["elapsed_s"] == pytest.approx(12.3)
+    assert manifest["recbole_metrics"] == {"x": 1}
+    assert manifest["exp"] == "smoke"  # 固定字段仍在
+
+
 # --------------------------------------------------------------------------- 异常路径
 def test_exception_still_writes_manifest(tmp_path, monkeypatch):
     """训练中途抛异常时也要落 manifest，标记 stop_reason=failed。"""

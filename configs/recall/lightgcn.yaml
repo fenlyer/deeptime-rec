@@ -1,0 +1,20 @@
+# LightGCN 召回基线（S-recall-base）
+#
+# 口径以任务卡为准：embedding 64 / batch 2048 / 200 epoch / 早停耐心 20 / seed 0-4
+
+embedding_size: 64
+n_layers: 3
+train_batch_size: 2048
+eval_batch_size: 4096
+epochs: 200
+stopping_step: 20
+eval_step: 1
+
+learner: adam
+learning_rate: 0.001
+weight_decay: 0.0001
+
+topk: [10, 20]
+metrics: ["Recall", "NDCG"]
+valid_metric: "Recall@10"
+seeds: [0, 1, 2, 3, 4]

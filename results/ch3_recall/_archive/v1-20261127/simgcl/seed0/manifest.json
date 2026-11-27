@@ -1,0 +1,35 @@
+{
+  "exp": "ch3_recall/baselines",
+  "model": "simgcl",
+  "seed": 0,
+  "git_commit": "61e5bd6ce6ad5ea9f91260c0bfa183a135ba58ef",
+  "git_dirty": false,
+  "git_dirty_files": [],
+  "git_tags": [],
+  "command": "run_recall_baseline.py --model simgcl --seed 0",
+  "started_at": "2026-11-27T18:44:34.092709+08:00",
+  "ended_at": "2026-11-27T18:49:48.571480+08:00",
+  "gpu": {
+    "name": "NVIDIA GeForce RTX 2080 Ti",
+    "total_memory_mb": 22001.2
+  },
+  "epoch_seconds": [],
+  "best_epoch": 1,
+  "stop_reason": "patience",
+  "data_scope": "train",
+  "error": null,
+  "elapsed_s": 312.3,
+  "epochs": 200,
+  "recbole_metrics": {
+    "recbole_recall@10": 0.0175,
+    "recbole_recall@20": 0.025,
+    "recbole_ndcg@10": 0.0101,
+    "recbole_ndcg@20": 0.0119
+  },
+  "best_valid_score": 0.0305,
+  "user_id_mapped": 50985,
+  "item_id_mapped": 25848,
+  "user_num": 50986,
+  "item_num": 25849,
+  "dataset": "IS"
+}

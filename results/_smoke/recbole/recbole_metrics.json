@@ -1,8 +1,8 @@
 {
-  "recall@10": 0.0044,
-  "recall@20": 0.0058,
-  "ndcg@10": 0.0027,
-  "ndcg@20": 0.003,
+  "recall@10": 0.0063,
+  "recall@20": 0.0077,
+  "ndcg@10": 0.0042,
+  "ndcg@20": 0.0046,
   "device": "cuda",
-  "epochs": 10
+  "epochs": 50
 }

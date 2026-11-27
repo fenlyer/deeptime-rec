@@ -274,11 +274,13 @@ def per_user_from_model(
     shield = conduct["shield"]
     test_by_user = conduct["test_by_user"]
 
+    device = next(model.parameters()).device
     model.eval()
     dfs = []
     n_users_total = 0
     with torch.no_grad():
         for user_df, _history, _pos_u, _pos_i in test_data:
+            user_df = user_df.to(device)
             out = model.full_sort_predict(user_df)
             internal_users = user_df[dataset.uid_field].detach().cpu().numpy().astype(int)
             block = reshape_scores(out.detach().cpu().numpy(), len(internal_users), n_items)
@@ -303,8 +305,25 @@ def train_and_eval(
 ):
     """跑完一个 run，返回 (metrics, per_user, 对账信息)。"""
     from recbole.config import Config
-    from recbole.data import create_dataset, data_preparation
-    from recbole.utils import get_model, get_trainer, init_seed, ModelType
+    from recbole.utils import get_trainer, init_seed, ModelType
+    # RecBole-GNN 的 create_dataset/data_preparation 会优先查 GNN 数据集，
+    # 查不到再 fallback 到 RecBole 原生。
+    from recbole_gnn.utils import create_dataset, data_preparation
+
+    # monkey-patch recbole.utils.get_model，让 Config 内部能查到 RecBole-GNN 模型
+    # （SimGCL/SGL/NGCF/LightGCN）。RecBole Config 在 __init__ 时调 recbole.utils.get_model。
+    import recbole.utils as _recbole_utils
+    import recbole_gnn.utils as _gnn_utils
+    _orig_get_model = _recbole_utils.get_model
+    def _patched_get_model(model_name):
+        try:
+            return _orig_get_model(model_name)
+        except ValueError:
+            return _gnn_utils.get_model(model_name)
+    _recbole_utils.get_model = _patched_get_model
+    # Config 内部 from recbole.utils import get_model，需要也 patch 到 configurator 模块
+    import recbole.config.configurator as _cfg_mod
+    _cfg_mod.get_model = _patched_get_model
 
     config_dict = build_config(model_key, cfg, seed, data_path, use_gpu)
     if epochs is not None:
@@ -316,7 +335,7 @@ def train_and_eval(
     dataset = create_dataset(config)
     train_data, valid_data, test_data = data_preparation(config, dataset)
 
-    model_class = get_model(config["model"])
+    model_class = _patched_get_model(config["model"])
     model = model_class(config, train_data.dataset).to(config["device"])
 
     trainer_class = get_trainer(ModelType.GENERAL, config["model"])

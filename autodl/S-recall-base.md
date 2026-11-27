@@ -70,3 +70,66 @@ git push
 - checkpoint（`*.pth`）被 .gitignore 忽略，不入库；需要复现时重跑训练。
 - 结果目录落 `results/ch3_recall/baselines/{model}/seed{n}/`，`make_tables` 会自动采成
   `recall.baselines.{model}.{metric}.mean|std|seeds`。
+---
+
+## 重跑（补测训练过程数据，2026-11-27）
+
+v1 的 25 个 run 缺训练过程数据（`train_log.csv` 只有 `epoch,loss`，`manifest.epoch_seconds` 为空），
+无法回填表 3-15（单Epoch耗时/峰值显存/图构建耗时）与图 3-9（per-epoch 验证 Recall）。
+训练过程数据无法事后补，必须重跑。v1 已归档在 `results/ch3_recall/_archive/v1-20261127/`。
+
+### 重跑前
+
+```bash
+git pull
+git status --porcelain            # 必须为空，否则结果落 _dirty_ 前缀，验收失败
+conda activate rec
+```
+
+### 重跑
+
+```bash
+bash experiments/queue.sh         # 复用现有 25 条，约 4 小时（v1 实测 3.8h @ 2080Ti）
+```
+
+### 重跑后验收
+
+```bash
+# 1) 与 v1 逐 seed 比对：4 指标 × 25 run 必须完全一致
+python experiments/snapshot_baselines.py --output /tmp/v2.csv
+python experiments/snapshot_baselines.py --compare \
+    results/ch3_recall/_archive/v1-20261127/summary.csv /tmp/v2.csv    # 退出码须为 0
+
+# 2) 训练过程数据齐全
+python - <<'PY'
+import json, glob, csv
+bad = []
+for f in glob.glob("results/ch3_recall/baselines/*/seed*/manifest.json"):
+    m = json.load(open(f))
+    log = f.replace("manifest.json", "train_log.csv")
+    n_rows = sum(1 for _ in open(log)) - 1
+    if not m["epoch_seconds"] or len(m["epoch_seconds"]) != n_rows:
+        bad.append((f, "epoch_seconds 长度不符"))
+    for k in ("build_seconds", "fit_seconds", "n_params"):
+        if k not in m:
+            bad.append((f, f"缺 {k}"))
+    if m.get("peak_memory_mb") is None:
+        bad.append((f, "缺 peak_memory_mb"))
+print("❌", bad) if bad else print("✅ 25 个 run 训练过程数据齐全")
+PY
+```
+
+### 新增字段说明
+
+| 位置 | 字段 | 含义 |
+|---|---|---|
+| `train_log.csv` | `seconds` | **纯训练**耗时（不含验证评估） |
+| `train_log.csv` | `n_eval` | 该 epoch 验证集 Recall@10（早停依据） |
+| `train_log.csv` | `loss` | 平均批损失 = 批 mean 之和 / 批次数（≈ ln2 表示该 epoch 无区分） |
+| `manifest.json` | `build_seconds` | 数据集加载 + 模型/图构造耗时 |
+| `manifest.json` | `fit_seconds` | 训练总时长（含验证） |
+| `manifest.json` | `peak_memory_mb` | 训练峰值显存（仅 GPU） |
+| `manifest.json` | `n_params` | 可训练参数量 |
+
+> v1 的 `loss` 恒为 105.358372 = 152 批 × ln2，原因是 RecBole 累加的是**批 mean**，
+> 与批大小无关，BPR 与 LightGCN 完全相同。重跑后 `loss` ≈ ln2（0.693），口径已修正。

@@ -298,3 +298,105 @@ def test_summary_skips_dirty_runs(tmp_path):
 
     rows = rb.collect_summary_rows(tmp_path)
     assert [(r["model"], r["n_seeds"]) for r in rows] == [("lightgcn", 1)]
+
+# --------------------------------------------------------------------------- 训练过程度量
+class _FakeInteraction:
+    """最小可用的 interaction 替身：只需要 len()。"""
+    def __init__(self, n):
+        self.n = n
+
+    def __len__(self):
+        return self.n
+
+
+class _FakeTrainer:
+    """模拟 RecBole Trainer：_train_epoch 返回 loss（标量或 tuple）。
+
+    RecBole 真实行为见 recbole/trainer/trainer.py：多分量损失返回 tuple of sums，
+    本替身覆盖「标量」与「tuple」两种返回。
+    """
+
+    def __init__(self, per_epoch_return):
+        self.per_epoch_return = per_epoch_return
+        self.calls = 0
+
+    def _train_epoch(self, *args, **kwargs):
+        out = self.per_epoch_return
+        self.calls += 1
+        return out
+
+
+def _patch_fit(fake_trainer, n_epochs, valid_scores):
+    """给替身挂一个 fit，按 epoch 调 callback_fn。"""
+    def fit(train_data, valid_data, saved=True, show_progress=False, callback_fn=None):
+        for e in range(n_epochs):
+            fake_trainer._train_epoch()
+            if callback_fn is not None:
+                callback_fn(e, valid_scores[e])
+    fake_trainer.fit = fit
+    return fake_trainer
+
+
+def test_epoch_timing_hook_records_seconds_and_valid_score():
+    """包装 _train_epoch 后，每 epoch 都要有 seconds 与 valid_score，且不改变返回值。"""
+    ft = _patch_fit(_FakeTrainer((3.0, 100)), n_epochs=2, valid_scores=[0.1, 0.2])
+
+    epoch_stats = []
+    orig = ft._train_epoch
+
+    def timed(*a, **kw):
+        import time
+        t0 = time.time()
+        raw = orig(*a, **kw)
+        epoch_stats.append({"seconds": time.time() - t0,
+                            "loss_sum": float(raw[0]) if isinstance(raw, tuple) else float(raw),
+                            "n_samples": raw[1] if isinstance(raw, tuple) else 0})
+        return raw
+
+    ft._train_epoch = timed
+
+    def on_epoch(epoch_idx, valid_score):
+        if epoch_stats:
+            epoch_stats[-1]["epoch"] = int(epoch_idx)
+            epoch_stats[-1]["valid_score"] = float(valid_score)
+
+    ft.fit(None, None, callback_fn=on_epoch)
+
+    assert len(epoch_stats) == 2
+    assert all("seconds" in st and st["seconds"] >= 0 for st in epoch_stats)
+    assert [st["epoch"] for st in epoch_stats] == [0, 1]
+    assert [st["valid_score"] for st in epoch_stats] == pytest.approx([0.1, 0.2])
+    # loss_sum 是张量求和（3.0），不是 RecBole train_loss_dict 的 mean 累加
+    assert epoch_stats[0]["loss_sum"] == pytest.approx(3.0)
+    assert epoch_stats[0]["n_samples"] == 100
+
+
+def test_epoch_loss_normalized_by_batches():
+    """真实损失 = loss_sum / 批次数；批次数为 0 时写 None 而不是 0 或 NaN。
+
+    口径依据：RecBole 的 calculate_loss 返回批内 mean，_train_epoch 累加得
+    mean 之和，所以除以批次数才是该 epoch 的平均批损失（≈ ln2 表示模型尚未学到区分）。
+    """
+    info = {"epoch_stats": [
+        {"epoch": 0, "loss_sum": 150.0, "n_batches": 100, "valid_score": 0.1},
+        {"epoch": 1, "loss_sum": 90.0, "n_batches": 0, "valid_score": 0.2},
+    ]}
+    losses = []
+    for st in info["epoch_stats"]:
+        n = st.get("n_batches") or 0
+        losses.append((st["loss_sum"] / n) if n else None)
+
+    assert losses[0] == pytest.approx(1.5)
+    assert losses[1] is None
+
+
+def test_epoch_loss_equals_ln2_when_no_signal():
+    """BPR 在打分无区分时每批 loss 恰为 ln2；批次数归一化后该 epoch 损失 = ln2。
+
+    这是 v1 结果里 loss 恒为 105.358372（= 152 批 × ln2）的成因，
+    重跑后 train_log.loss 应等于 ln2 而不是 105.358372。
+    """
+    import math
+    n_batches, loss_sum = 152, 152 * math.log(2)
+    assert loss_sum / n_batches == pytest.approx(math.log(2))
+    assert loss_sum / n_batches != pytest.approx(105.358372)

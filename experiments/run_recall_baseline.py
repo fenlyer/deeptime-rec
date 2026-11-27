@@ -304,21 +304,33 @@ def train_and_eval(
     epochs: int | None = None,
 ):
     """跑完一个 run，返回 (metrics, per_user, 对账信息)。"""
+    import time
+
+    import torch
+
     from recbole.config import Config
     from recbole.utils import get_trainer, init_seed, ModelType
-    # RecBole-GNN 的 create_dataset/data_preparation 会优先查 GNN 数据集，
-    # 查不到再 fallback 到 RecBole 原生。
-    from recbole_gnn.utils import create_dataset, data_preparation
+
+    # RecBole-GNN 按需加载：装了它就用它的 create_dataset/data_preparation
+    # （会优先查 GNN 数据集，查不到再 fallback 到 RecBole 原生）；没装则用原生。
+    # 这样 BPR 这类纯 RecBole 模型在没有 recbole_gnn 的环境里也能跑。
+    try:
+        from recbole_gnn.utils import create_dataset, data_preparation
+        import recbole_gnn.utils as _gnn_utils
+    except ModuleNotFoundError:
+        from recbole.data import create_dataset, data_preparation
+        _gnn_utils = None
 
     # monkey-patch recbole.utils.get_model，让 Config 内部能查到 RecBole-GNN 模型
     # （SimGCL/SGL/NGCF/LightGCN）。RecBole Config 在 __init__ 时调 recbole.utils.get_model。
     import recbole.utils as _recbole_utils
-    import recbole_gnn.utils as _gnn_utils
     _orig_get_model = _recbole_utils.get_model
     def _patched_get_model(model_name):
         try:
             return _orig_get_model(model_name)
         except ValueError:
+            if _gnn_utils is None:
+                raise
             return _gnn_utils.get_model(model_name)
     _recbole_utils.get_model = _patched_get_model
     # Config 内部 from recbole.utils import get_model，需要也 patch 到 configurator 模块
@@ -332,29 +344,90 @@ def train_and_eval(
     config = Config(model=config_dict["model"], dataset="IS", config_dict=config_dict)
     init_seed(config["seed"], config["reproducibility"])
 
+    # 图构建/数据准备耗时：数据集加载 + 模型构造（含加权邻接矩阵与归一化预计算）
+    t_build = time.time()
     dataset = create_dataset(config)
     train_data, valid_data, test_data = data_preparation(config, dataset)
 
     model_class = _patched_get_model(config["model"])
     model = model_class(config, train_data.dataset).to(config["device"])
+    t_build = time.time() - t_build
 
     trainer_class = get_trainer(ModelType.GENERAL, config["model"])
     trainer = trainer_class(config, model)
 
-    # saved=True：训练中把验证集最优 epoch 存成 checkpoint。
-    # 评测试前必须载入它，否则用的是「最后一个 epoch」而不是验证集最优的那个。
+    # ---- 训练过程度量（表3-15 / 图3-9）-----------------------------------
+    # 两个 hook 各管一件事：
+    #   1) 包装 _train_epoch：用前后时间差拿**纯训练**耗时（不含验证），并累积真实损失。
+    #      不能直接用 trainer.train_loss_dict：它累加的是各批 mean loss
+    #      （≈ 批次数 × ln2 = 105.358372，与批大小无关，BPR/LightGCN 完全相同），
+    #      不能当训练曲线。这里改成逐批 loss × len(interaction) 求和再除样本数。
+    #   2) callback_fn：拿每 epoch 的验证 valid_metric（Recall@10）。
+    epoch_stats: list[dict] = []
     best_epoch_box = [-1]
+
+    def _loss_with_batch_size(loss_func):
+        """包一层：只统计本 epoch 的批数。
+
+        注意：RecBole 的 model.calculate_loss 返回的是**批内 mean**，
+        _train_epoch 累加得到「mean 之和」，所以样本均值损失 = loss_sum / 批次数。
+        不按样本数归一（按样本数除会得到 mean/2048，无意义）。
+        """
+        def wrapped(interaction):
+            if epoch_stats:
+                epoch_stats[-1]["n_batches"] += 1
+            return loss_func(interaction)
+        return wrapped
+
+    # fit() 调 _train_epoch 时不传 loss_func（默认 None → 用 model.calculate_loss），
+    # 所以在 _timed_train_epoch 里包 args/kwargs 两条路都覆盖不到。直接从源头包装模型方法。
+    _orig_calc_loss = model.calculate_loss
+    model.calculate_loss = _loss_with_batch_size(_orig_calc_loss)
+
+    _orig_train_epoch = trainer._train_epoch
+
+    def _timed_train_epoch(*args, **kwargs):
+        # 先占一个槽位，供 loss 包装函数累加批数与样本数
+        epoch_stats.append({"seconds": 0.0, "loss_sum": 0.0, "n_batches": 0})
+        t0 = time.time()
+        raw = _orig_train_epoch(*args, **kwargs)
+        dt = time.time() - t0
+
+        if isinstance(raw, tuple):
+            total, _ = raw
+            # 多分量损失：total 是逐分量之和的 tuple（SGL/SimGCL 会这样返回）
+            loss_sum = float(sum(total)) if isinstance(total, tuple) else float(total)
+        else:
+            loss_sum = float(raw)
+        # 写回已占的槽位（n_samples 由 loss 包装函数累加，这里不覆盖）
+        epoch_stats[-1]["seconds"] = dt
+        epoch_stats[-1]["loss_sum"] = loss_sum
+        return raw
+
+    trainer._train_epoch = _timed_train_epoch
 
     def _on_epoch(epoch_idx, valid_score):
         best_epoch_box[0] = epoch_idx
+        if epoch_stats:
+            epoch_stats[-1]["epoch"] = int(epoch_idx)
+            epoch_stats[-1]["valid_score"] = float(valid_score)
 
+    t_fit = time.time()
     trainer.fit(train_data, valid_data, saved=True,
                 show_progress=config["show_progress"], callback_fn=_on_epoch)
+    fit_seconds = time.time() - t_fit
+
+    # 还原被包装的 calculate_loss，避免影响后续 evaluate / 打分
+    model.calculate_loss = _orig_calc_loss
+    trainer._train_epoch = _orig_train_epoch
+
+    # 峰值显存：仅 GPU 有效；CPU 冒烟为 None
+    peak_mem_mb = None
+    if use_gpu and torch.cuda.is_available():
+        peak_mem_mb = float(torch.cuda.max_memory_allocated()) / 2 ** 20
 
     best_epoch = best_epoch_box[0]
     if trainer.saved_model_file and Path(trainer.saved_model_file).exists():
-        import torch
-
         state = torch.load(trainer.saved_model_file, map_location=config["device"])
         best_epoch = int(state["epoch"])
         model.load_state_dict(state["state_dict"])
@@ -388,6 +461,12 @@ def train_and_eval(
         "item_id_mapped": len(item_to_col),
         "user_num": int(dataset.user_num),
         "item_num": int(dataset.item_num),
+        # ---- 训练过程度量（表3-15 / 图3-9）
+        "epoch_stats": epoch_stats,
+        "build_seconds": float(t_build),
+        "fit_seconds": float(fit_seconds),
+        "peak_mem_mb": peak_mem_mb,
+        "n_params": int(sum(p.numel() for p in model.parameters() if p.requires_grad)),
     }
     return metrics, per_user, info
 
@@ -460,16 +539,41 @@ def main() -> int:
 
         h.write_metrics(metrics)
         per_user.to_parquet(h.dir / "per_user.parquet", index=False)
+
+        # 逐 epoch：样本均值损失（loss_sum / 批次数）+ 纯训练耗时 + 验证 Recall@10。
+        # 口径：RecBole 的 calculate_loss 返回批内 mean，_train_epoch 累加得 mean 之和，
+        # 故除以批次数即得该 epoch 的平均批损失。seconds 不含验证评估。
+        for st in info["epoch_stats"]:
+            n_batches = st.get("n_batches") or 0
+            loss = (st["loss_sum"] / n_batches) if n_batches else None
+            h.log_epoch(
+                epoch=st.get("epoch", -1),
+                loss=loss,
+                seconds=st.get("seconds"),
+                n_eval=st.get("valid_score"),
+            )
+        # 没有 callback 记录的 epoch（理论上不发生）用 REC 损失兜底，保证行数 == 训练轮数
+        logged = {st.get("epoch") for st in info["epoch_stats"]}
         for epoch, loss in info["train_loss"].items():
-            h.log_epoch(epoch=epoch, loss=loss)
+            if epoch not in logged:
+                h.log_epoch(epoch=epoch, loss=loss)
+
         if info["best_epoch"] is not None:
             h.set_best_epoch(info["best_epoch"])
+        if info["peak_mem_mb"] is not None:
+            h.set_peak_memory(info["peak_mem_mb"])
         h.set_stop_reason("patience")
         h.write_manifest(extra={
             "elapsed_s": round(elapsed, 1),
             "epochs": args.epochs or cfg.get("epochs"),
             "recbole_metrics": info["recbole_metrics"],
             "best_valid_score": info["best_valid_score"],
+            # ---- 训练过程度量（表3-15 / 图3-9）
+            "build_seconds": round(info["build_seconds"], 2),
+            "fit_seconds": round(info["fit_seconds"], 2),
+            "peak_memory_mb": info["peak_mem_mb"],
+            "n_params": info["n_params"],
+            "n_epochs_logged": len(info["epoch_stats"]),
             "user_id_mapped": info["user_id_mapped"],
             "item_id_mapped": info["item_id_mapped"],
             "user_num": info["user_num"],

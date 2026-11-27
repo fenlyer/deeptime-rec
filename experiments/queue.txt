@@ -7,31 +7,31 @@
 # done python experiments/recbole_smoke.py --epochs 50
 # done python eval/crosscheck_recbole.py --checkpoint $(ls -t results/_smoke/recbole/LightGCN-*.pth | head -1) --data-path data/recbole --output results/_smoke/crosscheck.json
 
-# S-recall-base: 5 基线 × 5 seed = 25 run（AutoDL rec 环境，conda activate rec）
-# 前置：git pull 到干净工作区；SimGCL 需先装 RecBole-GNN（见 docs/decisions.md）
-# done python experiments/run_recall_baseline.py --model bprmf   --seed 0
-# done python experiments/run_recall_baseline.py --model bprmf   --seed 1
-# done python experiments/run_recall_baseline.py --model bprmf   --seed 2
-# done python experiments/run_recall_baseline.py --model bprmf   --seed 3
-# done python experiments/run_recall_baseline.py --model bprmf   --seed 4
-# done python experiments/run_recall_baseline.py --model ngcf    --seed 0
-# done python experiments/run_recall_baseline.py --model ngcf    --seed 1
-# done python experiments/run_recall_baseline.py --model ngcf    --seed 2
-# done python experiments/run_recall_baseline.py --model ngcf    --seed 3
-# done python experiments/run_recall_baseline.py --model ngcf    --seed 4
-# done python experiments/run_recall_baseline.py --model lightgcn --seed 0
-# done python experiments/run_recall_baseline.py --model lightgcn --seed 1
-# done python experiments/run_recall_baseline.py --model lightgcn --seed 2
-# done python experiments/run_recall_baseline.py --model lightgcn --seed 3
-# done python experiments/run_recall_baseline.py --model lightgcn --seed 4
-# done python experiments/run_recall_baseline.py --model sgl     --seed 0
-# done python experiments/run_recall_baseline.py --model sgl     --seed 1
-# done python experiments/run_recall_baseline.py --model sgl     --seed 2
-# done python experiments/run_recall_baseline.py --model sgl     --seed 3
-# done python experiments/run_recall_baseline.py --model sgl     --seed 4
-# done python experiments/run_recall_baseline.py --model simgcl  --seed 0
-# done python experiments/run_recall_baseline.py --model simgcl  --seed 1
-# done python experiments/run_recall_baseline.py --model simgcl  --seed 2
-# done python experiments/run_recall_baseline.py --model simgcl  --seed 3
-# done python experiments/run_recall_baseline.py --model simgcl  --seed 4
-# done python experiments/make_baseline_summary.py
+# S-recall-base R2: 重跑 25 run 补测训练过程数据（表3-15 / 图3-9）
+# R0 已归档 v1 到 _archive/v1-20261127/，R1 runner 已改造，预计 3.8h
+python experiments/run_recall_baseline.py --model bprmf   --seed 0
+python experiments/run_recall_baseline.py --model bprmf   --seed 1
+python experiments/run_recall_baseline.py --model bprmf   --seed 2
+python experiments/run_recall_baseline.py --model bprmf   --seed 3
+python experiments/run_recall_baseline.py --model bprmf   --seed 4
+python experiments/run_recall_baseline.py --model ngcf    --seed 0
+python experiments/run_recall_baseline.py --model ngcf    --seed 1
+python experiments/run_recall_baseline.py --model ngcf    --seed 2
+python experiments/run_recall_baseline.py --model ngcf    --seed 3
+python experiments/run_recall_baseline.py --model ngcf    --seed 4
+python experiments/run_recall_baseline.py --model lightgcn --seed 0
+python experiments/run_recall_baseline.py --model lightgcn --seed 1
+python experiments/run_recall_baseline.py --model lightgcn --seed 2
+python experiments/run_recall_baseline.py --model lightgcn --seed 3
+python experiments/run_recall_baseline.py --model lightgcn --seed 4
+python experiments/run_recall_baseline.py --model sgl     --seed 0
+python experiments/run_recall_baseline.py --model sgl     --seed 1
+python experiments/run_recall_baseline.py --model sgl     --seed 2
+python experiments/run_recall_baseline.py --model sgl     --seed 3
+python experiments/run_recall_baseline.py --model sgl     --seed 4
+python experiments/run_recall_baseline.py --model simgcl  --seed 0
+python experiments/run_recall_baseline.py --model simgcl  --seed 1
+python experiments/run_recall_baseline.py --model simgcl  --seed 2
+python experiments/run_recall_baseline.py --model simgcl  --seed 3
+python experiments/run_recall_baseline.py --model simgcl  --seed 4
+python experiments/make_baseline_summary.py

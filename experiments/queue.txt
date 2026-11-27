@@ -9,29 +9,29 @@
 
 # S-recall-base: 5 基线 × 5 seed = 25 run（AutoDL rec 环境，conda activate rec）
 # 前置：git pull 到干净工作区；SimGCL 需先装 RecBole-GNN（见 docs/decisions.md）
-python experiments/run_recall_baseline.py --model bprmf   --seed 0
-python experiments/run_recall_baseline.py --model bprmf   --seed 1
-python experiments/run_recall_baseline.py --model bprmf   --seed 2
-python experiments/run_recall_baseline.py --model bprmf   --seed 3
-python experiments/run_recall_baseline.py --model bprmf   --seed 4
-python experiments/run_recall_baseline.py --model ngcf    --seed 0
-python experiments/run_recall_baseline.py --model ngcf    --seed 1
-python experiments/run_recall_baseline.py --model ngcf    --seed 2
-python experiments/run_recall_baseline.py --model ngcf    --seed 3
-python experiments/run_recall_baseline.py --model ngcf    --seed 4
-python experiments/run_recall_baseline.py --model lightgcn --seed 0
-python experiments/run_recall_baseline.py --model lightgcn --seed 1
-python experiments/run_recall_baseline.py --model lightgcn --seed 2
-python experiments/run_recall_baseline.py --model lightgcn --seed 3
-python experiments/run_recall_baseline.py --model lightgcn --seed 4
-python experiments/run_recall_baseline.py --model sgl     --seed 0
-python experiments/run_recall_baseline.py --model sgl     --seed 1
-python experiments/run_recall_baseline.py --model sgl     --seed 2
-python experiments/run_recall_baseline.py --model sgl     --seed 3
-python experiments/run_recall_baseline.py --model sgl     --seed 4
-python experiments/run_recall_baseline.py --model simgcl  --seed 0
-python experiments/run_recall_baseline.py --model simgcl  --seed 1
-python experiments/run_recall_baseline.py --model simgcl  --seed 2
-python experiments/run_recall_baseline.py --model simgcl  --seed 3
-python experiments/run_recall_baseline.py --model simgcl  --seed 4
-python experiments/make_baseline_summary.py
+# done python experiments/run_recall_baseline.py --model bprmf   --seed 0
+# done python experiments/run_recall_baseline.py --model bprmf   --seed 1
+# done python experiments/run_recall_baseline.py --model bprmf   --seed 2
+# done python experiments/run_recall_baseline.py --model bprmf   --seed 3
+# done python experiments/run_recall_baseline.py --model bprmf   --seed 4
+# done python experiments/run_recall_baseline.py --model ngcf    --seed 0
+# done python experiments/run_recall_baseline.py --model ngcf    --seed 1
+# done python experiments/run_recall_baseline.py --model ngcf    --seed 2
+# done python experiments/run_recall_baseline.py --model ngcf    --seed 3
+# done python experiments/run_recall_baseline.py --model ngcf    --seed 4
+# done python experiments/run_recall_baseline.py --model lightgcn --seed 0
+# done python experiments/run_recall_baseline.py --model lightgcn --seed 1
+# done python experiments/run_recall_baseline.py --model lightgcn --seed 2
+# done python experiments/run_recall_baseline.py --model lightgcn --seed 3
+# done python experiments/run_recall_baseline.py --model lightgcn --seed 4
+# done python experiments/run_recall_baseline.py --model sgl     --seed 0
+# done python experiments/run_recall_baseline.py --model sgl     --seed 1
+# done python experiments/run_recall_baseline.py --model sgl     --seed 2
+# done python experiments/run_recall_baseline.py --model sgl     --seed 3
+# done python experiments/run_recall_baseline.py --model sgl     --seed 4
+# done python experiments/run_recall_baseline.py --model simgcl  --seed 0
+# done python experiments/run_recall_baseline.py --model simgcl  --seed 1
+# done python experiments/run_recall_baseline.py --model simgcl  --seed 2
+# done python experiments/run_recall_baseline.py --model simgcl  --seed 3
+# done python experiments/run_recall_baseline.py --model simgcl  --seed 4
+# done python experiments/make_baseline_summary.py

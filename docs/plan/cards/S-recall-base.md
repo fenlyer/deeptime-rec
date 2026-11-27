@@ -54,13 +54,13 @@ seed: [0,1,2,3,4]
 
 ## 验收
 
-- [ ] 25 个 run 全部完成
-- [ ] `results/ch3_recall/baselines/summary.csv` 生成
-- [ ] 数字填入论文表 3-6
+- [x] 25 个 run 全部完成
+- [x] `results/ch3_recall/baselines/summary.csv` 生成
+- [ ] 数字填入论文表 3-6（后续卡片处理）
 
 ## 进度（2026-11-27）
 
-代码部分已完成并提交（202f453），**正式 25 run 未跑**，阻塞于 AutoDL GPU。
+**已完成**：25 个正式 run 全部完成，结果已汇总。
 
 | 项 | 状态 | 位置 |
 |---|---|---|
@@ -69,12 +69,10 @@ seed: [0,1,2,3,4]
 | summary 脚本 | ✅ | `experiments/make_baseline_summary.py` |
 | 单元测试（29 个） | ✅ | `tests/test_recall_baseline_runner.py` |
 | CPU 冒烟（BPR/seed0/2epoch） | ✅ | `results/_smoke/recall/` |
-| 队列（25 run + summary） | ✅ 已挂 | `experiments/queue.txt` |
+| 队列（25 run + summary） | ✅ 已完成 | `experiments/queue.txt` |
 | AutoDL 操作步骤 | ✅ | `autodl/S-recall-base.md` |
-| **25 个正式 run** | ❌ 待 GPU | `bash experiments/queue.sh` |
-
-下一步：在 AutoDL `rec` 环境（需先装 RecBole-GNN）执行队列，约 20 小时；
-完成后回填 `git add results/ch3_recall/baselines && git push`。
+| **25 个正式 run** | ✅ 已完成 | `results/ch3_recall/baselines/` |
+| summary.csv | ✅ 已生成 | `results/ch3_recall/baselines/summary.csv` |
 
 ## 论文落点
 

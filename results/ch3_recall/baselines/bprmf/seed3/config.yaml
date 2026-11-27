@@ -1,0 +1,60 @@
+embedding_size: 64
+train_batch_size: 2048
+eval_batch_size: 4096
+epochs: 200
+stopping_step: 20
+eval_step: 1
+learner: adam
+learning_rate: 0.001
+weight_decay: 0.0001
+topk: &id002
+- 10
+- 20
+metrics: &id001
+- Recall
+- NDCG
+valid_metric: Recall@10
+seeds:
+- 0
+- 1
+- 2
+- 3
+- 4
+recbole_config:
+  model: BPR
+  dataset: IS
+  data_path: /root/autodl-tmp/deeptime-rec/data/recbole
+  benchmark_filename:
+  - train
+  - val
+  - test
+  eval_args:
+    split:
+      mode: custom
+    group_by: user
+    order: RO
+    repeat: none
+  metrics: *id001
+  topk: *id002
+  valid_metric: Recall@10
+  eval_batch_size: 6617344
+  stopping_step: 20
+  seed: 3
+  use_gpu: true
+  gpu_id: 0
+  log_wandb: false
+  show_progress: false
+  save_dataset: false
+  load_col:
+    inter:
+    - user_id
+    - item_id
+    - rating
+    - timestamp
+  embedding_size: 64
+  train_batch_size: 2048
+  epochs: 200
+  eval_step: 1
+  learner: adam
+  learning_rate: 0.001
+  weight_decay: 0.0001

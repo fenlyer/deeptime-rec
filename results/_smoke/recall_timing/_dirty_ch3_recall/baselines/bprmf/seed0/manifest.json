@@ -1,0 +1,46 @@
+{
+  "exp": "ch3_recall/baselines",
+  "model": "bprmf",
+  "seed": 0,
+  "git_commit": "7e7d81a977a97dac47dd0bcee62e5232515ab113",
+  "git_dirty": true,
+  "git_dirty_files": [
+    "claude/settings.local.json",
+    "experiments/run_recall_baseline.py",
+    "tests/test_recall_baseline_runner.py",
+    "\"docs/revision/\\346\\225\\264\\346\\224\\271V9_1127.docx\""
+  ],
+  "git_tags": [],
+  "command": "run_recall_baseline.py --model bprmf --seed 0 --epochs 3 --no-gpu --results-dir results/_smoke/recall_timing",
+  "started_at": "2026-11-27T21:32:30.587110+08:00",
+  "ended_at": "2026-11-27T21:33:57.201867+08:00",
+  "gpu": null,
+  "epoch_seconds": [
+    5.706912040710449,
+    5.76449990272522,
+    5.721179008483887
+  ],
+  "best_epoch": 0,
+  "stop_reason": "patience",
+  "data_scope": "train",
+  "error": null,
+  "elapsed_s": 84.1,
+  "epochs": 3,
+  "recbole_metrics": {
+    "recbole_recall@10": 0.003,
+    "recbole_recall@20": 0.0044,
+    "recbole_ndcg@10": 0.0016,
+    "recbole_ndcg@20": 0.002
+  },
+  "best_valid_score": 0.0024,
+  "build_seconds": 5.13,
+  "fit_seconds": 46.88,
+  "peak_memory_mb": null,
+  "n_params": 4917440,
+  "n_epochs_logged": 3,
+  "user_id_mapped": 50985,
+  "item_id_mapped": 25848,
+  "user_num": 50986,
+  "item_num": 25849,
+  "dataset": "IS"
+}

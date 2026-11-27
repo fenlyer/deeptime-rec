@@ -1,0 +1,45 @@
+{
+  "exp": "ch3_recall/baselines",
+  "model": "lightgcn",
+  "seed": 0,
+  "git_commit": "7e7d81a977a97dac47dd0bcee62e5232515ab113",
+  "git_dirty": true,
+  "git_dirty_files": [
+    "claude/settings.local.json",
+    "experiments/run_recall_baseline.py",
+    "tests/test_recall_baseline_runner.py",
+    "\"docs/revision/\\346\\225\\264\\346\\224\\271V9_1127.docx\""
+  ],
+  "git_tags": [],
+  "command": "run_recall_baseline.py --model lightgcn --seed 0 --epochs 2 --no-gpu --results-dir results/_smoke/recall_timing",
+  "started_at": "2026-11-27T21:36:08.396239+08:00",
+  "ended_at": "2026-11-27T21:39:54.805882+08:00",
+  "gpu": null,
+  "epoch_seconds": [
+    79.18981194496155,
+    83.06694197654724
+  ],
+  "best_epoch": 1,
+  "stop_reason": "patience",
+  "data_scope": "train",
+  "error": null,
+  "elapsed_s": 224.3,
+  "epochs": 2,
+  "recbole_metrics": {
+    "recbole_recall@10": 0.0027,
+    "recbole_recall@20": 0.0048,
+    "recbole_ndcg@10": 0.0013,
+    "recbole_ndcg@20": 0.0019
+  },
+  "best_valid_score": 0.0038,
+  "build_seconds": 5.93,
+  "fit_seconds": 183.97,
+  "peak_memory_mb": null,
+  "n_params": 4917440,
+  "n_epochs_logged": 2,
+  "user_id_mapped": 50985,
+  "item_id_mapped": 25848,
+  "user_num": 50986,
+  "item_num": 25849,
+  "dataset": "IS"
+}

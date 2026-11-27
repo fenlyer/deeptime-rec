@@ -137,10 +137,10 @@ footer {
 <div class="container">
 
 <header>
-  <h1>📋 V9 执行计划（对齐版 · 基于整改V9_1123）</h1>
+  <h1>📋 V9 执行计划（对齐版 · 基于整改V9_1126）</h1>
   <p class="subtitle">
-    对齐对象：<code>V9执行计划_简化版.html</code>（2026-11-20）+ <code>整改V9_1123.docx</code> 第三/四章实验清单<br>
-    生成时间：2026-11-26 · 本文件为对齐分析产物，不修改原简化版计划
+    对齐对象：<code>整改V9_1126.docx</code> 第三/四章实验清单<br>
+    生成时间：2026-11-26 · 最近对齐更新：2026-11-27 · 本文件为对齐分析产物
   </p>
   <div class="summary">
     <div class="stat"><div class="stat-num" style="color:var(--research)">18</div><div class="stat-label">数据/基础设施</div></div>
@@ -152,85 +152,155 @@ footer {
 
 <!-- ======== 对齐结论 ======== -->
 <section class="align-section">
-  <h2>🔗 对齐结论（简化版 vs 整改V9_1123 差异）</h2>
+  <h2>🔗 对齐结论（整改V9_1126.docx × V9执行计划 当前状态）</h2>
   <p style="font-size:13.5px;margin-bottom:12px">
-    以下列出 <code>整改V9_1123.docx</code> 第三/四章中明确要求的实验要件，以及 <code>V9执行计划_简化版.html</code> 的覆盖情况。
-    <b>简化版主线条覆盖对得上</b>，但 1123 版新增了若干实验要求与口径调整，须在后续执行中补充。
+    对齐对象：<code>整改V9_1126.docx</code> 第三/四章实验清单 × 本文件当前卡片状态（截至 2026-11-27）。
+    逐条核对论文中每个【待实验】标记与表格/图片要件，确认执行计划与论文要求的一致性。
   </p>
 
-  <h3>差异一览</h3>
+  <h3>对齐状态一览</h3>
   <table class="diff-table">
-    <thead><tr><th>差异点</th><th>简化版（1120）</th><th>整改V9_1123 新要求</th><th>对齐操作</th></tr></thead>
+    <thead><tr><th>论文要件</th><th>执行计划卡片</th><th>论文要求</th><th>状态</th></tr></thead>
     <tbody>
       <tr>
-        <td><b>近三年强基线</b></td>
-        <td class="old">deferred（S-recall-new-baseline）</td>
-        <td class="new">整改意见要求至少两个2023年及以后强基线；候选：XSimGCL(TKDE 2023)、LightGCL(ICLR 2023)、RLMRec(WWW 2024)</td>
-        <td>从 deferred 拉入主计划，新增卡片 <code>S-recall-newbase</code></td>
+        <td><b>图3-4/3-5 画像图</b></td>
+        <td><code>T-profile</code></td>
+        <td class="new">IS商品交互长尾 + 边权重分布（λ=0.001 vs 0.1）</td>
+        <td><span class="chip done">✅ 已完成</span></td>
       </tr>
       <tr>
-        <td><b>排序侧近三年基线</b></td>
-        <td class="old">未规划</td>
-        <td class="new">候选 KAR、DLLM2Rec(RecSys 2024)、TiSASRec</td>
-        <td>新增卡片 <code>S-rank-newbase</code></td>
+        <td><b>表3-5 基线汇总</b></td>
+        <td><code>S-recall-newbase</code> 🆕</td>
+        <td class="new">至少两个2023年及以后强基线（XSimGCL TKDE 2023 / RLMRec WWW 2024）</td>
+        <td><span class="chip todo">⏳ 卡片已建，待执行</span></td>
       </tr>
       <tr>
-        <td><b>教师信号形式</b></td>
-        <td class="old">"简化蒸馏"，不做教师信号</td>
-        <td class="new">改为"是/否概率"软标签（读 logprobs），r_T = exp(ℓ_yes)/(exp(ℓ_yes)+exp(ℓ_no))</td>
-        <td><code>S-rank-distill</code> 需升级：确认模型 logprobs 支持，保留联合训练 α=0.7/β=0.3</td>
+        <td><b>表3-6 主结果</b></td>
+        <td><code>S-recall-base</code> + <code>S-recall-main</code></td>
+        <td>7行基线（含S-recall-newbase新增2行）+ TI-LightGCN</td>
+        <td><span class="chip todo">⏳ 待执行</span></td>
+      </tr>
+      <tr>
+        <td><b>表3-8 消融</b></td>
+        <td><code>S-recall-ablation</code></td>
+        <td>5行消融（完整/无反馈强度/无时间衰减/无长尾正则/两者均移除）</td>
+        <td><span class="chip todo">⏳ 待执行</span></td>
+      </tr>
+      <tr>
+        <td><b>表3-10 敏感性</b></td>
+        <td><code>S-recall-sens</code></td>
+        <td class="new">5行含 λ/L/d/μ/α_5（μ∈{0,0.001,0.01,0.1} 新增行）</td>
+        <td><span class="chip todo">⏳ 已补 μ 行，待执行</span></td>
+      </tr>
+      <tr>
+        <td><b>表3-11/3-12 冷启动</b></td>
+        <td><code>S-recall-cold</code></td>
+        <td>四层分层（0-4/5-9/10-29/≥30）+ 守恒校验</td>
+        <td><span class="chip todo">⏳ 待执行</span></td>
+      </tr>
+      <tr>
+        <td><b>表3-14 跨域</b></td>
+        <td><code>S-recall-cross</code></td>
+        <td>TH/OP/AJ 三数据集 + AJ多行为验证</td>
+        <td><span class="chip todo">⏳ 待执行</span></td>
+      </tr>
+      <tr>
+        <td><b>表3-15 效率</b></td>
+        <td><code>S-recall-base</code> + <code>S-recall-main</code></td>
+        <td>训练耗时/显存/参数量</td>
+        <td><span class="chip todo">⏳ 待执行</span></td>
+      </tr>
+      <tr>
+        <td><b>表4-1 排序基线汇总</b></td>
+        <td><code>S-rank-newbase</code> 🆕</td>
+        <td class="new">排序侧近三年基线（KAR/DLLM2Rec/TiSASRec 选1-2）</td>
+        <td><span class="chip todo">⏳ 卡片已建，待评估</span></td>
+      </tr>
+      <tr>
+        <td><b>表4-2 排序主结果</b></td>
+        <td><code>S-rank-base</code> + <code>S-rank-main</code> + <code>S-rank-distill</code></td>
+        <td>DIN / DIEN / Temporal-DIN（无蒸馏）/ Temporal-DIN+蒸馏（完整版）</td>
+        <td><span class="chip todo">⏳ 待执行</span></td>
+      </tr>
+      <tr>
+        <td><b>表4-5 消融</b></td>
+        <td><code>S-rank-main</code> + <code>S-rank-distill</code></td>
+        <td>6行消融（完整/移除时间衰减/移除UM/移除门控/移除蒸馏/移除蒸馏+UM=DIN）</td>
+        <td><span class="chip todo">⏳ 待执行</span></td>
+      </tr>
+      <tr>
+        <td><b>表4-6 教师质量</b></td>
+        <td><code>S-rank-distill</code></td>
+        <td class="new">教师AUC/Brier/ECE/秩相关/无效比例 + 校准曲线（图4-6）</td>
+        <td><span class="chip todo">⏳ 已从deferred拉入，待执行</span></td>
+      </tr>
+      <tr>
+        <td><b>表4-7 蒸馏敏感性</b></td>
+        <td><code>S-rank-distill</code></td>
+        <td>α/β 敏感性5行 + γ/N 敏感性（图4-7三子图）</td>
+        <td><span class="chip wait">⚠ 降级：α/β仅留"本文设定"一行；γ/N并入S-rank-main</span></td>
+      </tr>
+      <tr>
+        <td><b>图4-1 模型结构</b></td>
+        <td><code>S-rank-main</code></td>
+        <td>Temporal-DIN整体架构图</td>
+        <td><span class="chip todo">⏳ 待绘制</span></td>
+      </tr>
+      <tr>
+        <td><b>图4-5 门控值分布</b></td>
+        <td><code>S-rank-main</code></td>
+        <td>门控值g按用户层次分组的小提琴图</td>
+        <td><span class="chip todo">⏳ 待绘制</span></td>
       </tr>
       <tr>
         <td><b>短期通道口径</b></td>
-        <td class="old">"近7天最多50条"</td>
-        <td class="new">改为"最近 N 条"，N∈{3,5,10}做敏感性分析</td>
-        <td><code>S-rank-main</code> 修改短期通道逻辑 + 增加 N 的敏感性实验</td>
+        <td><code>S-rank-main</code></td>
+        <td class="new">改为"最近N条"，N∈{3,5,10}做敏感性</td>
+        <td><span class="chip todo">⏳ 卡片已更新口径，待执行</span></td>
       </tr>
       <tr>
-        <td><b>γ 取值复核</b></td>
-        <td class="old">γ=0.3/天</td>
-        <td class="new">需依据图3-3交互间隔分布重新确定</td>
-        <td>依赖 <code>S0-b</code> 画像数据，在 <code>S-rank-main</code> 之前确认 γ 值</td>
+        <td><b>γ 取值</b></td>
+        <td><code>S-rank-main</code></td>
+        <td class="new">需依据图3-3交互间隔分布复核（现0.3/天可能偏大）</td>
+        <td><span class="chip wait">⚠ 前置确认项</span></td>
       </tr>
       <tr>
-        <td><b>表 4-6 教师质量</b></td>
-        <td class="old">deferred</td>
-        <td class="new">4.5.6节要求教师信号AUC/校准曲线/Brier分数</td>
-        <td>从 deferred 拉入，归 <code>S-rank-distill</code> 扩展产出</td>
+        <td><b>4.4.2 教师信号形式</b></td>
+        <td><code>S-rank-distill</code></td>
+        <td class="new">是/否概率软标签（读logprobs），r_T=exp(ℓ_yes)/(exp(ℓ_yes)+exp(ℓ_no))</td>
+        <td><span class="chip todo">⏳ 卡片已升级，待确认logprobs接口</span></td>
       </tr>
       <tr>
-        <td><b>表 4-7 蒸馏敏感性</b></td>
-        <td class="old">deferred</td>
-        <td class="new">α/β 敏感性 + γ/N 敏感性</td>
-        <td>保留降级（仅留"本文设定值"一行），但 γ/N 敏感性并入 <code>S-rank-main</code></td>
-      </tr>
-      <tr>
-        <td><b>表 3-10 敏感性补 μ 行</b></td>
-        <td class="old">仅扫 λ/L/d（3/5行）</td>
-        <td class="new">论文5行含 μ 与 α_5</td>
-        <td><code>S-recall-sens</code> 补 μ∈{0,0.001,0.01,0.1} 一行</td>
-      </tr>
-      <tr>
-      <tr>
-        <td><b>案例用户 4.5.8</b></td>
-        <td class="old">无卡</td>
-        <td class="new">须用 IS 真实用户替换虚构案例，γ 数值复核</td>
-        <td>新增卡片 <code>T-case</code>（可选）</td>
+        <td><b>4.5.8 真实用户案例</b></td>
+        <td><em>无卡</em></td>
+        <td class="new">用IS真实用户替换虚构案例，补充注意力热力图（图4-8）</td>
+        <td><span class="chip todo">⏳ 可选，待建卡 T-case</span></td>
       </tr>
     </tbody>
   </table>
+
+  <h3>对齐总结</h3>
+  <p style="font-size:13.5px;margin-top:8px">
+    <b>已完成：</b> 图3-4/3-5（T-profile 5张画像图全部完成）<br>
+    <b>卡片已建/已更新：</b> S-recall-newbase、S-rank-newbase、S-rank-distill（升级版）、S-rank-main（口径调整）、S-recall-sens（补μ行）、T-ch3/T-ch4（回填清单更新）<br>
+    <b>降级：</b> 表4-7 α/β敏感性仅留"本文设定值"一行；γ/N敏感性并入S-rank-main<br>
+    <b>风险项：</b> logprobs接口可用性、γ取值复核、近三年基线代码可得性、AJ跨域超时
+  </p>
 </section>
 
 <!-- ======== 后续调整方案 ======== -->
 <section class="adjustment-box">
-  <h3>🔧 后续如何调整计划（6 项关键操作）</h3>
+  <h3>🔧 后续执行要点（基于当前卡片状态）</h3>
   <ul>
-    <li><b>操作1：拉入近三年基线（召回侧）。</b>从 deferred 的 <code>S-recall-new-baseline</code> 正式建卡 <code>S-recall-newbase</code>。候选模型由你选定2个（建议 XSimGCL + RLMRec，前者是 SimGCL 的直接继承、后者回应表1-1大模型增强路线）。置于 W2 与 <code>S-recall-main</code> 并行（不阻塞主路），产出填入表3-6新增行。</li>
-    <li><b>操作2：升级蒸馏方案。</b><code>S-rank-distill</code> 从"简化蒸馏"升级为"最小可行蒸馏"：保留是/否概率软标签 + logprobs 读取 + 联合训练 α=0.7/β=0.3；砍掉 τ 与 β 的敏感性扫描。前置确认项：所选模型服务能否返回词元级 logprobs（若 Qwen-7B-Chat API 不支持，改用本地部署开源模型或 DashScope logprobs 接口）。</li>
-    <li><b>操作3：短期通道口径 + γ 定值。</b>在 <code>S-rank-main</code> 之前，先由 <code>S0-b</code> 的图3-3交互间隔分布确定 γ 取值（现 γ=0.3/天，与IS中位间隔22.1天相比偏大，需复核）。短期通道改为"最近 N 条"，N∈{3,5,10}做敏感性。此两项调整均影响 <code>S-rank-main</code> 与 <code>S-rank-sens</code> 的卡片内容。</li>
-    <li><b>操作4：表 4-6 教师质量评估。</b>从 deferred 拉入，归 <code>S-rank-distill</code> 扩展产出。验证集上计算教师 AUC/Brier + 校准曲线，成本约半天。</li>
-    <li><b>操作5：补 μ 行敏感性。</b><code>S-recall-sens</code> 补充 μ∈{0,0.001,0.01,0.1}（4个新值 × 3 seed ≈ 14小时），使表3-10从3/5行扩为4/5行。</li>
-    <li><b>操作6：~~补图3-4/3-5脚本~~（已完成 ✅）。</b><code>T-profile</code> 图3-4/3-5 已生成（<code>IS_fig3-4_item_tail</code> / <code>IS_fig3-5_edge_weight</code>）。卡片已标记完成。</li>
+    <li><b>要点1：S-recall-base 启动。</b>AutoDL 余额到位后立即挂队列，25 runs（5基线×5seed），产出表3-6前5行 + 表3-15。这是 G1 唯一未过条件的阻塞项。</li>
+    <li><b>要点2：S-recall-main → 主路径。</b>TI-LightGCN 实现 + 5 seed，产出表3-6最后一行。完成后导出 Top-100 候选集供排序实验使用。</li>
+    <li><b>要点3：S-recall-newbase 并行。</b>与 S-recall-main 并行（不阻塞主路），XSimGCL + RLMRec 各3 seed，产出表3-5新增行 + 表3-6新增2行。需先确认代码可得性。</li>
+    <li><b>要点4：S-recall-sens 补 μ 行执行。</b>4参数×多值×3seed ≈ 60 runs，~14h GPU。产出表3-10（4/5行含μ）+ 图3-10（4子图）。</li>
+    <li><b>要点5：γ 定值前置确认。</b>在 S-rank-main 之前，依据 S0-b 图3-3 交互间隔分布复核 γ 取值。若需大幅调整（如 γ=0.3→0.03），需重跑全部排序实验。</li>
+    <li><b>要点6：S-rank-main 口径执行。</b>短期通道改为"最近N条"（N∈{3,5,10}敏感性），γ 取复核后定值。产出表4-2 + 表4-5（消融3行）+ 图4-1/4-5。</li>
+    <li><b>要点7：S-rank-distill 升级执行。</b>确认 logprobs 接口 → User Memory生成 → 是/否概率教师信号 → 联合训练(α=0.7,β=0.3) → 表4-6教师质量评估。砍掉τ/β敏感性扫描。</li>
+    <li><b>要点8：S-rank-newbase 代码评估。</b>评估 KAR/DLLM2Rec/TiSASRec 代码可得性，选1-2个执行，产出表4-1 + 表4-2新增行。</li>
+    <li><b>要点9：T-profile 已完成 ✅</b> 图3-4/3-5已生成，卡片标记完成，不再阻塞后续流程。</li>
   </ul>
 </section>
 
@@ -505,6 +575,18 @@ S-rank-distill (LLM蒸馏, 升级版)
         <div class="l-row">4.5.2节 Temporal-DIN vs DIN 显著性</div>
       </div>
     </div>
+    <div class="task-card rank">
+      <span class="task-id">T-case</span>
+      <div class="task-name">真实用户案例分析（4.5.8）</div>
+      <div class="task-desc">从IS测试集选取3类真实用户（活跃/冷启动/兴趣转移），对比推荐结果 + 注意力热力图（图4-8），重写4.5.8节</div>
+      <div class="task-meta"><span class="chip wait">等待</span><span class="chip cpu">CPU 0.5天</span><span class="chip new">新增</span></div>
+      <div class="paper-landing">
+        <span class="l-label">论文落点</span>
+        <div class="l-row"><b>4.5.8节</b> 真实用户案例分析（用真实用户替换虚构案例）</div>
+        <div class="l-row"><b>图4-8</b> 案例用户的时间偏置注意力热力图（3个子图）</div>
+        <div class="l-row" style="color:#b45309">⚠ 前置依赖：S-rank-distill 完成（需要完整模型输出）</div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -729,8 +811,8 @@ S-rank-distill (LLM蒸馏, 升级版)
 </section>
 
 <footer>
-  <p>基于《整改V9_1123.docx》第三/四章实验清单 × 《V9执行计划_简化版.html》对齐产出</p>
-  <p>生成时间：2026-11-26 · 本文件为对齐分析产物，不修改原简化版计划与 cards/plan</p>
+  <p>基于《整改V9_1126.docx》第三/四章实验清单 × 执行计划卡片对齐产出</p>
+  <p>生成时间：2026-11-26 · 最近对齐更新：2026-11-27</p>
 </footer>
 
 </div>

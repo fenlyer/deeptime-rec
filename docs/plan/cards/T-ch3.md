@@ -13,10 +13,11 @@
 
 | 表格 | 数据来源 | 状态 |
 |-----|---------|------|
-| 表 3-6 | S-recall-base + S-recall-main | ⏳ 待实验 |
+| 表 3-5 | S-recall-newbase（近三年基线汇总） | ⏳ 待实验 |
+| 表 3-6 | S-recall-base + S-recall-main + S-recall-newbase | ⏳ 待实验 |
 | 表 3-7 | 显著性检验脚本 | ⏳ 待实现 |
 | 表 3-8 | S-recall-ablation | ⏳ 待实验 |
-| 表 3-10 | S-recall-sens | ⏳ 待实验 |
+| 表 3-10 | S-recall-sens（含 μ 行） | ⏳ 待实验 |
 | 表 3-12 | S-recall-cold | ⏳ 待实验 |
 | 表 3-14 | S-recall-cross | ⏳ 待实验 |
 | 表 3-15 | 训练日志 | ⏳ 待提取 |

@@ -10,11 +10,10 @@
 - 优先级：低
 - 依赖：S-recall-main
 
-### S-recall-new-baseline 近三年强基线
+### ~~S-recall-new-baseline 近三年强基线~~ → 已拉入主路径
 
-- 候选：XSimGCL、LightGCL、RLMRec
-- 优先级：中（整改意见要求）
-- 依赖：代码可得性
+- 已升级为正式卡片 **S-recall-newbase**
+- 从本列表移除
 
 ### S-rank-dien DIEN 基线（推迟到送审前）
 
@@ -22,10 +21,10 @@
 - 推迟原因：表 4-1/4-2 的 DIEN 行若留空，答辩时显突兀；但并非核心指标瓶颈
 - 依赖：S-rank-base（需与 DIN 共享候选集与候选生成逻辑）
 
-### S-rank-teacher 教师质量评估（表 4-6）
+### ~~S-rank-teacher 教师质量评估（表 4-6）~~ → 已拉入主路径
 
-- 生成教师信号，对比学生 AUC
-- 优先级：低
+- 已归入 **S-rank-distill**（升级版）扩展产出
+- 从本列表移除
 
 ### S-rank-e2e 端到端实验（表 4-3、4-4）
 

@@ -144,9 +144,9 @@ footer {
   </p>
   <div class="summary">
     <div class="stat"><div class="stat-num" style="color:var(--research)">18</div><div class="stat-label">数据/基础设施</div></div>
-    <div class="stat"><div class="stat-num" style="color:var(--research)">10</div><div class="stat-label">召回实验</div></div>
-    <div class="stat"><div class="stat-num" style="color:var(--eng)">8</div><div class="stat-label">排序实验</div></div>
-    <div class="stat"><div class="stat-num" style="color:var(--new)">6</div><div class="stat-label">1123 新增项</div></div>
+    <div class="stat"><div class="stat-num" style="color:var(--research)">11</div><div class="stat-label">召回实验</div></div>
+    <div class="stat"><div class="stat-num" style="color:var(--eng)">10</div><div class="stat-label">排序实验</div></div>
+    <div class="stat"><div class="stat-num" style="color:var(--new)">5</div><div class="stat-label">1123 新增项</div></div>
   </div>
 </header>
 
@@ -211,11 +211,6 @@ footer {
         <td><code>S-recall-sens</code> 补 μ∈{0,0.001,0.01,0.1} 一行</td>
       </tr>
       <tr>
-        <td><b>图 3-4/3-5 缺脚本</b></td>
-        <td class="old">3/5画像图有脚本</td>
-        <td class="new">商品长尾分布 + 边权重分布仍缺</td>
-        <td><code>T-profile</code> 补两张图脚本</td>
-      </tr>
       <tr>
         <td><b>案例用户 4.5.8</b></td>
         <td class="old">无卡</td>
@@ -234,8 +229,8 @@ footer {
     <li><b>操作2：升级蒸馏方案。</b><code>S-rank-distill</code> 从"简化蒸馏"升级为"最小可行蒸馏"：保留是/否概率软标签 + logprobs 读取 + 联合训练 α=0.7/β=0.3；砍掉 τ 与 β 的敏感性扫描。前置确认项：所选模型服务能否返回词元级 logprobs（若 Qwen-7B-Chat API 不支持，改用本地部署开源模型或 DashScope logprobs 接口）。</li>
     <li><b>操作3：短期通道口径 + γ 定值。</b>在 <code>S-rank-main</code> 之前，先由 <code>S0-b</code> 的图3-3交互间隔分布确定 γ 取值（现 γ=0.3/天，与IS中位间隔22.1天相比偏大，需复核）。短期通道改为"最近 N 条"，N∈{3,5,10}做敏感性。此两项调整均影响 <code>S-rank-main</code> 与 <code>S-rank-sens</code> 的卡片内容。</li>
     <li><b>操作4：表 4-6 教师质量评估。</b>从 deferred 拉入，归 <code>S-rank-distill</code> 扩展产出。验证集上计算教师 AUC/Brier + 校准曲线，成本约半天。</li>
-    <li><b>操作5：补 μ 行敏感性。</b><code>S-recall-sens</code> 补充 μ∈{0,0.001,0.01,0.1}（2个新 run × 3 seed ≈ 2小时），使表3-10从3/5行扩为4/5行。</li>
-    <li><b>操作6：补图3-4/3-5脚本。</b><code>T-profile</code> 卡片补两项开发：① 商品长尾曲线（按交互次数降序累计占比）② 边权重分布（λ=0.001 vs 0.1），合计半天。</li>
+    <li><b>操作5：补 μ 行敏感性。</b><code>S-recall-sens</code> 补充 μ∈{0,0.001,0.01,0.1}（4个新值 × 3 seed ≈ 14小时），使表3-10从3/5行扩为4/5行。</li>
+    <li><b>操作6：~~补图3-4/3-5脚本~~（已完成 ✅）。</b><code>T-profile</code> 图3-4/3-5 已生成（<code>IS_fig3-4_item_tail</code> / <code>IS_fig3-5_edge_weight</code>）。卡片已标记完成。</li>
   </ul>
 </section>
 
@@ -306,17 +301,6 @@ footer {
       <div class="task-name">数字管线 results/ → numbers.json</div>
       <div class="task-desc">scripts/make_tables.py → thesis/generated/numbers.json（84 key）</div>
       <div class="task-meta"><span class="chip done">✓ 完成</span><span class="chip cpu">本机</span></div>
-    </div>
-    <div class="task-card data new">
-      <span class="task-id">T-profile</span>
-      <div class="task-name">数据画像图补全</div>
-      <div class="task-desc">补 图3-4（商品长尾分布）+ 图3-5（边权重 w(u,i) 分布）脚本</div>
-      <div class="task-meta"><span class="chip todo">待执行</span><span class="chip cpu">本机</span><span class="chip">0.5天</span></div>
-      <div class="paper-landing">
-        <span class="l-label">论文落点</span>
-        <div class="l-row"><b>图3-4</b> 3.1节 商品交互长尾（前20%商品覆盖57.2%交互）</div>
-        <div class="l-row"><b>图3-5</b> 3.1节 边权重分布（λ=0.001 vs 0.1；λ=0.1时99.39%边权&lt;1e-6）</div>
-      </div>
     </div>
   </div>
 </section>
@@ -549,7 +533,7 @@ S-rank-distill (LLM蒸馏, 升级版)
     <div class="task-card infra">
       <span class="task-id">T-ch3</span>
       <div class="task-name">第三章数据回填</div>
-      <div class="task-desc">回填表3-6/3-7/3-8/3-10/3-12/3-14/3-15 + 图3-8/3-9/3-10/3-11重绘</div>
+      <div class="task-desc">回填表3-5/3-6/3-7/3-8/3-10/3-12/3-14/3-15 + 图3-8/3-9/3-10/3-11重绘</div>
       <div class="task-meta"><span class="chip wait">等待</span><span class="chip cpu">写作 1天</span></div>
     </div>
     <div class="task-card infra">
@@ -583,7 +567,7 @@ S-rank-distill (LLM蒸馏, 升级版)
       <tr><td>冻结数据（4数据集）</td><td><code>data/processed/{IS,TH,OP,AJ}/</code></td><td><span class="chip done">完成</span></td><td>5-core + LOO 划分，CHECKSUMS.sha256 校验</td></tr>
       <tr><td>RecBole 适配格式</td><td><code>scripts/export_recbole.py</code></td><td><span class="chip done">完成</span></td><td>冻结切分 → RecBole atom/ml 格式</td></tr>
       <tr><td>数据画像 JSON</td><td><code>results/profile/{IS,TH,OP}.json</code></td><td><span class="chip done">完成</span></td><td>γ₀/λ₀/交互间隔/交互年龄等统计</td></tr>
-      <tr><td>画像图（3/5）</td><td><code>figures/profile/IS_*.svg</code></td><td><span class="chip done">3张完成</span></td><td>评分分布/用户交互数/交互间隔；长尾+边权缺</td></tr>
+      <tr><td>画像图（5/5）</td><td><code>figures/profile/IS_*.svg</code></td><td><span class="chip done">5张完成</span></td><td>评分分布/用户交互数/交互间隔/商品长尾/边权重</td></tr>
     </tbody>
   </table>
 
@@ -591,8 +575,8 @@ S-rank-distill (LLM蒸馏, 升级版)
   <table class="data-table">
     <thead><tr><th>任务</th><th>具体操作</th><th>预估</th><th>阻塞</th></tr></thead>
     <tbody>
-      <tr><td><b>图3-4 商品长尾分布</b></td><td>新写脚本：按交互次数降序的累计占比曲线（训练集口径），标出前20%商品覆盖57.2%交互、交互次数&lt;10的商品占65.8%</td><td>0.25天</td><td>无</td></tr>
-      <tr><td><b>图3-5 边权重分布</b></td><td>新写脚本：按式(3-1)计算 w(u,i)=α_r×exp(-λΔt/T)，对比 λ=0.001 vs 0.1，含 α_r 映射</td><td>0.25天</td><td>无</td></tr>
+      <tr><td><b>图3-4 商品长尾分布</b></td><td>~~新写脚本~~ <b>✅ 已完成</b>：<code>IS_fig3-4_item_tail</code></td><td>0</td><td>—</td></tr>
+      <tr><td><b>图3-5 边权重分布</b></td><td>~~新写脚本~~ <b>✅ 已完成</b>：<code>IS_fig3-5_edge_weight</code></td><td>0</td><td>—</td></tr>
       <tr><td><b>短期通道 N 值确定</b></td><td>由图3-3交互间隔分布，确定 N∈{3,5,10} 的候选范围</td><td>0.1天</td><td>S0-b已完成</td></tr>
       <tr><td><b>γ 值复核</b></td><td>依据图3-3中位间隔22.1天，复核 γ=0.3/天 是否合理（现意味着相隔10天权重差 e^(-3)≈0.05）</td><td>0.1天</td><td>S0-b已完成</td></tr>
       <tr><td><b>Top-100候选集导出</b></td><td>S-recall-main 完成后，导出 TI-LightGCN 召回 Top-100 → <code>results/ch4_rank/candidates/</code></td><td>0.1天</td><td>S-recall-main</td></tr>
@@ -684,7 +668,7 @@ S-rank-distill (LLM蒸馏, 升级版)
       <tr><td rowspan="5">Phase 1 召回</td><td>S-recall-base (25 runs)</td><td>~20h</td><td>2天</td></tr>
       <tr><td>S-recall-main (5 runs)</td><td>~4h</td><td>0.5天</td></tr>
       <tr><td>S-recall-ablation (12 runs)</td><td>~6h</td><td>1天</td></tr>
-      <tr><td>S-recall-sens (~51 runs)</td><td>~14h</td><td>1.5天</td></tr>
+      <tr><td>S-recall-sens (~60 runs：λ×5 + L×4 + d×4 + μ×4 × 3seed)</td><td>~14h</td><td>1.5天</td></tr>
       <tr><td>S-recall-cross + newbase (~40 runs)</td><td>~22h</td><td>2.5天</td></tr>
       <tr><td rowspan="3">Phase 2 排序</td><td>S-rank-base (5 runs)</td><td>~5h</td><td>1天</td></tr>
       <tr><td>S-rank-main (5 runs + 消融)</td><td>~12h</td><td>2天</td></tr>

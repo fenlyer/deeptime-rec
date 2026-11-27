@@ -43,4 +43,7 @@
 
 ## 论文落点
 
-V9 表 3-6 TI-LightGCN 行
+- **表 3-6**：最后一行 TI-LightGCN + 相对提升行
+- **表 3-1/3-2**：α_r 权重 / 复杂度对比
+- **表 3-15**：TI-LightGCN 行（参数量 4.9M）
+- 目录：`results/ch3_recall/ti_lightgcn/seed{0-4}/`（含 per_user.parquet）

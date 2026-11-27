@@ -1,6 +1,6 @@
 # T-profile 数据画像图
 
-- 周次：W1（11/20 – 11/22）
+- 周次：W1（11/20 – 11/26）
 - 线：写作线
 - 估时：0.5 天
 - 依赖：S0-b（数据画像已完成）
@@ -21,21 +21,21 @@
 
 | 图号 | 内容 | 数据来源 | 状态 |
 |-----|------|---------|------|
-| 图 3-1 | IS 评分分布 | data/profile/IS.json | ⏳ 待绘制 |
-| 图 3-2 | 用户交互数分布 | data/profile/IS.json | ⏳ 待绘制 |
-| 图 3-3 | 相邻交互时间间隔 | 需新写脚本 | ⏳ 待实现 |
-| 图 3-4 | 商品交互长尾分布 | data/profile/IS.json | ⏳ 待绘制 |
-| 图 3-5 | 边权重分布 | 需新写脚本 | ⏳ 待实现 |
+| 图 3-1 | IS 评分分布 | data/profile/IS.json | ✅ 已完成 |
+| 图 3-2 | 用户交互数分布 | data/profile/IS.json | ✅ 已完成 |
+| 图 3-3 | 相邻交互时间间隔 | 需新写脚本 | ✅ 已完成 |
+| 图 3-4 | 商品交互长尾分布 | data/profile/IS.json | ✅ 已完成 |
+| 图 3-5 | 边权重分布 | 需新写脚本 | ✅ 已完成 |
 
 ## 产出
 
 - `scripts/plot_profile.py`：画像绘制脚本
-- `figures/ch3/profile/*.svg`：5 张 SVG 图
+- `figures/profile/IS_fig3-{1..5}_*.svg`：5 张 SVG 图
 
 ## 验收
 
-- [ ] 5 张图生成完成
-- [ ] 图片风格统一（matplotlib + thesis style）
+- [x] 5 张图生成完成
+- [x] 图片风格统一（matplotlib + thesis style）
 
 ## 论文落点
 

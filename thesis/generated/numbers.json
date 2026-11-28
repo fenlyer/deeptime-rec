@@ -914,343 +914,343 @@
   "recall.baselines.lightgcn.NDCG@10.mean": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
-    "value": 0.003275083823617945
+    "value": 0.0033843373456931758
   },
   "recall.baselines.lightgcn.NDCG@10.seeds": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
     "value": [
-      0.0029078803786206768,
-      0.003843274723279684,
-      0.0031664180660264897,
-      0.003347510771182043,
-      0.003110335178980832
+      0.003542688937796373,
+      0.0031381305977158445,
+      0.0032345989259459245,
+      0.004118243828916771,
+      0.0028880244380909666
     ]
   },
   "recall.baselines.lightgcn.NDCG@10.std": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
-    "value": 0.0003542157866302761
+    "value": 0.0004725092094842646
   },
   "recall.baselines.lightgcn.NDCG@20.mean": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
-    "value": 0.0038967316322457805
+    "value": 0.0038753628310002064
   },
   "recall.baselines.lightgcn.NDCG@20.seeds": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
     "value": [
-      0.003671459763922408,
-      0.004416518471106345,
-      0.003793250194126955,
-      0.003963035546045631,
-      0.003639394186027563
+      0.004061857242951664,
+      0.0036324442355925193,
+      0.003725078880945032,
+      0.004678103531276985,
+      0.003279330264234831
     ]
   },
   "recall.baselines.lightgcn.NDCG@20.std": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
-    "value": 0.00031711707252881933
+    "value": 0.0005282097897270375
   },
   "recall.baselines.lightgcn.Recall@10.mean": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
-    "value": 0.00586054721977052
+    "value": 0.00575071099342944
   },
   "recall.baselines.lightgcn.Recall@10.seeds": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
     "value": [
-      0.00592331077767971,
-      0.006374423850152006,
-      0.005727174659213494,
-      0.006001765225066196,
-      0.0052760615867411985
+      0.006217514955379033,
+      0.005354516034127684,
+      0.005648720211827008,
+      0.006590173580464842,
+      0.004942630185348632
     ]
   },
   "recall.baselines.lightgcn.Recall@10.std": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
-    "value": 0.00040229425660844454
+    "value": 0.0006601080463872059
   },
   "recall.baselines.lightgcn.Recall@20.mean": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
-    "value": 0.008324016867706188
+    "value": 0.007708149455722272
   },
   "recall.baselines.lightgcn.Recall@20.seeds": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
     "value": [
-      0.008943807002059429,
-      0.008649602824360106,
-      0.008237716975581053,
-      0.008414239482200648,
-      0.0073747180543297045
+      0.008276944199274296,
+      0.007335490830636462,
+      0.007610081396489164,
+      0.0088261253309797,
+      0.006492105521231735
     ]
   },
   "recall.baselines.lightgcn.Recall@20.std": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
-    "value": 0.0005930645104954605
+    "value": 0.0008945183289980486
   },
   "recall.baselines.lightgcn.recbole_ndcg@10.mean": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
-    "value": 0.00326
+    "value": 0.0033599999999999997
   },
   "recall.baselines.lightgcn.recbole_ndcg@10.seeds": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
     "value": [
-      0.0029,
-      0.0038,
+      0.0035,
+      0.0031,
       0.0032,
-      0.0033,
-      0.0031
+      0.0041,
+      0.0029
     ]
   },
   "recall.baselines.lightgcn.recbole_ndcg@10.std": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
-    "value": 0.0003361547262794323
+    "value": 0.0004669047011971503
   },
   "recall.baselines.lightgcn.recbole_ndcg@20.mean": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
-    "value": 0.0039
+    "value": 0.00388
   },
   "recall.baselines.lightgcn.recbole_ndcg@20.seeds": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
     "value": [
+      0.0041,
+      0.0036,
       0.0037,
-      0.0044,
-      0.0038,
-      0.004,
-      0.0036
+      0.0047,
+      0.0033
     ]
   },
   "recall.baselines.lightgcn.recbole_ndcg@20.std": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
-    "value": 0.00031622776601683805
+    "value": 0.0005403702434442519
   },
   "recall.baselines.lightgcn.recbole_recall@10.mean": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
-    "value": 0.00586
+    "value": 0.00574
   },
   "recall.baselines.lightgcn.recbole_recall@10.seeds": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
     "value": [
-      0.0059,
-      0.0064,
-      0.0057,
-      0.006,
-      0.0053
+      0.0062,
+      0.0054,
+      0.0056,
+      0.0066,
+      0.0049
     ]
   },
   "recall.baselines.lightgcn.recbole_recall@10.std": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
-    "value": 0.0004037325847637271
+    "value": 0.0006693280212272604
   },
   "recall.baselines.lightgcn.recbole_recall@20.mean": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
-    "value": 0.0083
+    "value": 0.0077
   },
   "recall.baselines.lightgcn.recbole_recall@20.seeds": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
     "value": [
-      0.0089,
-      0.0086,
-      0.0082,
-      0.0084,
-      0.0074
+      0.0083,
+      0.0073,
+      0.0076,
+      0.0088,
+      0.0065
     ]
   },
   "recall.baselines.lightgcn.recbole_recall@20.std": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/lightgcn/seed0/metrics.json",
-    "value": 0.0005656854249492378
+    "value": 0.0008916277250063506
   },
   "recall.baselines.ngcf.NDCG@10.mean": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
-    "value": 0.0035293638276052753
+    "value": 0.0034208906723106154
   },
   "recall.baselines.ngcf.NDCG@10.seeds": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
     "value": [
-      0.003630688232355964,
-      0.003608532164179901,
-      0.003307878749697468,
-      0.00349998398526465,
-      0.0035997360065283947
+      0.0035412568574386847,
+      0.003360396121336703,
+      0.00328997221170718,
+      0.0033393802190153105,
+      0.003573447952055199
     ]
   },
   "recall.baselines.ngcf.NDCG@10.std": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
-    "value": 0.00013360886848582466
+    "value": 0.0001276762802423246
   },
   "recall.baselines.ngcf.NDCG@20.mean": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
-    "value": 0.005081585858815638
+    "value": 0.004988679416560488
   },
   "recall.baselines.ngcf.NDCG@20.seeds": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
     "value": [
-      0.005085942074745768,
-      0.005161408175339845,
-      0.004824820996641416,
-      0.005061908358606173,
-      0.005273849688744989
+      0.005193542368618222,
+      0.004752296146993129,
+      0.004844321669369982,
+      0.004971576863694848,
+      0.005181660034126256
     ]
   },
   "recall.baselines.ngcf.NDCG@20.std": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
-    "value": 0.0001655833306778371
+    "value": 0.0001976227811397697
   },
   "recall.baselines.ngcf.Recall@10.mean": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
-    "value": 0.007508090614886731
+    "value": 0.007241345493772679
   },
   "recall.baselines.ngcf.Recall@10.seeds": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
     "value": [
-      0.007708149455722272,
-      0.0073551044424830835,
-      0.007217809159556733,
-      0.007668922232029028,
-      0.007590467784642542
+      0.007512013337256056,
+      0.007139354712170246,
+      0.0069432185937040305,
+      0.007158968324016868,
+      0.007453172501716191
     ]
   },
   "recall.baselines.ngcf.Recall@10.std": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
-    "value": 0.0002123349001113951
+    "value": 0.00023674856333441474
   },
   "recall.baselines.ngcf.Recall@20.mean": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
-    "value": 0.013717760125527115
+    "value": 0.013509855839952928
   },
   "recall.baselines.ngcf.Recall@20.seeds": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
     "value": [
-      0.013533392174168874,
-      0.013553005786015494,
-      0.013317642443856036,
-      0.013886437187408061,
-      0.014298323036187114
+      0.014141414141414142,
+      0.012670393252917524,
+      0.013180347160929685,
+      0.013651073845248602,
+      0.013906050799254683
     ]
   },
   "recall.baselines.ngcf.Recall@20.std": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
-    "value": 0.00038299312575442606
+    "value": 0.0005892903069634266
   },
   "recall.baselines.ngcf.recbole_ndcg@10.mean": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
-    "value": 0.00352
+    "value": 0.0034200000000000003
   },
   "recall.baselines.ngcf.recbole_ndcg@10.seeds": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
     "value": [
-      0.0036,
-      0.0036,
-      0.0033,
       0.0035,
+      0.0034,
+      0.0033,
+      0.0033,
       0.0036
     ]
   },
   "recall.baselines.ngcf.recbole_ndcg@10.std": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
-    "value": 0.00013038404810405293
+    "value": 0.00013038404810405296
   },
   "recall.baselines.ngcf.recbole_ndcg@20.mean": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
-    "value": 0.0051
+    "value": 0.004999999999999999
   },
   "recall.baselines.ngcf.recbole_ndcg@20.seeds": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
     "value": [
-      0.0051,
       0.0052,
       0.0048,
-      0.0051,
-      0.0053
+      0.0048,
+      0.005,
+      0.0052
     ]
   },
   "recall.baselines.ngcf.recbole_ndcg@20.std": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
-    "value": 0.0001870828693386972
+    "value": 0.0002000000000000001
   },
   "recall.baselines.ngcf.recbole_recall@10.mean": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
-    "value": 0.007520000000000001
+    "value": 0.007239999999999999
   },
   "recall.baselines.ngcf.recbole_recall@10.seeds": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
     "value": [
-      0.0077,
-      0.0074,
+      0.0075,
+      0.0071,
+      0.0069,
       0.0072,
-      0.0077,
-      0.0076
+      0.0075
     ]
   },
   "recall.baselines.ngcf.recbole_recall@10.std": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
-    "value": 0.00021679483388678812
+    "value": 0.0002607680962081058
   },
   "recall.baselines.ngcf.recbole_recall@20.mean": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
-    "value": 0.01372
+    "value": 0.013519999999999999
   },
   "recall.baselines.ngcf.recbole_recall@20.seeds": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
     "value": [
-      0.0135,
-      0.0136,
-      0.0133,
-      0.0139,
-      0.0143
+      0.0141,
+      0.0127,
+      0.0132,
+      0.0137,
+      0.0139
     ]
   },
   "recall.baselines.ngcf.recbole_recall@20.std": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/ngcf/seed0/metrics.json",
-    "value": 0.0003898717737923588
+    "value": 0.0005674504383644443
   },
   "recall.baselines.sgl.NDCG@10.mean": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/sgl/seed0/metrics.json",
-    "value": 0.017683173436944304
+    "value": 0.01768308370916643
   },
   "recall.baselines.sgl.NDCG@10.seeds": {
     "n_seeds": 5,
@@ -1258,7 +1258,7 @@
     "value": [
       0.017504027599500715,
       0.017620611200639402,
-      0.01775409517778849,
+      0.017753646538899114,
       0.01755920355275892,
       0.017977929654033987
     ]
@@ -1266,28 +1266,28 @@
   "recall.baselines.sgl.NDCG@10.std": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/sgl/seed0/metrics.json",
-    "value": 0.00018926629223607318
+    "value": 0.00018922436552050797
   },
   "recall.baselines.sgl.NDCG@20.mean": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/sgl/seed0/metrics.json",
-    "value": 0.021767085470281316
+    "value": 0.021766997748514354
   },
   "recall.baselines.sgl.NDCG@20.seeds": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/sgl/seed0/metrics.json",
     "value": [
-      0.021600685516615523,
+      0.021600590624479603,
       0.02180914681136785,
-      0.02170822063563276,
-      0.02161816653608003,
+      0.021707771996743383,
+      0.021618271458270517,
       0.022099207851710424
     ]
   },
   "recall.baselines.sgl.NDCG@20.std": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/sgl/seed0/metrics.json",
-    "value": 0.0002033502489314722
+    "value": 0.00020338302914514462
   },
   "recall.baselines.sgl.Recall@10.mean": {
     "n_seeds": 5,
@@ -1418,86 +1418,86 @@
   "recall.baselines.simgcl.NDCG@10.mean": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
-    "value": 0.010305624071213326
+    "value": 0.010283304470299006
   },
   "recall.baselines.simgcl.NDCG@10.seeds": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
     "value": [
-      0.01005831068538988,
-      0.0102377448265587,
-      0.010531001957244185,
-      0.01039431708387694,
-      0.010306745802996923
+      0.010054337854043584,
+      0.01021633385142591,
+      0.010459891835871177,
+      0.010387379789723577,
+      0.01029857902043079
     ]
   },
   "recall.baselines.simgcl.NDCG@10.std": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
-    "value": 0.00017637630435493647
+    "value": 0.0001574474966667281
   },
   "recall.baselines.simgcl.NDCG@20.mean": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
-    "value": 0.012160895752862125
+    "value": 0.01209498525820584
   },
   "recall.baselines.simgcl.NDCG@20.seeds": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
     "value": [
-      0.011936138456732602,
-      0.012018368282784705,
-      0.012472235833326809,
-      0.01214658675715796,
-      0.01223114943430855
+      0.011953942865139905,
+      0.011915550192469839,
+      0.012234368983770566,
+      0.012136425215415846,
+      0.012234639034233047
     ]
   },
   "recall.baselines.simgcl.NDCG@20.std": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
-    "value": 0.00020790796924884634
+    "value": 0.00015226471162253587
   },
   "recall.baselines.simgcl.Recall@10.mean": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
-    "value": 0.017711091497499266
+    "value": 0.017652250661959402
   },
   "recall.baselines.simgcl.Recall@10.seeds": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
     "value": [
-      0.01751495537903305,
-      0.01800529567519859,
-      0.01776993233303913,
+      0.017475728155339806,
+      0.017848386780425614,
+      0.017711091497499266,
       0.017828773168578994,
-      0.017436500931646563
+      0.01739727370795332
     ]
   },
   "recall.baselines.simgcl.Recall@10.std": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
-    "value": 0.00023331131221673683
+    "value": 0.00020570929649311575
   },
   "recall.baselines.simgcl.Recall@20.mean": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
-    "value": 0.025089732274198296
+    "value": 0.024854368932038833
   },
   "recall.baselines.simgcl.Recall@20.seeds": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
     "value": [
-      0.025007355104442484,
-      0.02506619593998235,
-      0.025497695400608023,
-      0.024791605374129645,
+      0.025046582328135725,
+      0.02459546925566343,
+      0.024771991762283025,
+      0.024771991762283025,
       0.02508580955182897
     ]
   },
   "recall.baselines.simgcl.Recall@20.std": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
-    "value": 0.00025625617355033215
+    "value": 0.00020682830364168346
   },
   "recall.baselines.simgcl.recbole_ndcg@10.mean": {
     "n_seeds": 5,
@@ -1523,15 +1523,15 @@
   "recall.baselines.simgcl.recbole_ndcg@20.mean": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
-    "value": 0.012140000000000001
+    "value": 0.01208
   },
   "recall.baselines.simgcl.recbole_ndcg@20.seeds": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
     "value": [
-      0.0119,
       0.012,
-      0.0125,
+      0.0119,
+      0.0122,
       0.0121,
       0.0122
     ]
@@ -1539,20 +1539,20 @@
   "recall.baselines.simgcl.recbole_ndcg@20.std": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
-    "value": 0.00023021728866442684
+    "value": 0.00013038404810405298
   },
   "recall.baselines.simgcl.recbole_recall@10.mean": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
-    "value": 0.0177
+    "value": 0.01764
   },
   "recall.baselines.simgcl.recbole_recall@10.seeds": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
     "value": [
       0.0175,
-      0.018,
       0.0178,
+      0.0177,
       0.0178,
       0.0174
     ]
@@ -1560,20 +1560,20 @@
   "recall.baselines.simgcl.recbole_recall@10.std": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
-    "value": 0.0002449489742783174
+    "value": 0.00018165902124584954
   },
   "recall.baselines.simgcl.recbole_recall@20.mean": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
-    "value": 0.0251
+    "value": 0.02486
   },
   "recall.baselines.simgcl.recbole_recall@20.seeds": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
     "value": [
       0.025,
-      0.0251,
-      0.0255,
+      0.0246,
+      0.0248,
       0.0248,
       0.0251
     ]
@@ -1581,6 +1581,6 @@
   "recall.baselines.simgcl.recbole_recall@20.std": {
     "n_seeds": 5,
     "source": "ch3_recall/baselines/simgcl/seed0/metrics.json",
-    "value": 0.00025495097567963874
+    "value": 0.0001949358868961798
   }
 }

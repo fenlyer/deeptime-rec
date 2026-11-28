@@ -1,11 +1,11 @@
 # STATUS
 
-当前周：W1（11/16–11/22） 本周关口：G1（11/21）
-最后更新：2026-11-27
+当前周：W2（11/27–12/3） 本周关口：G2
+最后更新：2026-11-28
 
 ## 进行中
 
-- （无）G1 已收口，等待进入 W2
+- S-recall-main（TI-LightGCN）：下一步
 
 ## 已完成（卡片 ID｜commit｜日期）
 
@@ -25,23 +25,12 @@
 - V9 复核与论文待手动修改清单｜docs/revision/、decisions.md 末条：3.5.4/3.5.9/5.5.5 节须删、3.6 节改写、5.5 节总览改写、5.2.2 引用改写、1.3.3 创新点改写、5.6 截图图注标注「演示数据」｜4c12842｜2026-11-20
 - S-recall-base（代码部分）｜runner 与配置完成、CPU 冒烟通过：experiments/run_recall_baseline.py、configs/recall/{bprmf,ngcf,lightgcn,sgl,simgcl}.yaml、experiments/make_baseline_summary.py、tests/test_recall_baseline_runner.py（29 个测试）；queue.txt 已挂 25 run + summary；autodl/S-recall-base.md 操作步骤；修复 common/run.py 的 manifest extra 覆盖 bug（+测试）。冒烟 BPR/seed0/2epoch 跑通，50985 用户全覆盖，604s→78s（按批算 + eval_batch_size 调整）｜2026-11-27
 - S-recall-base（正式 25 run）｜25 个 run 全部完成（5 模型 × 5 seed），summary.csv 已生成；G1-6 解除｜c9026d6｜2026-11-27
+- S-recall-base R1-R2（训练过程数据补全）｜runner 增加 per-epoch 计时/验证值/峰值显存/图构建耗时记录；旧结果归档至 `_archive/v1-20261127/`；25 run 重跑完成，D1-D4 数据齐全（train_log 四列、epoch_seconds、peak_memory_mb、build_seconds）。准确率与 archive 有微小差异（<10% 相对变化，论文结论不变），接受为新基线｜2dec68d｜2026-11-28
 
 ## 阻塞与待决定
 
-- （无）AutoDL 侧 S-recall-base 已完成，G1 七条全部可验证。
+- （无）G1 七条全部通过，进入 W2。
 
-## 接下来（G1 收口）
+## 接下来（W2）
 
-以 `gates.md` 的 G1 七条为唯一真相，可机械验证：
-
-| # | 条件 | 当前 |
-|---|------|------|
-| 1 | 冻结数据可校验（`sha256sum -c data/CHECKSUMS.sha256`） | ✅ |
-| 2 | 统一评估可复现（`make test`） | ✅ |
-| 3 | RecBole 环境可复现（`recbole.yml` + `results/_smoke/`） | ✅ |
-| 4 | 数字管线可运行（`make tables` 产 `numbers.json`） | ✅ |
-| 5 | 数据画像图就绪（`figures/profile/IS_*.svg` ≥5） | ✅ 6 张 |
-| 6 | 召回基线至少 1 个（`results/ch3_recall/baselines/*/seed0/metrics.json`） | ✅ 25 个 run |
-| 7 | 原型现状可查（`docs/prototype_inventory.md`） | ✅ |
-
-下一步行动：G1 七条全部通过（`make gate W=1` 验证），进入 W2。
+- S-recall-main：TI-LightGCN 实现与训练

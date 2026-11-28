@@ -1,0 +1,48 @@
+{
+  "exp": "ch3_recall/ti_lightgcn",
+  "model": "ti_lightgcn",
+  "seed": 0,
+  "git_commit": "9fd776ad631d3433efa30b98bd124adae817c2a8",
+  "git_dirty": true,
+  "git_dirty_files": [
+    "configs/recall/ti_lightgcn.yaml",
+    "experiments/run_ti_lightgcn.py",
+    "models/ti_lightgcn.py",
+    "tests/test_ti_lightgcn.py"
+  ],
+  "git_tags": [],
+  "command": "run_ti_lightgcn.py --seed 0 --epochs 2 --no-gpu --results-dir results/_smoke/ti_lightgcn",
+  "started_at": "2026-11-28T09:12:45.413192+08:00",
+  "ended_at": "2026-11-28T09:16:28.860330+08:00",
+  "gpu": null,
+  "epoch_seconds": [
+    81.4194118976593,
+    76.74948191642761
+  ],
+  "best_epoch": 1,
+  "stop_reason": "patience",
+  "data_scope": "train",
+  "error": null,
+  "elapsed_s": 223.4,
+  "epochs": 2,
+  "recbole_metrics": {
+    "recbole_recall@10": 0.0013,
+    "recbole_recall@20": 0.0026,
+    "recbole_ndcg@10": 0.0007,
+    "recbole_ndcg@20": 0.0011
+  },
+  "best_valid_score": 0.0015,
+  "build_seconds": 13.65,
+  "fit_seconds": 178.42,
+  "peak_memory_mb": null,
+  "n_params": 4917440,
+  "n_epochs_logged": 2,
+  "user_id_mapped": 50985,
+  "item_id_mapped": 25848,
+  "user_num": 50986,
+  "item_num": 25849,
+  "dataset": "IS",
+  "lambda_": 0.001,
+  "gamma": 0.0,
+  "theta": 10
+}

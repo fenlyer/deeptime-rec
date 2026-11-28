@@ -36,3 +36,11 @@
 # done conda run -n recbole_env python experiments/run_recall_baseline.py --model simgcl  --seed 3
 # done conda run -n recbole_env python experiments/run_recall_baseline.py --model simgcl  --seed 4
 # done conda run -n recbole_env python experiments/make_baseline_summary.py
+
+# S-recall-main: TI-LightGCN 5 seed 主实验（预计 ~4h）
+# 环境修复：用 conda run -n recbole_env 重跑
+# done conda run -n recbole_env python experiments/run_ti_lightgcn.py --seed 0
+# done conda run -n recbole_env python experiments/run_ti_lightgcn.py --seed 1
+# done conda run -n recbole_env python experiments/run_ti_lightgcn.py --seed 2
+# done conda run -n recbole_env python experiments/run_ti_lightgcn.py --seed 3
+# done conda run -n recbole_env python experiments/run_ti_lightgcn.py --seed 4

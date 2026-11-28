@@ -32,19 +32,33 @@
 
 ## 产出
 
+对以下模型做分层评估（全部为后处理，不重跑）：
+
+| 模型 | 数据来源 | 对应论文表 |
+|------|----------|-----------|
+| LightGCN | `results/ch3_recall/baselines/lightgcn/` | 表 3-12 第 1 列 |
+| SimGCL | `results/ch3_recall/baselines/simgcl/` | 表 3-12 第 2 列 |
+| TI-LightGCN | `results/ch3_recall/ti_lightgcn/` | 表 3-12 第 3 列 |
+
+输出文件：
 - `results/ch3_recall/cold_start/lightgcn.json`
+- `results/ch3_recall/cold_start/simgcl.json`
 - `results/ch3_recall/cold_start/ti_lightgcn.json`
-- 数字填入表 3-12
 
 ## 验收
 
-- [ ] 分层结果生成
-- [ ] 加权守恒检查通过
-- [ ] 数字填入表 3-12
+- [ ] 3 个模型的分层结果生成
+- [ ] 加权守恒检查通过：Σ(nᵢ·metricᵢ)/Σnᵢ = 全体用户值
+- [ ] 数字填入表 3-12（3 模型 × 4 层 + 全体）
 
 ## 论文落点
 
 - **表 3-11**：分层定义
-- **表 3-12**：模型分层
-- **图 3-11**：分层增益柱图
+- **表 3-12**：模型分层对比（LightGCN / SimGCL / TI-LightGCN × 4 层）
+- **图 3-11**：分层增益柱状图（TI-LightGCN 相对 LightGCN 的各层相对提升）
 - 守恒校验：Σ(nᵢ·metricᵢ)/Σnᵢ = 全体用户值
+
+## 推迟项
+
+- **表 3-13**（"完整系统" 分层）：需要多路召回 + User Memory，推迟到 S-system-test 卡片
+- **图 3-11** 中 "完整多路召回" 柱：同上，届时补充
